@@ -1,5 +1,5 @@
 "use client"
-import React from "react";
+import React, {ReactNode} from "react";
 import {TopBar} from "@/components/ui/top-bar";
 import {Navigation} from "@/components/ui/navigation";
 import Footer from "@/components/ui/footer";
@@ -7,7 +7,7 @@ import DynamicBreadcrumb from "@/components/ui/dynamic-breadcrumb";
 import {AppProgressBar as ProgressBar} from "next-nprogress-bar"
 
 
-const DashboardLayout = ({children: children}: Readonly<{ children: React.ReactNode }>) => {
+const DashboardLayout = ({children}: { children: ReactNode }) => {
 
     return (
         <>

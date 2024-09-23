@@ -2,7 +2,7 @@
 import React, {ReactNode} from "react";
 import {AppProgressBar as ProgressBar} from "next-nprogress-bar";
 
-const AuthLayout = ({children}: { children: ReactNode }) => {
+const GuestLayout = ({children}: { children: ReactNode }) => {
     return (
         <>
             <ProgressBar
@@ -15,4 +15,4 @@ const AuthLayout = ({children}: { children: ReactNode }) => {
         </>);
 }
 
-export default AuthLayout;
+export default GuestLayout;

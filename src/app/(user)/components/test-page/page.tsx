@@ -1,3 +1,4 @@
+"use client"
 const TestPage = () => {
     return <h1>test page</h1>
 }

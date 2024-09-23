@@ -37,7 +37,7 @@ const Queue = () => {
                     {
                         polyclinic.map((polyclinic: polyclinic, i: number) => {
                             return (
-                                <SolidCard key={i} href="/queue/doctor">
+                                <SolidCard key={i} href="/queue/polyclinic/1">
                                     <p className="font-medium">Poliklinik {polyclinic.name}</p>
                                 </SolidCard>
                             )

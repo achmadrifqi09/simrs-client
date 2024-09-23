@@ -8,13 +8,12 @@ const DynamicBreadcrumb = () => {
     const pathName = usePathname();
     const [pathNames, setPathNames] = useState<Array<string>>([]);
 
-    const handleBreadcrumbPath = () => {
-        const paths = pathName.split("/")
-        const result = paths.filter(path => path !== "")
-        setPathNames(result)
-    }
-
     useEffect(() => {
+        const handleBreadcrumbPath = () => {
+            const paths = pathName.split("/")
+            const result = paths.filter(path => path !== "")
+            setPathNames(result)
+        }
         handleBreadcrumbPath()
     }, [pathName])
 

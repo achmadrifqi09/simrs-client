@@ -1,3 +1,4 @@
+"use client"
 import Heading from "@/components/ui/heading";
 
 const Dashboard = () => {

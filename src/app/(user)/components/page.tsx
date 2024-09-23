@@ -119,15 +119,7 @@ const data = [
 ]
 
 
-export type Payment = {
-    id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
-}
-
-
-export default function Home() {
+const Home = () => {
     const {toast} = useToast();
     const [date, setDate] = useState<Date>()
     const [goal, setGoal] = useState(350)
@@ -469,3 +461,5 @@ export default function Home() {
         </>
     );
 }
+
+export default Home
