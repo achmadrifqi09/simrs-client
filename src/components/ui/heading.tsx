@@ -2,15 +2,15 @@ import React from "react";
 import {cn} from "@/lib/utils"
 import { cva, VariantProps } from "class-variance-authority"
 
-const headingVariant = cva("mt-1 font-semibold mb-4 ",{
+const headingVariant = cva("mt-1 mb-4 ",{
     variants: {
         variant : {
-            'page-title' : 'text-[#054571]',
-            'section-title' : 'text-gray-800'
+            'page-title' : 'text-[#054571] font-bold',
+            'section-title' : 'text-gray-800 font-semibold'
         },
         size :{
-            h1: 'text-4xl',
-            h2: 'text-3xl',
+            h1: 'text-2xl md:text-3xl xl:text-4xl',
+            h2: 'text-xl md:text-2xl xl:text-3xl',
             h3: 'text-2xl',
             h4: 'text-xl',
             h5: 'text-lg',
