@@ -9,7 +9,7 @@ type polyclinic = {
     name: string
 }
 
-const Queue = () => {
+const QueuePolyclinic = () => {
     const [polyclinic, setPolyclinic] = useState<polyclinic[]>([])
 
     useEffect(() => {
@@ -49,4 +49,4 @@ const Queue = () => {
     )
 }
 
-export default Queue;
+export default QueuePolyclinic;
