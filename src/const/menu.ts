@@ -1,18 +1,6 @@
-import {LucideIcon, UserIcon} from "lucide-react";
+import { UserIcon} from "lucide-react";
 import {BetweenHorizonalStart, CircleGauge, LayoutDashboard} from "lucide-react";
-
-type Menu = {
-    icon : LucideIcon,
-    href?: string,
-    label: string,
-    submenus?: Submenu[]
-}
-
-type Submenu = {
-    href: string,
-    label: string,
-    active?: boolean,
-}
+import Menu from "@/types/menu-type";
 
 const menus : Menu[] = [
     {
