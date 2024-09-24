@@ -1,4 +1,4 @@
-import {LucideIcon, Users} from "lucide-react";
+import {LucideIcon, UserIcon} from "lucide-react";
 import {BetweenHorizonalStart, CircleGauge, LayoutDashboard} from "lucide-react";
 
 type Menu = {
@@ -21,17 +21,6 @@ const menus : Menu[] = [
         label: 'Dashboard',
     },
     {
-        icon: Users,
-        label: 'Antrean',
-        submenus: [
-            {label: "Ambil Antrean", href: '/components/test', active: true},
-            {label: "Loket Antrean", href: '/queue/locket', active: false},
-            {label: "Check-In Antrean", href: '#', active: false},
-            {label: "Daftar Antrean", href: '#', active: false},
-            {label: "Display Antrean", href: '#', active: false},
-        ]
-    },
-    {
         icon: LayoutDashboard,
         href: '/components',
         label: 'Components',
@@ -42,6 +31,14 @@ const menus : Menu[] = [
         submenus: [
             {label: "Submenu 1", href: '/components/test-page', active: false},
             {label: "Submenu 2", href: '#', active: false},
+        ]
+    },
+    {
+        icon: UserIcon,
+        label: 'Testing Menu',
+        submenus: [
+            {label: "Submenu 2.1", href: '#', active: false},
+            {label: "Submenu 2.2", href: '#', active: false},
         ]
     },
 ]
