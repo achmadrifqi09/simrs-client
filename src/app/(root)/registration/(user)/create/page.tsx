@@ -147,74 +147,10 @@ const Home = () => {
   return (
     <>
       <Heading headingLevel="h3" variant="page-title">
-        Daftar Antrean
+        Components
       </Heading>
 
       <div className="space-y-6">
-        <Section>
-          <Heading headingLevel="h5">Daftar Antrean</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 bg-gray-300">
-            <div className="my-4">
-              <Label htmlFor="text">Filter Tanggal Layanan</Label>
-              <div className="flex sm:flex-row flex-col gap-2">
-                <div className="my-3">
-                  <Label htmlFor="select">Dari Tanggal</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] justify-between text-left font-normal border-input",
-                          !date && "text-muted-foreground"
-                        )}
-                      >
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        <CalendarDays className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="my-3">
-                  <Label htmlFor="select">Sampai Tanggal</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] justify-between text-left font-normal border-input",
-                          !date && "text-muted-foreground"
-                        )}
-                      >
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        <CalendarDays className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="my-9 ml-1">
-                  <Button>Filter</Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Section>
-
         <Section>
           <Heading headingLevel="h5">Button</Heading>
           <div className="flex gap-4 flex-wrap">
