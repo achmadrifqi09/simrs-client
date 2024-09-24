@@ -26,7 +26,7 @@ const menus: Menu[] = [
     },
 ]
 
-const TestPage = () => {
+const Locket = () => {
 
     const handleMenuClick = () => { }
     return (
@@ -37,10 +37,9 @@ const TestPage = () => {
             </div>
 
             <div>
-                <strong>Menu</strong>
-
-                <div className="flex">
-                    <div className="w-1/4 min-w-[180px]">
+                <div className="flex flex-col xl:flex-row gap-6">
+                    <div className="w-1/4 min-w-[180px] border border-graay-200 rounded-lg p-4">
+                        <p className="font-bold mb-2">Menu</p>
                         {
                             menus.map((menu, index) => {
                                 return (
@@ -51,10 +50,10 @@ const TestPage = () => {
                         }
                     </div>
 
-                    <div>
+                    <div className="w-full">
                         <Section>
                             <Heading headingLevel="h5">Daftar Loket Admisi</Heading>
-                            <div className="flex gap-4 flex-wrap">
+                            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
                                 <SolidCard href="/queue/locket/1">
                                     <p>Loket 1</p>
                                 </SolidCard>
@@ -88,4 +87,4 @@ const TestPage = () => {
     );
 }
 
-export default TestPage;
+export default Locket;
