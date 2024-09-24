@@ -12,7 +12,8 @@ import {routeWithoutPanelLayout} from "@/const/route-without-panel-layout";
 const DashboardLayout = ({children}: { children: ReactNode }) => {
     const pathName = usePathname();
 
-    if (routeWithoutPanelLayout.includes(pathName)) {
+    const checkingPath = routeWithoutPanelLayout.some((path) => pathName.includes(path))
+    if (checkingPath) {
         return (
             <>
                 {children}
