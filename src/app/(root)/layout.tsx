@@ -5,16 +5,27 @@ import {Navigation} from "@/components/ui/navigation";
 import Footer from "@/components/ui/footer";
 import DynamicBreadcrumb from "@/components/ui/dynamic-breadcrumb";
 import {AppProgressBar as ProgressBar} from "next-nprogress-bar"
+import {usePathname} from "next/navigation";
+import {routeWithoutPanelLayout} from "@/const/route-without-panel-layout";
 
 
 const DashboardLayout = ({children}: { children: ReactNode }) => {
+    const pathName = usePathname();
+
+    if (routeWithoutPanelLayout.includes(pathName)) {
+        return (
+            <>
+                {children}
+            </>
+        )
+    }
 
     return (
         <>
             <ProgressBar
                 height="5px"
                 color="#F1A7AC"
-                options={{ showSpinner: false }}
+                options={{showSpinner: false}}
                 shallowRouting
             />
             <div className="w-screen h-dvh overflow-hidden">

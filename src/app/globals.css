@@ -2,27 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/*:root {*/
-/*  --background: #ffffff;*/
-/*  --foreground: #101928;*/
-/*}*/
-
-/*@media (prefers-color-scheme: dark) {*/
-/*  :root {*/
-/*    --background: #ffffff;*/
-/*    --foreground: #101928;*/
-/*  }*/
-/*}*/
-
 .main-wrapper{
   height: calc(100vh - 72px);
-  /*width: 100%;*/
   flex:1;
   overflow-y: scroll;
 }
 
 .h-content{
   min-height: calc(100vh - 72px);
+}
+
+.queue-wrapper{
+  height: calc(100vh - 132px - 40px - 54px);
 }
 
 .main{
