@@ -32,7 +32,7 @@ export const Navigation = () => {
 
     const handleMenuClick = () => {
         if(window){
-            if (size?.width && size?.width < 768) toggle()
+            if (size?.width && size?.width < 1024) toggle()
         }
         setOpenCollapseId(null)
     };

@@ -39,11 +39,11 @@ const useWindowResizeHandler = () => {
 
             // eslint-disable-next-line react-hooks/exhaustive-deps
             resizeTimeout = setTimeout(() => {
-                if (size.width && size.width < 768 && show) {
+                if (size.width && size.width < 1024 && show) {
                     toggle();
                 }
 
-                if (size.width && size.width >= 768 && !show) {
+                if (size.width && size.width >= 1024 && !show) {
                     toggle();
                 }
             }, 200);
