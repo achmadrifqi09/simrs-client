@@ -29,7 +29,7 @@ const menus : Menu[] = [
         icon: BetweenHorizonalStart,
         label: 'Collapse Menu',
         submenus: [
-            {label: "Submenu 1", href: '/components/test', active: false},
+            {label: "Submenu 1", href: '/components/test-page', active: false},
             {label: "Submenu 2", href: '#', active: false},
         ]
     },

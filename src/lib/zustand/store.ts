@@ -1,12 +1,12 @@
 import {create} from "zustand";
 
 type NavState = {
-    show : boolean,
+    show : boolean ,
     toggle : () => void
 
 }
 const useNavigation = create<NavState>((set) => ({
-    show : false,
+    show : true,
     toggle : () => set((state) => ({show: !state.show})),
 }))
 
