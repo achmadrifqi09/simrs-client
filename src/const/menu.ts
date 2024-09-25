@@ -3,6 +3,7 @@ import {
   CircleGauge,
   LayoutDashboard,
   Users,
+  UserRoundPen,
 } from "lucide-react";
 import { Menu } from "@/types/menu-type";
 
@@ -22,6 +23,11 @@ const menus: Menu[] = [
       { label: "Daftar Antrean", href: "/queue/list", active: false },
       { label: "Display Antrean", href: "#", active: false },
     ],
+  },
+  {
+    icon: UserRoundPen,
+    href: "/registration",
+    label: "Pendaftaran",
   },
   {
     icon: LayoutDashboard,
