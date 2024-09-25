@@ -16,7 +16,7 @@ const Clock = () => {
     const formatDate = (date: Date) => {
         const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
-            month: 'long',
+            month: 'numeric',
             day: 'numeric',
             weekday: 'long'
         };

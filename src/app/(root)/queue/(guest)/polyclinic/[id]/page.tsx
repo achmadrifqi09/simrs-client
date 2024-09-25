@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import DoctorCard from "@/components/ui/doctor-card";
 import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle,} from "@/components/ui/drawer"
 import {Badge} from "@/components/ui/badge"
+import {useParams} from "next/navigation";
 
 const data: DoctorPractice[] = [
     {
@@ -83,7 +84,12 @@ const data: DoctorPractice[] = [
     }
 ]
 
+type SelectDoctorProps = {
+    id: string
+}
+
 const SelectDoctor = () => {
+    const param = useParams<SelectDoctorProps>()
     const [doctors, setDoctors] = useState<DoctorPractice[]>([]);
     const [selectedDoctor, setSelectedDoctor] = useState<DoctorPractice>();
     const [openDrawer, setOpenDrawer] = useState<boolean>(false);
@@ -125,7 +131,7 @@ const SelectDoctor = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {data.map((doctor: DoctorPractice, index: number) => {
                         return (
-                            <DoctorCard data={doctor} key={index} showSchedule={handleDrawerDoctorSchedules}/>
+                            <DoctorCard data={doctor} polyCode={param.id} key={index} showSchedule={handleDrawerDoctorSchedules}/>
                         )
                     })
                     }
