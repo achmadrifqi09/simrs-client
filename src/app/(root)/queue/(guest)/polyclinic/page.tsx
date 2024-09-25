@@ -4,10 +4,13 @@ import {Button} from "@/components/ui/button";
 import {Printer} from 'lucide-react'
 import SolidCard from "@/components/ui/solid-card";
 import {useEffect, useState} from "react";
+import Link from "next/link";
 
 type polyclinic = {
     name: string
 }
+
+
 
 const QueuePolyclinic = () => {
     const [polyclinic, setPolyclinic] = useState<polyclinic[]>([])
@@ -27,9 +30,11 @@ const QueuePolyclinic = () => {
             <div
                 className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white sticky top-0 z-10 p-6">
                 <Input className="max-w-[24em]" placeholder="Cari poliklinik"/>
-                <Button variant="outline">
-                    <Printer className="w-4 h-4 mr-2"/>
-                    <span>Cetak Ulang Tiket</span>
+                <Button variant="outline" asChild>
+                    <Link href="/queue/polyclinic/reprint-ticket">
+                        <Printer className="w-4 h-4 mr-2"/>
+                        <span>Cetak Ulang Tiket</span>
+                    </Link>
                 </Button>
             </div>
             <div className="px-6 pb-6 flex-1 overflow-auto">

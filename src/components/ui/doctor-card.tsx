@@ -4,16 +4,19 @@ import {Stethoscope} from 'lucide-react'
 import {Progress} from "@/components/ui/progress"
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
+import Link from "next/link";
 
 interface DoctorCardProps {
     data: DoctorPractice,
-    showSchedule: (selectedDoctor : DoctorPractice) => void
+    polyCode: string,
+    showSchedule: (selectedDoctor: DoctorPractice) => void
 }
 
-const DoctorCard = ({data, showSchedule}: DoctorCardProps) => {
+const DoctorCard = ({data, showSchedule, polyCode}: DoctorCardProps) => {
     const handleSchedule = () => {
         showSchedule(data)
     }
+
     return (
         <div className="rounded-lg border border-gray-200 p-5 space-y-4">
             <div className="flex gap-3 items-center justify-between">
@@ -25,7 +28,7 @@ const DoctorCard = ({data, showSchedule}: DoctorCardProps) => {
                         {data.name}
                     </Heading>
                 </div>
-                {data.is_off && (<Badge>Libur / Cuti</Badge>)}
+                {data.is_off && (<Badge>Libur</Badge>)}
             </div>
             <div className="flex justify-between  gap-4 flex-col md:flex-row items-stretch">
                 <div className="w-full flex flex-col justify-between h-full">
@@ -53,7 +56,19 @@ const DoctorCard = ({data, showSchedule}: DoctorCardProps) => {
                 </div>
             </div>
             <div className="space-x-4">
-                <Button disabled={data.is_off}>Daftar</Button>
+                {
+                    data.is_off ? (
+                        <Button disabled={data.is_off}>
+                            Tutup
+                        </Button>
+                    ) : (
+
+                        <Button disabled={data.is_off} asChild>
+                            <Link
+                                href={`/queue/polyclinic/${polyCode}/register?code=${data.code}&practice_hours=14:00`}>Daftar</Link>
+                        </Button>
+                    )
+                }
                 <Button variant="outline" onClick={handleSchedule}>Jadwal Dokter</Button>
             </div>
         </div>

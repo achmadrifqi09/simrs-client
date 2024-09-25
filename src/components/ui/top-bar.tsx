@@ -1,13 +1,20 @@
 "use client"
-import {AlignLeft, AlignRight, ChevronDown} from "lucide-react";
+import {AlignLeft, ChevronDown} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
 import Image from "next/image";
-import {useNavigation} from "@/lib/zustand/store";
+import MobileNavigation from "@/components/ui/mobile-navigation";
 
+type TopBarProps = {
+    onToggleMenu: () => void
+}
 
-export const TopBar = () => {
-    const {toggle} = useNavigation();
+const TopBar = ({onToggleMenu}: TopBarProps) => {
+
+    const handleToggleMenu = () => {
+        onToggleMenu()
+    }
+
     return (
         <div
             className="flex items-center justify-between bg-gradient-to-br from-red-600 to-orange-600 sticky top-0">
@@ -21,7 +28,8 @@ export const TopBar = () => {
                 </div>
             </div>
             <div className="flex items-center justify-end md:justify-between flex-1 px-4 md:px-6">
-                <Button onClick={toggle} variant="ghost" size="icon"
+
+                <Button onClick={handleToggleMenu} variant="ghost" size="icon"
                         className="text-white hover:bg-red-500 hover:text-white hidden md:flex">
                     <AlignLeft/>
                 </Button>
@@ -42,14 +50,12 @@ export const TopBar = () => {
                             <DropdownMenuItem>Log out</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button onClick={toggle} variant="ghost" size="icon"
-                            className="text-white hover:bg-red-500 hover:text-white md:hidden">
-                        <AlignRight/>
-                    </Button>
                 </div>
-
+                <MobileNavigation/>
             </div>
 
         </div>
     )
 }
+
+export default TopBar
