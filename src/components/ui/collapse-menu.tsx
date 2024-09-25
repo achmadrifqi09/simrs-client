@@ -18,9 +18,10 @@ interface CollapseMenuButtonProps {
     onToggle: (id: string) => void,
     id: string,
     open: boolean,
+    closeMenu?: () => void
 }
 
-const CollapseMenu = ({icon: Icon, label, submenus, active, onToggle, id, open}: CollapseMenuButtonProps) => {
+const CollapseMenu = ({icon: Icon, label, submenus, active, onToggle, id, open, closeMenu}: CollapseMenuButtonProps) => {
     const baseClass = "mx-[-0.65rem] w-full hover:bg-gray-50 flex justify-between items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary";
 
     return (
@@ -47,6 +48,7 @@ const CollapseMenu = ({icon: Icon, label, submenus, active, onToggle, id, open}:
                             <Link
                                 className="mx-[-0.65rem] w-full hover:bg-gray-50 flex justify-between items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
                                 href={submenu.href}
+                                onClick={closeMenu}
                                 key={index}
                             >
                                 {submenu.label}

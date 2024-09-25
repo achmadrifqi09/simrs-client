@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import QueueHeader from "@/components/ui/queue-header";
 
+
 const QueueLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>

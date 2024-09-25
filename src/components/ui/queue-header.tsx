@@ -9,7 +9,7 @@ const QueueHeader = () => {
     const pathName = usePathname();
     return (
         <header className="row-span-2 relative px-6">
-            <div className="flex justify-center md:justify-between items-center gap-6">
+            <div className="flex justify-center md:justify-between items-center md:gap-6">
                 <div className="hidden md:block">
                     <Image src="/images/logo-rs.png" alt="Logo RSU UMM" width={132} height={132}/>
                 </div>
