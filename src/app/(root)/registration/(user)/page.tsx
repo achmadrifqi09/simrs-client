@@ -7,6 +7,7 @@ import Heading from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MinusCircle, PlusCircle } from "lucide-react";
 import {
   Dialog,
@@ -175,26 +176,14 @@ const Registration = () => {
         <Section>
           <Heading headingLevel="h5">Pendaftar Layanan</Heading>
           <div className="flex space-x-1 bg-red-100 p-1 rounded-md">
-            <Button
-              className={`flex-1 ${
-                activeTab === "BPJS"
-                  ? ""
-                  : "bg-red-100 text-gray-500 hover:text-white"
-              }`}
-              onClick={() => setActiveTab("BPJS")}
-            >
-              Pasien BPJS
-            </Button>
-            <Button
-              className={`flex-1 ${
-                activeTab === "Umum"
-                  ? ""
-                  : "bg-red-100 text-gray-500 hover:text-white"
-              }`}
-              onClick={() => setActiveTab("Umum")}
-            >
-              Pasien Umum
-            </Button>
+            <Tabs defaultValue="BPJS">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="BPJS">Pasien BPJS</TabsTrigger>
+                <TabsTrigger value="Umum">Pasien Umum</TabsTrigger>
+              </TabsList>
+              <TabsContent value="BPJS" className="mt-6 px-1"></TabsContent>
+              <TabsContent value="Umum" className="mt-6 px-1"></TabsContent>
+            </Tabs>
           </div>
 
           <div className="my-7">
