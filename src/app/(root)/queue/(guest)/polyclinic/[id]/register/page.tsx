@@ -28,14 +28,15 @@ const Register = () => {
                     Kembail
                 </Button>
                 <div>
-                    <Heading headingLevel="h5" variant="section-title" className="text-center mb-1">Nama
-                        Dokter</Heading>
+                    <Heading headingLevel="h5" variant="section-title" className="text-center mb-1">
+                        Nama Poli - Nama Dokter
+                    </Heading>
                     <p className="text-center text-gray-500">Jam praktek 14:00-17:00</p>
                 </div>
             </div>
             <div className="px-6 pb-6 flex-1 overflow-auto mt-4">
                 <Tabs defaultValue="old-patinet">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-2 max-w-[24em]">
                         <TabsTrigger value="old-patinet">Pasien Lama</TabsTrigger>
                         <TabsTrigger value="new-patient">Pasien Baru</TabsTrigger>
                     </TabsList>
@@ -46,7 +47,6 @@ const Register = () => {
                         <NewPatientForm/>
                     </TabsContent>
                 </Tabs>
-
             </div>
         </div>
     )

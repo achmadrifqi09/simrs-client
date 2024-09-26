@@ -1,34 +1,27 @@
 "use client";
+import {useState} from "react";
 import {Button} from "@/components/ui/button";
-import Section from "@/components/ui/section";
 import Heading from "@/components/ui/heading";
 import Menu from "@/components/ui/menu";
-import {Clipboard, LucideIcon, Pill} from "lucide-react";
-import SolidCard from "@/components/ui/solid-card";
+import {counterMenus} from "@/const/menu";
+import {CounterMenu} from "@/enums/Menu";
+import Admission from "@/app/(root)/queue/(user)/counter/admission";
+import Pharmacy from "@/app/(root)/queue/(user)/counter/pharmacy";
 
-type Menu = {
-    icon: LucideIcon;
-    href?: string;
-    label: string;
-};
+const Counter = () => {
+    const [counter, setCounter] = useState<CounterMenu>(CounterMenu.ADMISSION);
 
-const menus: Menu[] = [
-    {
-        icon: Clipboard,
-        href: "/",
-        label: "Loket Admisi",
-    },
-    {
-        icon: Pill,
-        href: "/",
-        label: "Loket Farmasi",
-    },
-];
+    const handleMenuCounter = (menu: string) => {
+        if (menu === "ADMISSION") {
+            setCounter(CounterMenu.ADMISSION)
+        } else {
+            setCounter(CounterMenu.PHARMACY)
+        }
+    }
 
-const counter = () => {
     return (
         <div>
-            <div className="flex justify-between items-center ">
+            <div className="flex justify-between items-center mb-6">
                 <Heading headingLevel="h3" variant="page-title">
                     Loket Antrean
                 </Heading>
@@ -36,52 +29,34 @@ const counter = () => {
             </div>
 
             <div>
-                <div className="flex flex-col xl:flex-row gap-6">
-                    <div className="w-1/4 min-w-[180px] border border-graay-200 rounded-lg p-4">
-                        <p className="font-bold mb-2">Menu</p>
-                        {menus.map((menu, index) => {
-                            return (
-                                <Menu
-                                    key={index}
-                                    icon={menu.icon}
-                                    href={`${menu.href}`}
-                                    label={menu.label}
-                                    active={false}
-                                />
-                            );
-                        })}
+                <div className="flex flex-col lg:flex-row gap-6">
+                    <div
+                        className="w-full md:w-1/4 sm:min-w-[220px] bg-white h-max border border-graay-200 rounded-lg p-4">
+                        <Heading headingLevel="h5" variant="section-title">
+                            Menu
+                        </Heading>
+                        <div className="ms-2.5 space-y-2">
+                            {counterMenus.map((menu, index) => {
+                                return (
+                                    <Menu
+                                        key={index}
+                                        icon={menu.icon}
+                                        label={menu.label}
+                                        asButton={true}
+                                        active={menu.tag == counter}
+                                        onClick={() => handleMenuCounter(menu.tag ?? "ADMISSION")}
+                                    />
+                                );
+                            })}
+                        </div>
                     </div>
 
                     <div className="w-full">
-                        <Section>
-                            <Heading headingLevel="h5">Daftar Loket Admisi</Heading>
-                            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
-                                <SolidCard href="/queue/counter/1">
-                                    <p>Loket 1</p>
-                                </SolidCard>
-                                <SolidCard href="/queue/counter/2">
-                                    <p>Loket 2</p>
-                                </SolidCard>
-                                <SolidCard href="/queue/counter/3">
-                                    <p>Loket 3</p>
-                                </SolidCard>
-                                <SolidCard href="/queue/counter/4">
-                                    <p>Loket 4</p>
-                                </SolidCard>
-                                <SolidCard href="/queue/counter/5">
-                                    <p>Loket 5</p>
-                                </SolidCard>
-                                <SolidCard href="/queue/counter/6">
-                                    <p>Loket 6</p>
-                                </SolidCard>
-                                <SolidCard href="/queue/counter/7">
-                                    <p>Loket 7</p>
-                                </SolidCard>
-                                <SolidCard href="/queue/counter/8">
-                                    <p>Loket 8</p>
-                                </SolidCard>
-                            </div>
-                        </Section>
+                        {
+                            counter == CounterMenu.ADMISSION ? (
+                                <Admission/>
+                            ) : (<Pharmacy/>)
+                        }
                     </div>
                 </div>
             </div>
@@ -89,4 +64,4 @@ const counter = () => {
     );
 };
 
-export default counter;
+export default Counter;

@@ -14,7 +14,7 @@ const QueueHeader = () => {
                     <Image src="/images/logo-rs.png" alt="Logo RSU UMM" width={132} height={132}/>
                 </div>
                 <div className="static md:absolute left-0 right-0">
-                    <p className="text-gray-500 text-center">Sistem Antrean Online</p>
+                    <p className="text-gray-500 text-center">Sistem Antrean</p>
                     <Heading headingLevel="h2" variant="page-title" className="text-center font-bold mb-2">
                         Rumah Sakit Umum<br/>
                         Universitas Muhammadiyah Malang

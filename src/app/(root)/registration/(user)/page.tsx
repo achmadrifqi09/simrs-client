@@ -2,7 +2,7 @@
 import Section from "@/components/ui/section";
 import { useToast } from "@/hooks/use-toast";
 import { Bar, BarChart, ResponsiveContainer } from "recharts";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Heading from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -155,6 +155,9 @@ const Registration = () => {
       dokter: "Dr. Wara Pertiwi, Sp.P",
     },
   ];
+  useEffect(() => {
+    setActiveTab("BPJS")
+  }, []);
 
   function onClick(adjustment: number) {
     setGoal(Math.max(200, Math.min(400, goal + adjustment)));
