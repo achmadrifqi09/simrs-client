@@ -121,7 +121,7 @@ const SelectDoctor = () => {
             <div
                 className="h-20 flex flex-col md:flex-row justify-center items-center gap-4 bg-white sticky top-0 z-10 py-6 mx-6 pb-4 border-b border-b-gray-300">
                 <Button variant="outline" onClick={handleBackButton} className="absolute left-0 hidden md:block">
-                    Kembail
+                    Kembali
                 </Button>
                 <div>
                     <Heading headingLevel="h4" variant="section-title" className="text-center">Poliklinik x</Heading>

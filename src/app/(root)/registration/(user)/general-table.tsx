@@ -1,21 +1,21 @@
 import React from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
 import {PatientType} from "@/types/patient";
 
-type BPJSTableProps = {
-    dataBPJS: PatientType[];
+type GeneralTableProps = {
+    generalPatient: PatientType[];
 };
 
-const BPJSTable = ({dataBPJS}: BPJSTableProps) => {
+const GeneralTable = ({generalPatient}: GeneralTableProps) => {
     return (
         <>
             <Table className="table-fixed">
@@ -33,7 +33,7 @@ const BPJSTable = ({dataBPJS}: BPJSTableProps) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody className="text-gray-500">
-                    {dataBPJS.map((item) => (
+                    {generalPatient.map((item) => (
                         <TableRow key={item.no}>
                             <TableCell className="w-[50px]">{item.no}</TableCell>
                             <TableCell className="w-[120px] text-center">
@@ -84,4 +84,4 @@ const BPJSTable = ({dataBPJS}: BPJSTableProps) => {
     );
 };
 
-export default BPJSTable;
+export default GeneralTable;
