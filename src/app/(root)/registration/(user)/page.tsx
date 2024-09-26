@@ -88,6 +88,9 @@ const Registration = () => {
       dokter: "Dr. Wara Pertiwi, Sp.P",
     },
   ];
+  useEffect(() => {
+    setActiveTab("BPJS")
+  }, []);
 
   return (
     <>

@@ -83,7 +83,7 @@ const MobileNavigation = () => {
 
                                                 <Menu icon={menu.icon} href={`${menu.href}`} label={menu.label}
                                                       active={pathname === menu.href}
-                                                      closeMenu={() => setOpen(!open)}></Menu>
+                                                      onClick={() => setOpen(!open)}></Menu>
                                             )}
                                         </React.Fragment>
                                     </SheetClose>

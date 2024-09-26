@@ -21,7 +21,7 @@ export default function RootLayout({
 
 }>) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body
         className={`${inter.className} antialiased overflow-hidden`}
       >
