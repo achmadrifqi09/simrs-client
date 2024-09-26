@@ -1,5 +1,4 @@
 import {LucideIcon} from "lucide-react";
-import {CounterMenu} from "@/enums/Menu";
 
 type Menu = {
     icon : LucideIcon,
