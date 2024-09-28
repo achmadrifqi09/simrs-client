@@ -3,4 +3,9 @@ enum CounterMenu {
     PHARMACY = "PHARMACY",
 }
 
-export {CounterMenu}
+enum InventoryMenu {
+    ADDALKES = "ADDALKES",
+    ADDROOM = "ADDROOM",
+    MAINTENANCE = "MAINTENANCE"
+}
+export {CounterMenu, InventoryMenu}

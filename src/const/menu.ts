@@ -1,14 +1,17 @@
 import {
+    Bed,
     BetweenHorizonalStart,
+    Box,
     BriefcaseMedical,
     CircleGauge,
     Clipboard,
     LayoutDashboard,
     UserRoundPen,
     Users,
+    Wrench,
 } from "lucide-react";
 import {Menu} from "@/types/menu-type";
-import {CounterMenu} from "@/enums/Menu";
+import {CounterMenu, InventoryMenu} from "@/enums/Menu";
 
 const menus: Menu[] = [
     {
@@ -38,6 +41,14 @@ const menus: Menu[] = [
         label: "Components",
     },
     {
+        icon: Box,
+        label: "Inventory",
+        submenus: [
+            {label: "Alat Kesehatan", href: "/inventory-alkes", active: false},
+            {label: "Barang Habis Pakai", href: "/Consumables", active: false},
+        ],
+    },
+    {
         icon: BetweenHorizonalStart,
         label: "Collapse Menu",
         submenus: [
@@ -60,5 +71,23 @@ const counterMenus: Menu[] = [
     },
 ];
 
+const inventoryMenus: Menu[] = [
+    {
+        label: "Input Alat Kesehatan",
+        icon: Clipboard,
+        tag : InventoryMenu.ADDALKES
+    },
+    {
+        label: "Input Data Ruangan",
+        icon : Bed,
+        tag : InventoryMenu.ADDROOM,
+    },
+    {
+        label : "Pemeliharaan",
+        icon : Wrench,
+        tag : InventoryMenu.MAINTENANCE
+    }
+]
+export {menus, counterMenus, inventoryMenus};
 
-export {menus, counterMenus};
+
