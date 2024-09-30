@@ -19,7 +19,9 @@ const QueueHeader = () => {
                         Rumah Sakit Umum<br/>
                         Universitas Muhammadiyah Malang
                     </Heading>
-                    <Clock/>
+                    <div className="h-6 min-w-10">
+                        <Clock/>
+                    </div>
                 </div>
                 <div>
                     {
