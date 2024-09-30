@@ -1,17 +1,26 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Drawer,
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {
+    Drawer,
     DrawerTrigger,
     DrawerContent,
-} from "@/components/ui/drawer"; // import drawer components
+} from "@/components/ui/drawer";
+import {
+    Pagination,
+    PaginationContent, PaginationEllipsis,
+    PaginationItem,
+    PaginationLink, PaginationNext,
+    PaginationPrevious
+} from "@/components/ui/pagination"; // import drawer components
 
 const maintenance = () => {
 
-    const handleMenuClick = () => {};
+    const handleMenuClick = () => {
+    };
 
     return (
         <>
@@ -26,14 +35,13 @@ const maintenance = () => {
                     <Section>
                         <div className="w-full">
                             <div className="flex justify-between items-center mb-4">
-                                <Heading headingLevel="h5">Data Ruangan</Heading>
+                                <Heading headingLevel="h5">Data Pemeliharaan</Heading>
                             </div>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>No</TableHead>
-                                        <TableHead>Nama Ruangan</TableHead>
-                                        <TableHead>Jumlah</TableHead>
+                                        <TableHead>Nama Alat</TableHead>
                                         <TableHead>Keterangan</TableHead>
                                         <TableHead>Aksi</TableHead>
                                     </TableRow>
@@ -41,8 +49,7 @@ const maintenance = () => {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell>1</TableCell>
-                                        <TableCell>Ruang Menyusui dan KIE</TableCell>
-                                        <TableCell>1</TableCell>
+                                        <TableCell>Tensimeter</TableCell>
                                         <TableCell>Baik</TableCell>
                                         <TableCell>
                                             <div className="flex space-x-2">
@@ -64,8 +71,7 @@ const maintenance = () => {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>2</TableCell>
-                                        <TableCell>Ruang Persiapan Bersalin (Observasi) dengan komplikasi (pre-eclamsy labour)</TableCell>
-                                        <TableCell>1</TableCell>
+                                        <TableCell>Defibrilator</TableCell>
                                         <TableCell>Baik</TableCell>
                                         <TableCell>
                                             <div className="flex space-x-2">
@@ -76,6 +82,31 @@ const maintenance = () => {
                                     </TableRow>
                                 </TableBody>
                             </Table>
+                        </div>
+
+                        <div className="mt-4 flex flex-col sm:flex-row gap-6">
+                            <Pagination className="mt-4 flex flex-col sm:flex-row gap-6">
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious href="#"/>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink href="#" isActive>1</PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink href="#">2</PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationLink href="#">3</PaginationLink>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationEllipsis/>
+                                    </PaginationItem>
+                                    <PaginationItem>
+                                        <PaginationNext href="#"/>
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
                         </div>
                     </Section>
                 </div>

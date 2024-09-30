@@ -44,7 +44,7 @@ const InputRoom = () => {
                         <div className="flex justify-between items-center mb-4">
                             {/* Input Search on the left, Add Button on the right */}
                             <div className="flex items-center">
-                                <Input className="max-w-72" placeholder="Cari Alat..."/>
+                                <Input className="max-w-72" placeholder="Cari Ruangan..."/>
                             </div>
                             <div>
                                 <Drawer>

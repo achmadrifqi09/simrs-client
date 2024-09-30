@@ -49,8 +49,12 @@ type AlatKesehatan = {
     keterangan: string;
 };
 
-
+const initialState: AlatKesehatan[] = [
+    { id: 1, nama: "Tensimeter", ketersediaan: "Ada", jumlah: 1, keterangan: "Baik" },
+    { id: 2, nama: "Defibrilator", ketersediaan: "Ada", jumlah: 1, keterangan: "Baik" },
+];
 const InputAlkes = () => {
+    const [alatKesehatan, setAlatKesehatan] = useState<AlatKesehatan[]>(initialState);
     const [nama, setNama] = useState("");
     const [ketersediaan, setKetersediaan] = useState("");
     const [jumlah, setJumlah] = useState(1);
@@ -59,20 +63,21 @@ const InputAlkes = () => {
     const [kondisiAlat, setKondisiAlat] = useState("");
     const [ruangan, setRuangan] = useState("");
     const [keterangan, setKeterangan] = useState("");
-
     const [selectedAlat, setSelectedAlat] = useState<AlatKesehatan | null>(null);
 
     const handleViewAlat = (alat: AlatKesehatan) => {
         setSelectedAlat(alat);
     };
 
-    const [alatKesehatan, setAlatKesehatan] = useState([
-        { id: 1, nama: "Tensimeter", ketersediaan: "Ada", jumlah: 1, keterangan: "Baik" },
-        { id: 2, nama: "Defibrilator", ketersediaan: "Ada", jumlah: 1, keterangan: "Baik" },
-    ]);
 
     const handleDelete = (id: number) => {
-        setAlatKesehatan(alatKesehatan.filter(alat => alat.id !== id));
+        const updatedAlatKesehatan = alatKesehatan.filter(alat => alat.id !== id);
+        setAlatKesehatan(updatedAlatKesehatan);
+
+        // Reset selectedAlat if the deleted item was selected
+        if (selectedAlat && selectedAlat.id === id) {
+            setSelectedAlat(null);
+        }
     };
 
     const handleTambahAlat = () => {

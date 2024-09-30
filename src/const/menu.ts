@@ -45,7 +45,8 @@ const menus: Menu[] = [
         label: "Inventory",
         submenus: [
             {label: "Alat Kesehatan", href: "/inventory-alkes", active: false},
-            {label: "Barang Habis Pakai", href: "/Consumables", active: false},
+            {label: "Barang Habis Pakai", href: "/consumables", active: false},
+            {label: "Peralatan Non-Medis", href: "/non-clinical", active: false},
         ],
     },
     {
