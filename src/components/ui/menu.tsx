@@ -12,7 +12,7 @@ interface MenuProps {
 }
 
 const Menu = ({icon: Icon, href, label, active, onClick, asButton = false}: MenuProps) => {
-    const baseClass = "mx-[-0.65rem] w-full hover:bg-gray-50 flex items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
+    const baseClass = "mx-[-0.65rem] select-none w-full hover:bg-gray-50 flex items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
 
     return (
         <>

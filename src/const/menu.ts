@@ -5,13 +5,14 @@ import {
     BriefcaseMedical,
     CircleGauge,
     Clipboard,
-    LayoutDashboard,
+    Database, GraduationCap,
+    LayoutDashboard, Moon, Ribbon,
     UserRoundPen,
     Users,
     Wrench,
 } from "lucide-react";
 import {Menu} from "@/types/menu-type";
-import {CounterMenu, InventoryMenu} from "@/enums/Menu";
+import {CounterMenu, DemographicMenu, InventoryMenu} from "@/enums/Menu";
 
 const menus: Menu[] = [
     {
@@ -34,6 +35,16 @@ const menus: Menu[] = [
         icon: UserRoundPen,
         href: "/registration",
         label: "Pendaftaran",
+    },
+    {
+        icon: Database,
+        label: "Data Master",
+        submenus: [
+            {label: "Demografis", href: "/demographic", active: true},
+            {label: "Geografis", href: "/demographic", active: true},
+            {label: "Karyawan", href: "/queue/polyclinic", active: true},
+            {label: "Penunjang", href: "/queue/polyclinic", active: true},
+        ]
     },
     {
         icon: LayoutDashboard,
@@ -62,12 +73,12 @@ const counterMenus: Menu[] = [
     {
         label: "Loket Admisi",
         icon: Clipboard,
-        tag : CounterMenu.ADMISSION
+        tag: CounterMenu.ADMISSION
     },
     {
         icon: BriefcaseMedical,
         label: "Loket Farmasi",
-        tag : CounterMenu.PHARMACY
+        tag: CounterMenu.PHARMACY
     },
 ];
 
@@ -75,19 +86,37 @@ const inventoryMenus: Menu[] = [
     {
         label: "Input Alat Kesehatan",
         icon: Clipboard,
-        tag : InventoryMenu.ADDALKES
+        tag: InventoryMenu.ADDALKES
     },
     {
         label: "Input Data Ruangan",
-        icon : Bed,
-        tag : InventoryMenu.ADDROOM,
+        icon: Bed,
+        tag: InventoryMenu.ADDROOM,
     },
     {
-        label : "Pemeliharaan",
-        icon : Wrench,
-        tag : InventoryMenu.MAINTENANCE
+        label: "Pemeliharaan",
+        icon: Wrench,
+        tag: InventoryMenu.MAINTENANCE
     }
 ]
-export {menus, counterMenus, inventoryMenus};
+
+const demographicMenus: Menu[] = [
+    {
+        label: "Agama",
+        icon: Moon,
+        tag: DemographicMenu.RELIGION
+    },
+    {
+        label: "Tingkat Pendidikan",
+        icon: GraduationCap,
+        tag: DemographicMenu.EDUCATION_LEVEL,
+    },
+    {
+        label: "Status Kawin",
+        icon: Ribbon,
+        tag: DemographicMenu.MARITAL_STATUS
+    }
+]
+export {menus, counterMenus, inventoryMenus, demographicMenus};
 
 

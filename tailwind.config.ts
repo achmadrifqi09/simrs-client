@@ -11,7 +11,8 @@ const config: Config = {
         extend: {
             backgroundImage: {
 				'queue-accent' : "url('/images/bg-accent.png')",
-                'circles' : "url('/images/circles.png')",
+                'circles' : "url('/images/circles-mu.png')",
+                'login-banner' : "url('/images/login-banner.png')",
 			},
             colors: {
                 background: 'hsl(var(--background))',
