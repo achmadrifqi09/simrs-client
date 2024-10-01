@@ -1,39 +1,43 @@
 import {useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
-
-type PostProps<T> = {
-    endpoint: string,
-    headers?: Record<string, string>,
-    body: T,
-}
-
-const usePost = <T>({endpoint, headers, body}: PostProps<T>) => {
-    const [data, setData] = useState<T | null>(null)
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | object>();
+import {NextAuthSession} from "@/types/session";
+import {useSession} from "next-auth/react";
 
 
-    const postData = async () => {
-        setLoading(true)
+const usePost = <T>(url: string) => {
+    const [postLoading, setPostLoading] = useState<boolean>(false);
+    const [postError, setPostError] = useState<string | object | null>(null);
+    const { data: session } = useSession() as { data: NextAuthSession };
+
+    const postData = async (body: T, headers?: object) => {
+        setPostLoading(true);
         try {
-            const response: AxiosResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
-                headers: {
-                    'client-key': generateClientKey(),
-                    ...headers
-                },
-                body
-            })
+            const currentHeader: Record<string, string | null> = {
+                'client-key': generateClientKey(),
+                ...headers,
+            };
+            if (session?.accessToken) {
+                currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
+            }
+            console.log(currentHeader)
 
-           setData(response.data.data)
+            const response: AxiosResponse = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`,
+                body,
+                {
+                   headers: currentHeader
+                }
+            );
+            return response.data
         } catch (error: any) {
-            setError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga')
+            setPostError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga');
         } finally {
-            setLoading(false)
+            setPostLoading(false);
         }
-    }
+    };
 
-    return {data, postData, loading, error}
-}
+    return { postData, postLoading, postError};
+};
 
-export {usePost}
+export {usePost};

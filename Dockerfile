@@ -1,5 +1,4 @@
-FROM ubuntu:latest
-FROM node:latest
+FROM node:18
 
 WORKDIR /src
 

@@ -3,6 +3,8 @@ import axios from "axios";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
 import NextAuth, {NextAuthOptions} from "next-auth";
 import {JWT} from "next-auth/jwt";
+import moment from 'moment-timezone';
+import {signOut} from "next-auth/react";
 
 type LoginCredentials = {
     email: string;
@@ -11,7 +13,7 @@ type LoginCredentials = {
 
 
 export const authOptions: NextAuthOptions = {
-    secret: 'SECRET',
+    secret: process.env.PUBLIC_NEXTAUTH_SECRET || 'RSUMM@17082013',
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -67,6 +69,14 @@ export const authOptions: NextAuthOptions = {
             return token;
         },
         async session({session, token}: { session: any; token: JWT }) {
+            const expires =  moment(token.expires as number).valueOf();
+            const isExpired = moment().isAfter(expires)
+
+            if (isExpired) {
+                await signOut()
+                return null;
+            }
+
             session.accessToken = token.accessToken as string;
             session.expires = token.expires
             session.user = token.user

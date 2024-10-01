@@ -8,14 +8,14 @@ import SolidCard from "@/components/ui/solid-card";
 import Link from "next/link";
 import {WorkUnit} from "@/types/work-unit";
 import {Skeleton} from "@/components/ui/skeleton"
-import useFetch from "@/hooks/use-fetch";
+import useGet from "@/hooks/use-get";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
 
 const QueuePolyclinic = () => {
     const url: string = '/work-unit/polyclinic'
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error} = useFetch<WorkUnit[]>({
+    const {data, loading, error} = useGet<WorkUnit[]>({
         url: url,
         keyword: searchKeyword,
     })

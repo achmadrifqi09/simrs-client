@@ -52,7 +52,7 @@ const TopBar = ({onToggleMenu}: TopBarProps) => {
 
     return (
         <div
-            className="flex items-center justify-between bg-gradient-to-br from-red-600 to-orange-600 sticky top-0 border-b border-b-gray-300">
+            className="flex items-center justify-between bg-gradient-to-br from-red-600 to-red-500 sticky top-0 border-b border-b-gray-300">
             <div
                 className="flex gap-2 items-center bg-transparent md:w-[324px] h-[72px] md:border-r md:border-r-red-300 md:bg-gradient-to-br md:from-orange-600 to-red-600 pl-4 md:pl-6">
                 <Image src="/images/logo-rs-white.png" alt="Logo RSU UMM" width={48} height={48}/>

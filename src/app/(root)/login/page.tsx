@@ -4,8 +4,8 @@ import Heading from "@/components/ui/heading";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Footer from "@/components/ui/footer";
-import {Eye, EyeOff, FolderLock} from "lucide-react";
-import React, {useState} from "react";
+import {Eye, EyeOff, FolderLock, Loader2} from "lucide-react";
+import React, {useEffect, useState} from "react";
 import {loginSchema} from "@/validation-schema/auth";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
@@ -18,6 +18,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const route = useRouter();
+    const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
     const {status} = useSession()
     const credentials = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -31,28 +32,34 @@ const Login = () => {
 
     const onSubmit = handleSubmit(async (values) => {
         setErrorMessage(null);
+        setLoadingSubmit(true);
         const result = await signIn('credentials', {
             redirect: false,
             ...values
         })
-        console.log(result)
         if (result?.error) {
             setErrorMessage(result.error)
+            setLoadingSubmit(false);
             return
+        } else {
+            setLoadingSubmit(false);
+            route.push('/')
         }
-        route.push('/')
     })
 
-    if (status === 'authenticated') {
-        route.back()
-    }
+
+    useEffect(() => {
+        if (status === 'authenticated') {
+            route.back()
+        }
+    }, []);
 
     if (status === 'unauthenticated') {
         return (
             <div className="h-dvh w-screen overflow-hidden">
                 <div className="grid grid-cols-1 md:grid-cols-2 h-full">
                     <div
-                        className="w-full h-dvh bg-gradient-to-br from-red-600 to-orange-600 flex-col justify-center items-center hidden md:flex">
+                        className="w-full h-dvh bg-gradient-to-br from-red-600 to-red-500 flex-col justify-center items-center hidden md:flex">
                         <div className="w-full h-full flex flex-col items-center justify-center px-6">
                             <div className="relative w-40 h-40 mb-6">
                                 <Image
@@ -139,8 +146,17 @@ const Login = () => {
                                     </div>
                                     {errorMessage && (<p className="text-red-700 text-sm">{errorMessage}</p>)}
                                     <div className="flex justify-end mt-10">
-                                        <Button>
-                                            Login
+                                        <Button type="submit" disabled={loadingSubmit}>
+                                            {
+                                                loadingSubmit ? (
+                                                    <>
+                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                        <span>Loading</span>
+                                                    </>
+                                                ) : (
+                                                    <span>Login</span>
+                                                )
+                                            }
                                         </Button>
                                     </div>
                                 </form>

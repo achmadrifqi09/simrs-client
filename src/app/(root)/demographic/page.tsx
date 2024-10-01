@@ -4,7 +4,7 @@ import {useState} from "react";
 import {DemographicMenu} from "@/enums/Menu";
 import {demographicMenus} from "@/const/menu";
 import Menu from "@/components/ui/menu";
-import Religion from "@/app/(root)/demographic/religion";
+import Religion from "@/app/(root)/demographic/religion/religion";
 import EducationLevel from "@/app/(root)/demographic/education-level";
 import MaritalStatus from "@/app/(root)/demographic/marital-status";
 
@@ -30,7 +30,7 @@ const Demographic = () => {
 
             <div className="flex flex-col lg:flex-row gap-6">
                 <div
-                    className="w-full md:w-1/4 sm:min-w-[260px] bg-white h-max border border-graay-200 rounded-lg p-4">
+                    className="w-full md:w-1/4 sm:min-w-[260px] bg-white h-max border border-graay-200 rounded-lg p-4 md:sticky md:top-4">
                     <Heading headingLevel="h5" variant="section-title">
                         Submenu
                     </Heading>

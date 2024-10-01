@@ -29,7 +29,7 @@ const CollapseMenu = ({icon: Icon, label, submenus, active, onToggle, id, open, 
             <Collapsible open={open} onOpenChange={() => onToggle(id)} className="w-full select-none">
                 <CollapsibleTrigger className="[&[data-state=open]>div>div>svg]:rotate-180 mb-1" asChild>
                     <button
-                        className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-orange-600 text-white hover:from-red-500 hover:to-orange-600 hover:text-white')}
+                        className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-500 hover:text-white')}
                     >
                         <div className="flex gap-4 items-center">
                             <Icon className="w-5 h-5"/>

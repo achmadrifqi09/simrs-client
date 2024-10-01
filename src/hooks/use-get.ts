@@ -1,28 +1,37 @@
 import axios, {AxiosResponse} from "axios";
 import {useCallback, useEffect, useState} from "react";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
+import {NextAuthSession} from "@/types/session";
+import {useSession} from "next-auth/react";
 
-type FetchProps = {
+type GetProps = {
     url: string,
     headers?: Record<string, string>,
     keyword?: string,
 }
 
-const useFetch = <T>({url, headers, keyword}: FetchProps) => {
+const useGet = <T>({url, headers, keyword}: GetProps) => {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | object>();
+    const { data: session } = useSession() as { data: NextAuthSession };
 
-    const fetchData = useCallback(async () => {
+    const getData = useCallback(async () => {
         setLoading(true);
         const endpoint = keyword ? `${url}?keyword=${keyword}` : url;
 
         try {
+            const currentHeader: Record<string, string | null> = {
+                'client-key': generateClientKey(),
+                ...headers,
+            };
+
+            if (session?.accessToken) {
+                currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
+            }
+            
             const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
-                headers: {
-                    'client-key':generateClientKey(),
-                    ...headers
-                },
+                headers: currentHeader
             })
             setData(response.data.data)
         } catch (error: any) {
@@ -33,12 +42,12 @@ const useFetch = <T>({url, headers, keyword}: FetchProps) => {
     }, [url, headers, keyword]);
 
     useEffect(() => {
-        fetchData().catch((error) => {
+        getData().catch((error) => {
             setError(error.message);
         });
-    }, [fetchData])
+    }, [getData])
 
-    return {data, loading, error}
+    return {data, loading, error, getData}
 }
 
-export default useFetch;
+export default useGet;

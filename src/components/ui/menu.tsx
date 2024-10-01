@@ -20,7 +20,7 @@ const Menu = ({icon: Icon, href, label, active, onClick, asButton = false}: Menu
                 asButton ? (
                     <button
                         onClick={onClick}
-                        className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-orange-600 whitespace-nowrap text-white hover:from-red-500 hover:to-orange-600 hover:text-white')}
+                        className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-red-500 whitespace-nowrap text-white hover:from-red-500 hover:to-red-500 hover:text-white')}
                     >
                         <Icon className="h-5 w-5"/>
                         {label}
@@ -29,7 +29,7 @@ const Menu = ({icon: Icon, href, label, active, onClick, asButton = false}: Menu
                     <Link
                         href={href || "#"}
                         onClick={onClick}
-                        className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-orange-600 whitespace-nowrap text-white hover:from-red-500 hover:to-orange-600 hover:text-white')}
+                        className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-red-500 whitespace-nowrap text-white hover:from-red-500 hover:to-red-500 hover:text-white')}
                     >
                         <Icon className="h-5 w-5"/>
                         {label}
