@@ -12,7 +12,7 @@ type LoginCredentials = {
 }
 
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
     secret: process.env.PUBLIC_NEXTAUTH_SECRET || 'RSUMM@17082013',
     providers: [
         CredentialsProvider({
