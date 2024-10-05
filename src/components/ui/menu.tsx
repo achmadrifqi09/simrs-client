@@ -1,9 +1,10 @@
-import {LucideIcon} from "lucide-react";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
+import Icon from "@/components/ui/icon";
+import React from "react";
 
 interface MenuProps {
-    icon: LucideIcon,
+    iconName: string,
     href?: string,
     label: string,
     active?: boolean,
@@ -11,8 +12,8 @@ interface MenuProps {
     asButton?: boolean
 }
 
-const Menu = ({icon: Icon, href, label, active, onClick, asButton = false}: MenuProps) => {
-    const baseClass = "mx-[-0.65rem] select-none w-full hover:bg-gray-50 flex items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
+const Menu = ({iconName, href, label, active, onClick, asButton = false}: MenuProps) => {
+    const baseClass = "select-none w-full hover:bg-gray-50 flex items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
 
     return (
         <>
@@ -22,7 +23,7 @@ const Menu = ({icon: Icon, href, label, active, onClick, asButton = false}: Menu
                         onClick={onClick}
                         className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-red-500 whitespace-nowrap text-white hover:from-red-500 hover:to-red-500 hover:text-white')}
                     >
-                        <Icon className="h-5 w-5"/>
+                        <Icon nameIcon={iconName} />
                         {label}
                     </button>
                 ) : (
@@ -31,7 +32,7 @@ const Menu = ({icon: Icon, href, label, active, onClick, asButton = false}: Menu
                         onClick={onClick}
                         className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-red-500 whitespace-nowrap text-white hover:from-red-500 hover:to-red-500 hover:text-white')}
                     >
-                        <Icon className="h-5 w-5"/>
+                        <Icon nameIcon={iconName} />
                         {label}
                     </Link>
                 )

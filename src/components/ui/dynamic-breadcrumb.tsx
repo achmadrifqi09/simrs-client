@@ -30,15 +30,11 @@ const DynamicBreadcrumb = () => {
           return (
             <React.Fragment key={index}>
               <BreadcrumbItem>
-                <Link
-                  href={`/${pathNames
-                    .slice(0, index + 1)
-                    .map((p) => p.replace(/-/g, ""))
-                    .join("/")}`}
+                <span
                   className="capitalize"
                 >
                   {cleanedPath}
-                </Link>
+                </span>
               </BreadcrumbItem>
               {index != pathNames.length - 1 && <BreadcrumbSeparator />}
             </React.Fragment>

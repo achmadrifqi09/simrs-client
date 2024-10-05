@@ -7,26 +7,26 @@ import {useSession} from "next-auth/react";
 
 const usePost = <T>(url: string) => {
     const [postLoading, setPostLoading] = useState<boolean>(false);
-    const [postError, setPostError] = useState<string | object | null>(null);
-    const { data: session } = useSession() as { data: NextAuthSession };
+    const [postError, setPostError] = useState<string | object | [] | null>(null);
+    const {data: session} = useSession() as { data: NextAuthSession };
 
     const postData = async (body: T, headers?: object) => {
         setPostLoading(true);
         try {
-            const currentHeader: Record<string, string | null> = {
-                'client-key': generateClientKey(),
+            const currentHeader: Record<string, string | null | undefined> = {
+                'client-signature': generateClientKey(),
+                'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                 ...headers,
             };
-            if (session?.accessToken) {
-                currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
+            if (session?.apiToken) {
+                currentHeader['Authorization'] = `Bearer ${session.apiToken}`;
             }
-            console.log(currentHeader)
 
             const response: AxiosResponse = await axios.post(
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`,
                 body,
                 {
-                   headers: currentHeader
+                    headers: currentHeader
                 }
             );
             return response.data
@@ -37,7 +37,7 @@ const usePost = <T>(url: string) => {
         }
     };
 
-    return { postData, postLoading, postError};
+    return {postData, postLoading, postError};
 };
 
 export {usePost};

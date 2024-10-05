@@ -20,6 +20,27 @@
   min-height: calc(100vh - 72px - 32px - 24px);
 }
 
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  box-shadow: 0 0 0 30px white inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    top: -20px; /* Memulai dari atas */
+  }
+  100% {
+    opacity: 1;
+    top: 0; /* Posisi akhir */
+  }
+}
+.slide-down {
+  animation: slideDown 0.5s ease-out forwards;
+  position: relative; /* Agar top bisa berfungsi */
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

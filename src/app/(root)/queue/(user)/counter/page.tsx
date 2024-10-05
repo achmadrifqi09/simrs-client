@@ -35,12 +35,12 @@ const Counter = () => {
                         <Heading headingLevel="h5" variant="section-title">
                             Menu
                         </Heading>
-                        <div className="ms-2.5 space-y-2">
+                        <div className="space-y-2">
                             {counterMenus.map((menu, index) => {
                                 return (
                                     <Menu
                                         key={index}
-                                        icon={menu.icon}
+                                        iconName={menu.icon}
                                         label={menu.label}
                                         asButton={true}
                                         active={menu.tag == counter}

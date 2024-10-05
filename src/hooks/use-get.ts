@@ -21,13 +21,14 @@ const useGet = <T>({url, headers, keyword}: GetProps) => {
         const endpoint = keyword ? `${url}?keyword=${keyword}` : url;
 
         try {
-            const currentHeader: Record<string, string | null> = {
-                'client-key': generateClientKey(),
+            const currentHeader: Record<string, string | null | undefined> = {
+                'client-signature': generateClientKey(),
+                'client-id' : process.env.NEXT_PUBLIC_CLIENT_ID,
                 ...headers,
             };
 
-            if (session?.accessToken) {
-                currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
+            if (session?.apiToken) {
+                currentHeader['Authorization'] = `Bearer ${session.apiToken}`;
             }
             
             const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {

@@ -1,11 +1,11 @@
 import type {Metadata} from "next";
 import {Toaster} from "@/components/ui/toaster"
 import "./globals.css";
-
 import {Inter} from 'next/font/google'
 import {NextFont} from "next/dist/compiled/@next/font"
 import React from "react";
 import AuthProvider from "@/components/providers/AuthProvider";
+
 
 const inter: NextFont = Inter({subsets: ['latin'], display: 'swap'});
 

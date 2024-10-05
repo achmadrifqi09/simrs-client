@@ -1,13 +1,14 @@
 import {create} from "zustand";
+import {Menu} from "@/types/menu-type";
 
-type NavState = {
-    show : boolean ,
-    toggle : () => void
-
+interface MenuStore {
+    menus: Menu[];
+    setMenus: (menus: Menu[]) => void;
 }
-const useNavigation = create<NavState>((set) => ({
-    show : true,
-    toggle : () => set((state) => ({show: !state.show})),
-}))
 
-export {useNavigation}
+const useMenuStore = create<MenuStore>(set => ({
+    menus: [],
+    setMenus: (menus) => set({ menus }),
+}));
+
+export {useMenuStore}

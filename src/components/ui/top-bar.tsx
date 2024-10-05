@@ -1,31 +1,23 @@
 "use client"
-import {AlignLeft, ChevronDown, LogOut} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
 import Image from "next/image";
 import MobileNavigation from "@/components/ui/mobile-navigation";
 import {signOut, useSession} from "next-auth/react";
 import {toast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 import {Skeleton} from "@/components/ui/skeleton";
-import {useState} from "react";
+import {Menu as MenuType} from "@/types/menu-type";
+import {LuAlignLeft, LuChevronDown, LuLogOut} from "react-icons/lu";
+
 
 type TopBarProps = {
     onToggleMenu: () => void
+    menus: MenuType[]
 }
 
-const TopBar = ({onToggleMenu}: TopBarProps) => {
+const TopBar = ({onToggleMenu, menus}: TopBarProps) => {
     const {data: session, status} = useSession()
-    const [position, setPosition] = useState("bottom")
     const router = useRouter()
     const handleToggleMenu = () => {
         onToggleMenu()
@@ -63,15 +55,21 @@ const TopBar = ({onToggleMenu}: TopBarProps) => {
                 </div>
             </div>
             <div className="flex items-center justify-end md:justify-between flex-1 px-4 md:px-6">
-
-                <Button onClick={handleToggleMenu} variant="ghost" size="icon"
-                        className="text-white hover:bg-red-500 hover:text-white hidden md:flex">
-                    <AlignLeft/>
-                </Button>
+                {
+                    status === 'loading' ? (
+                        <Skeleton className="w-8 h-8 bg-red-500 hidden md:block"/>
+                    ) : (
+                        <Button onClick={handleToggleMenu} variant="ghost" size="icon"
+                                className="text-white hover:bg-red-500 hover:text-white hidden md:flex">
+                            <LuAlignLeft className="w-6 h-6"/>
+                        </Button>
+                    )
+                }
 
                 <div className="flex gap-4">
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="active:border-none active:ring-0 focus:border-none focus:ring-0 focus:outline-0">
+                        <DropdownMenuTrigger
+                            className="active:border-none active:ring-0 focus:border-none focus:ring-0 focus:outline-0">
                             <div className="flex gap-2 items-center text-white">
                                 {
                                     status === 'loading' ? (
@@ -85,30 +83,23 @@ const TopBar = ({onToggleMenu}: TopBarProps) => {
                                                 className="h-9 w-9 aspect-square bg-red-600 rounded-full font-medium flex select-none items-center justify-center uppercase">
                                                 {session?.user?.name ? (getAvatarCharacter(session?.user?.name)) : 'U'}
                                             </div>
-                                            <span className="text-base select-none">{session?.user?.name || "user"}</span>
-                                            <ChevronDown className="w-4 h-4"/>
+                                            <span
+                                                className="text-base select-none">{session?.user?.name || "user"}</span>
+                                            <LuChevronDown className="w-4 h-4"/>
                                         </>
                                     )
                                 }
                             </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56 mr-3.5 mt-4">
-                            <DropdownMenuLabel>Akses Pengguna</DropdownMenuLabel>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
-                                <DropdownMenuRadioItem value="top">Antrean</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="bottom">Pendaftaran</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="right">Farmasi</DropdownMenuRadioItem>
-                            </DropdownMenuRadioGroup>
-                            <DropdownMenuSeparator/>
                             <DropdownMenuItem onClick={handleLogout}>
-                                <LogOut className="mr-2 h-4 w-4"/>
+                                <LuLogOut className="mr-2 h-4 w-4"/>
                                 <span>Log out</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <MobileNavigation/>
+                <MobileNavigation menus={menus}/>
             </div>
         </div>
     )
