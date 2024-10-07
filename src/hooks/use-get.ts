@@ -14,39 +14,42 @@ const useGet = <T>({url, headers, keyword}: GetProps) => {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | object>();
-    const { data: session } = useSession() as { data: NextAuthSession };
+    const {data: session, status} = useSession() as { data: NextAuthSession, status: string };
 
     const getData = useCallback(async () => {
-        setLoading(true);
-        const endpoint = keyword ? `${url}?keyword=${keyword}` : url;
+       if(status === 'authenticated') {
+           setLoading(true);
+           const endpoint = keyword ? `${url}?keyword=${keyword}` : url;
 
-        try {
-            const currentHeader: Record<string, string | null | undefined> = {
-                'client-signature': generateClientKey(),
-                'client-id' : process.env.NEXT_PUBLIC_CLIENT_ID,
-                ...headers,
-            };
+           try {
+               const currentHeader: Record<string, string | null | undefined> = {
+                   'client-signature': generateClientKey(),
+                   'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
+                   ...headers,
+               };
+               if (session?.accessToken) {
+                   currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
+               }
 
-            if (session?.apiToken) {
-                currentHeader['Authorization'] = `Bearer ${session.apiToken}`;
-            }
-            
-            const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
-                headers: currentHeader
-            })
-            setData(response.data.data)
-        } catch (error: any) {
-            setError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga')
-        } finally {
-            setLoading(false)
-        }
-    }, [url, headers, keyword]);
+               const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+                   headers: currentHeader
+               })
+               setData(response.data.data)
+           } catch (error: any) {
+               setError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga')
+           } finally {
+               setLoading(false)
+           }
+       }
+    }, [url, headers, keyword, session]);
 
     useEffect(() => {
-        getData().catch((error) => {
-            setError(error.message);
-        });
-    }, [getData])
+        if (status === 'authenticated') {
+            getData().catch((error) => {
+                setError(error.message);
+            });
+        }
+    }, [getData, status])
 
     return {data, loading, error, getData}
 }

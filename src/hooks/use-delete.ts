@@ -17,8 +17,8 @@ const useDelete = () => {
                 'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                 ...headers,
             };
-            if (session?.apiToken) {
-                currentHeader['Authorization'] = `Bearer ${session.apiToken}`;
+            if (session?.accessToken) {
+                currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
             }
 
             const response: AxiosResponse = await axios.delete(
