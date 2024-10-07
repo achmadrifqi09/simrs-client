@@ -12,14 +12,15 @@ const usePatch = <T>() => {
 
     const updateData = async (url: string, body: T, headers?: object) => {
         setPatchLoading(true);
+        setPatchError(null)
         try {
             const currentHeader: Record<string, string | null| undefined> = {
                 'client-signature': generateClientKey(),
                 'client-id' : process.env.NEXT_PUBLIC_CLIENT_ID,
                 ...headers,
             };
-            if (session?.apiToken) {
-                currentHeader['Authorization'] = `Bearer ${session.apiToken}`;
+            if (session?.accessToken) {
+                currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
             }
 
             const response: AxiosResponse = await axios.patch(
@@ -37,7 +38,7 @@ const usePatch = <T>() => {
         }
     };
 
-    return { updateData, patchLoading, patchError };
+    return { updateData, patchLoading, patchError, setPatchError };
 }
 
 export { usePatch };

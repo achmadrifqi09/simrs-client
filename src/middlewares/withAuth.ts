@@ -15,7 +15,7 @@ export default function withAuth(
         const session = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
         if (!isAllowedPath && !isStaticAsset) {
 
-            if (!session?.apiToken) {
+            if (!session?.accessToken) {
                 const url = new URL('/login', req.url);
                 return NextResponse.redirect(url);
             }
@@ -27,7 +27,7 @@ export default function withAuth(
 
         }
 
-        if (pathname.includes('/login') && session?.apiToken) {
+        if (pathname.includes('/login') && session?.accessToken) {
             const url = new URL('/', req.url);
             return NextResponse.redirect(url);
         }
@@ -45,7 +45,7 @@ const clearSessionAndRedirect = (req: NextRequest) => {
     response.cookies.delete('next-auth.csrf-token');
     response.cookies.delete('next-auth.callback-url');
 
-    response.headers.set('Clear-Site-Data', '"cache", "cookies", "storage"');
+    response.headers.set('Clear-Site-Data', '"cookies"');
 
     return response;
 }

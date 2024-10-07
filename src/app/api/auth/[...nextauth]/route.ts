@@ -51,7 +51,7 @@ const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({token, user}: { token: JWT; user: any }) {
             if (user) {
-                token.apiToken = user.token;
+                token.accessToken = user.token;
                 token.expires = user.expires;
                 token.user = {
                     id: user.id,
@@ -64,7 +64,7 @@ const authOptions: NextAuthOptions = {
             return token;
         },
         async session({session, token}: { session: any; token: JWT }) {
-            session.apiToken = token.apiToken as string;
+            session.accessToken = token.accessToken as string;
             session.expires = token.expires;
             session.user = token.user;
             return session;

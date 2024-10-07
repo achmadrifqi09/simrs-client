@@ -4,16 +4,15 @@ import Heading from "@/components/ui/heading";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Footer from "@/components/ui/footer";
-
 import React, {useState} from "react";
 import {loginSchema} from "@/validation-schema/auth";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
-import {LuEye, LuEyeOff, LuLoader2, LuFolderLock} from "react-icons/lu";
+import {LuEye, LuEyeOff, LuFolderLock, LuLoader2} from "react-icons/lu";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -27,24 +26,30 @@ const Login = () => {
             password: ""
         }
     })
+    const {status} = useSession() as { status: string };
 
     const {handleSubmit, control} = credentials
 
     const onSubmit = handleSubmit(async (values) => {
         setErrorMessage(null);
         setLoadingSubmit(true);
+
+        if (status === 'authenticate') {
+            return route.push('/')
+        }
+
         const result = await signIn('credentials', {
             redirect: false,
             ...values
         })
+
         if (result?.error) {
             setErrorMessage(result.error)
             setLoadingSubmit(false);
             return
-        } else {
-            setLoadingSubmit(false);
-            route.push('/')
         }
+        setLoadingSubmit(false);
+        return route.push('/')
     })
 
     return (

@@ -12,14 +12,15 @@ const usePost = <T>(url: string) => {
 
     const postData = async (body: T, headers?: object) => {
         setPostLoading(true);
+        setPostError(null)
         try {
             const currentHeader: Record<string, string | null | undefined> = {
                 'client-signature': generateClientKey(),
                 'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                 ...headers,
             };
-            if (session?.apiToken) {
-                currentHeader['Authorization'] = `Bearer ${session.apiToken}`;
+            if (session?.accessToken) {
+                currentHeader['Authorization'] = `Bearer ${session.accessToken}`;
             }
 
             const response: AxiosResponse = await axios.post(
@@ -37,7 +38,7 @@ const usePost = <T>(url: string) => {
         }
     };
 
-    return {postData, postLoading, postError};
+    return {postData, postLoading, postError, setPostError};
 };
 
 export {usePost};

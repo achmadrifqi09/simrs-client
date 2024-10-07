@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {ReligionDTO} from "@/types/master";
+import type {DoctorSpecialistDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -11,25 +11,26 @@ import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 
-interface ReligionTableProps {
+interface DoctorSpecialistTableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<ReligionDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<DoctorSpecialistDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ReligionTable = (
+const DoctorSpecialistTable
+    = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete
-    }: ReligionTableProps) => {
-    const url: string = '/master/religion'
+    }: DoctorSpecialistTableProps) => {
+    const url: string = '/master/doctor-specialist'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<ReligionDTO[]>({
+    const {data, loading, error, getData} = useGet<DoctorSpecialistDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -74,25 +75,25 @@ const ReligionTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Agama</TableHead>
+                        <TableHead>Nama Dokter Spesialis</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((religion: ReligionDTO, index: number) => {
+                        data?.map((doctorSpecialist: DoctorSpecialistDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{religion.nama_agama}</TableCell>
+                                        <TableCell className="font-medium">{doctorSpecialist.nama_spesialis}</TableCell>
                                         <TableCell>
                                             <Switch
-                                                checked={religion.status === 1}
+                                                checked={doctorSpecialist.status === 1}
                                                 onCheckedChange={
                                                     () => {
-                                                        selectRecord(religion);
+                                                        selectRecord(doctorSpecialist);
                                                         setAction(Action.UPDATE_STATUS)
                                                     }
                                                 }
@@ -102,7 +103,7 @@ const ReligionTable = (
                                             <div className="flex gap-2">
                                                 <Button
                                                     onClick={() => {
-                                                        selectRecord(religion);
+                                                        selectRecord(doctorSpecialist);
                                                         setAction(Action.UPDATE_FIELDS)
                                                     }}
                                                     size="sm">
@@ -110,7 +111,7 @@ const ReligionTable = (
                                                 </Button>
                                                 <Button
                                                     onClick={() => {
-                                                        selectRecord(religion);
+                                                        selectRecord(doctorSpecialist);
                                                         setAction(Action.DELETE)
                                                         setAlertDelete(true)
                                                     }}
@@ -134,7 +135,7 @@ const ReligionTable = (
                             Array.from({length: 4}, (_, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-16 rounded-lg"/>
+                                        <Skeleton className="h-5 w-12 rounded-lg"/>
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
@@ -157,4 +158,5 @@ const ReligionTable = (
     )
 }
 
-export default ReligionTable
+export default DoctorSpecialistTable
+

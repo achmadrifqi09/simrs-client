@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {ReligionDTO} from "@/types/master";
+import type {StructuralPositionDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -11,25 +11,25 @@ import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 
-interface ReligionTableProps {
+interface StructuralPositionTableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<ReligionDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<StructuralPositionDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ReligionTable = (
+const StructuralPositionTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete
-    }: ReligionTableProps) => {
-    const url: string = '/master/religion'
+    }: StructuralPositionTableProps) => {
+    const url: string = '/master/structural-position'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<ReligionDTO[]>({
+    const {data, loading, error, getData} = useGet<StructuralPositionDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -74,25 +74,25 @@ const ReligionTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Agama</TableHead>
+                        <TableHead>Nama Jabatan</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((religion: ReligionDTO, index: number) => {
+                        data?.map((structuralPosition: StructuralPositionDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{religion.nama_agama}</TableCell>
+                                        <TableCell className="font-medium">{structuralPosition.nama_jabatan}</TableCell>
                                         <TableCell>
                                             <Switch
-                                                checked={religion.status === 1}
+                                                checked={structuralPosition.status === 1}
                                                 onCheckedChange={
                                                     () => {
-                                                        selectRecord(religion);
+                                                        selectRecord(structuralPosition);
                                                         setAction(Action.UPDATE_STATUS)
                                                     }
                                                 }
@@ -102,7 +102,7 @@ const ReligionTable = (
                                             <div className="flex gap-2">
                                                 <Button
                                                     onClick={() => {
-                                                        selectRecord(religion);
+                                                        selectRecord(structuralPosition);
                                                         setAction(Action.UPDATE_FIELDS)
                                                     }}
                                                     size="sm">
@@ -110,7 +110,7 @@ const ReligionTable = (
                                                 </Button>
                                                 <Button
                                                     onClick={() => {
-                                                        selectRecord(religion);
+                                                        selectRecord(structuralPosition);
                                                         setAction(Action.DELETE)
                                                         setAlertDelete(true)
                                                     }}
@@ -157,4 +157,4 @@ const ReligionTable = (
     )
 }
 
-export default ReligionTable
+export default StructuralPositionTable;

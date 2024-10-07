@@ -2,15 +2,15 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useState} from "react";
-import {ReligionDTO} from "@/types/master";
+import {RankOrClassDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import ReligionTable from "@/app/(root)/master/religion/religion-table";
-import UpdateOrCreateReligion from "@/app/(root)/master/religion/update-or-create";
-import DeleteReligion from "@/app/(root)/master/religion/delete";
+import RankOrClassTable from "@/app/(root)/master/rank-or-class/rank-or-class-table";
+import UpdateOrCreateRankOrClass from "@/app/(root)/master/rank-or-class/update-or-create";
+import RankOrClassDelete from "@/app/(root)/master/rank-or-class/delete";
 
-const Religion = () => {
+const RankOrClass = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<ReligionDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<RankOrClassDTO | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
 
@@ -20,22 +20,22 @@ const Religion = () => {
 
     return (
         <>
-            <Heading headingLevel="h3" variant="page-title">Data Master Agama</Heading>
+            <Heading headingLevel="h3" variant="page-title">Data Master Pangkat / Golongan</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateReligion
+                    <UpdateOrCreateRankOrClass
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         setSelectedRecord={setSelectedRecord}
                         actionType={actionType}
                     />
-                    <ReligionTable
+                    <RankOrClassTable
                         selectRecord={setSelectedRecord}
                         refreshTrigger={refreshTrigger}
                         setAction={setActionType}
                         setAlertDelete={setShowAlertDelete}
                     />
-                    <DeleteReligion
+                    <RankOrClassDelete
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         action={actionType}
@@ -48,4 +48,4 @@ const Religion = () => {
     )
 }
 
-export default Religion
+export default RankOrClass
