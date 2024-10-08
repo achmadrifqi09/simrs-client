@@ -21,7 +21,6 @@ type MaritalStatusDTO = {
     nama_status_kawin: string;
     status: number;
 };
-
 type CountryDTO = {
     id_ms_negara: number;
     nama_negara: string;

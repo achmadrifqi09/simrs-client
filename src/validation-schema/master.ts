@@ -25,7 +25,6 @@ const maritalStatusValidation = z.object({
         .max(50,  {message: 'Nama status perkawinan maksimal 50 karakter'}),
     status : z.string({message: 'Status harus di isi'})
 })
-
 const countryValidation = z.object({
     nama_negara: z.string({message: 'Nama negara harus di isi'})
         .min(3,  {message: 'Nama negara harus di isi minimal 4'})
