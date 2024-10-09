@@ -1,12 +1,14 @@
 const routeWithoutPanel: string[] = [
     '/queue/polyclinic',
-    '/login'
+    '/login',
+    '/sign-in'
 ];
 
 const guestRoutes = [
     '/queue/polyclinic',
     '/queue/polyclinic/',
     '/login',
+    '/sign-in',
     '/api/auth/',
 ];
 

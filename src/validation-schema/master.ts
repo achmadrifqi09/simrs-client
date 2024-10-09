@@ -26,7 +26,7 @@ const maritalStatusValidation = z.object({
     status : z.string({message: 'Status harus di isi'})
 })
 const countryValidation = z.object({
-    nama_negara: z.string({message: 'Nama negara harus di isi'})
+    nama: z.string({message: 'Nama negara harus di isi'})
         .min(3,  {message: 'Nama negara harus di isi minimal 4'})
         .max(50, {message: 'Nama negara harus di isi maximal 50'}),
     status : z.string({message: 'Status harus di isi'})

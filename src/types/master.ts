@@ -23,7 +23,7 @@ type MaritalStatusDTO = {
 };
 type CountryDTO = {
     id_ms_negara: number;
-    nama_negara: string;
+    nama: string;
     status: number;
 };
 

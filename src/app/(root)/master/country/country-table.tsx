@@ -86,7 +86,7 @@ const CountryTable = (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{country.nama_negara}</TableCell>
+                                        <TableCell className="font-medium">{country.nama}</TableCell>
                                         <TableCell>
                                             <Switch
                                                 checked={country.status === 1}

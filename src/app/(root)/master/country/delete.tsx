@@ -53,7 +53,7 @@ const CountryDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAle
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                           Apakah anda yakin akan menghapus data Negara {selectedRecord?.nama_negara}?
+                           Apakah anda yakin akan menghapus data Negara {selectedRecord?.nama}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

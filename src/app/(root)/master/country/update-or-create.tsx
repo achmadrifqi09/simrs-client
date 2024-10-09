@@ -37,7 +37,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
     const countryForm = useForm<z.infer<typeof countryValidation>>({
         resolver: zodResolver(countryValidation),
         defaultValues: {
-            nama_negara: "",
+            nama: "",
             status: "1"
         }
     })
@@ -59,7 +59,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_negara', "")
+        setValue('nama', "")
         setValue('status', '1')
         setShowDialog(!showDialog)
         setSelectedRecord(null)
@@ -75,7 +75,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate status negara ${selectedRecord?.nama_negara} 
+                description: `Berhasil mengupdate status negara ${selectedRecord?.nama} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
@@ -85,7 +85,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(countryForm.id_ms_negara)
-        setValue('nama_negara', countryForm.nama_negara)
+        setValue('nama', countryForm.nama)
         setValue('status', countryForm.status.toString())
     }
 
@@ -96,12 +96,12 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama_negara: values.nama_negara},
+                {status: Number(values.status), nama: values.nama},
             )
         ) : (
             await updateData(
                 `/master/country/${selectedRecordId}`,
-                {status: Number(values.status), nama_negara: values.nama_negara},
+                {status: Number(values.status), nama: values.nama},
             )
         )
 
@@ -110,10 +110,10 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} negara ${response.data.nama_negara}`,
+                    : 'memperbarui data '} negara ${response.data.nama}`,
             })
             countryForm.reset({
-                nama_negara: "",
+                nama: "",
                 status: "1"
             })
             onRefresh();
@@ -148,7 +148,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_negara"
+                                        name="nama"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>

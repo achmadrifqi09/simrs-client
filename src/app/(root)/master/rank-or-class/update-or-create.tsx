@@ -96,12 +96,12 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama_negara: values.nama_pangkat},
+                {status: Number(values.status), nama: values.nama_pangkat},
             )
         ) : (
             await updateData(
                 `/master/rank-or-class/${selectedRecordId}`,
-                {status: Number(values.status), nama_negara: values.nama_pangkat},
+                {status: Number(values.status), nama: values.nama_pangkat},
             )
         )
 
