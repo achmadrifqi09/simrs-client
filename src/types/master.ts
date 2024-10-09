@@ -43,6 +43,19 @@ type DoctorSpecialistDTO = {
     nama_spesialis: string;
     status: number;
 }
+
+type PositionDTO = {
+    id_ms_jabatan: number;
+    nama_jabatan: string;
+    status: number;
+}
+
+type ProvinceDTO = {
+    id_ms_provinsi: number;
+    nama_provinsi: string;
+    status: number;
+}
+
 export type {
     ReligionDTO,
     BloodTypeDTO,
@@ -51,5 +64,7 @@ export type {
     CountryDTO,
     EmployeeStatusDTO,
     RankOrClassDTO,
-    DoctorSpecialistDTO
+    DoctorSpecialistDTO,
+    PositionDTO,
+    ProvinceDTO
 };

@@ -1,4 +1,4 @@
-import type {RankOrClassDTO} from "@/types/master";
+import type {ProvinceDTO} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -15,21 +15,21 @@ import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
 
-type RankOrClassDeleteProps = {
+type DeleteProvinceProps = {
     onRefresh: () => void,
-    selectedRecord: RankOrClassDTO | null,
+    selectedRecord: ProvinceDTO | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const RankOrClassDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: RankOrClassDeleteProps) => {
+const DeleteProvince = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteProvinceProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete(
 
     )
     const handleDelete = async () => {
-        if(action === Action.DELETE){
-            const result = await deleteData(`/master/rank-or-class/${selectedRecord?.id_ms_pangkat}`)
+        if (action === Action.DELETE) {
+            const result = await deleteData(`/master/province/${selectedRecord?.id_ms_provinsi}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -37,7 +37,7 @@ const RankOrClassDelete = ({onRefresh, selectedRecord, action, showAlert, setSho
                     description: 'Berhasil manghapus data terkait',
                 })
                 onRefresh()
-            }else{
+            } else {
                 toast({
                     title: 'Delete Gagal',
                     description: deleteError?.toString(),
@@ -53,7 +53,7 @@ const RankOrClassDelete = ({onRefresh, selectedRecord, action, showAlert, setSho
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data Pangkat / Jabatan? {selectedRecord?.nama_pangkat}?
+                            Apakah anda yakin akan menghapus data provinse? {selectedRecord?. nama_provinsi}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -77,4 +77,4 @@ const RankOrClassDelete = ({onRefresh, selectedRecord, action, showAlert, setSho
     );
 }
 
-export default RankOrClassDelete;
+export default DeleteProvince;

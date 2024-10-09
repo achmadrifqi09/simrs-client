@@ -52,6 +52,20 @@ const doctorSpecialistValidation = z.object({
         .max(50, {message: 'Nama pangkat harus di isi maximal 4 karakter'}),
     status : z.string({message: 'Status harus di isi'})
 })
+
+const positionValidation = z.object({
+    nama_jabatan:z.string({message: 'Nama pangkat harus di isi'})
+        .min(2, {message: 'Nama pangkat harus di isi minimal 2 karakter'})
+        .max(50, {message: 'Nama pangkat harus di isi maximal 50 karakter'}),
+    status : z.string({message: 'Status harus di isi'})
+})
+
+const provinceValidation = z.object({
+    nama_provinsi:z.string({message: 'Nama provinsi harus di idi'})
+        .min(4, {message: 'Nama Provinsi harus diisi minimal 4'})
+        .max(50, {message: 'Nama Provinsi harus diisi minimal 4'}),
+    status : z.string({message: 'Status harus di isi'})
+})
 export {
     religionValidation,
     bloodTypeValidation,
@@ -60,5 +74,7 @@ export {
     countryValidation,
     employeeStatusValidation,
     rankOrClassValidation,
-    doctorSpecialistValidation
+    doctorSpecialistValidation,
+    positionValidation,
+    provinceValidation
 }
