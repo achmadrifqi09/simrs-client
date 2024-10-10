@@ -29,7 +29,7 @@ const CountryDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAle
     )
     const handleDelete = async () => {
         if(action === Action.DELETE){
-            const result = await deleteData(`/master/country/${selectedRecord?.id_ms_negara}`)
+            const result = await deleteData(`/master/country/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({

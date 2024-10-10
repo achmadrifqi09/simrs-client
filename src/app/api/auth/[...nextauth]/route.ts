@@ -30,7 +30,6 @@ const authOptions: NextAuthOptions = {
                             },
                         }
                     );
-                    console.log(response)
                     if (!response?.data?.data) return null;
                     return response.data.data;
                 } catch (error) {

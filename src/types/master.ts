@@ -22,7 +22,7 @@ type MaritalStatusDTO = {
     status: number;
 };
 type CountryDTO = {
-    id_ms_negara: number;
+    id: number;
     nama: string;
     status: number;
 };
@@ -51,9 +51,19 @@ type PositionDTO = {
 }
 
 type ProvinceDTO = {
-    id_ms_provinsi: number;
-    nama_provinsi: string;
+    id: number;
+    nama: string;
     status: number;
+}
+
+type PaginationDTO = {
+    current_cursor: number,
+    take: number
+}
+
+type ProvincesDTO = {
+    pagination: PaginationDTO
+    results: ProvinceDTO[]
 }
 
 export type {
@@ -66,5 +76,6 @@ export type {
     RankOrClassDTO,
     DoctorSpecialistDTO,
     PositionDTO,
+    ProvincesDTO,
     ProvinceDTO
 };

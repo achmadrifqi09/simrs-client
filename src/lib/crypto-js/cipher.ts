@@ -1,5 +1,6 @@
 import AES from 'crypto-js/aes';
 import moment from 'moment-timezone';
+import { enc } from 'crypto-js';
 
 const generateClientKey = () => {
     const currentDate = moment.tz('Asia/Jakarta');
@@ -32,13 +33,19 @@ const encryptCookies = (encrypt: string) => {
     return null;
 }
 
-const decryptCookies = (decrypt: string) => {
-    const secretKey =  process.env.NEXT_PUBLIC_SECRET_KEY
-    if(secretKey){
-        return JSON.parse(AES.decrypt(
-            decrypt,
-            secretKey
-        ).toString())
+const decryptCookies = (encryptedString: string) => {
+    const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY;
+
+    if (secretKey) {
+        const bytes = AES.decrypt(encryptedString, secretKey);
+        const result = bytes.toString(enc.Utf8);
+
+        try {
+            return result ? JSON.parse(result) : {};
+        } catch (error) {
+            console.error('Error parsing JSON:', error);
+            return {};
+        }
     }
 
     return null;

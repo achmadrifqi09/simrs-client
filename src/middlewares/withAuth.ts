@@ -2,6 +2,8 @@ import {getToken} from 'next-auth/jwt'
 import {NextFetchEvent, NextMiddleware, NextRequest, NextResponse} from "next/server";
 import moment from "moment-timezone";
 import {guestRoutes} from "@/const/routeWithoutPanel";
+// import {cookies} from "next/headers";
+// import {decryptCookies} from "@/lib/crypto-js/cipher";
 
 export default function withAuth(
     middleware: NextMiddleware,
@@ -13,6 +15,9 @@ export default function withAuth(
         const isAllowedPath = guestRoutes.some(path => pathname.startsWith(path));
 
         const session = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
+        // const sessionCookies = cookies().get('session')?.value
+        // const session = decryptCookies(sessionCookies || "{}")
+
         if (!isAllowedPath && !isStaticAsset) {
 
             if (!session?.accessToken) {
@@ -24,7 +29,6 @@ export default function withAuth(
             if (moment.tz('Asia/Jakarta').isAfter(expired)) {
                 return clearSessionAndRedirect(req);
             }
-
         }
 
         if (pathname.includes('/login') && session?.accessToken) {

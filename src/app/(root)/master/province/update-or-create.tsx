@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FormError from "@/components/ui/form-error";
 import {Button} from "@/components/ui/button";
 import {Loader2} from "lucide-react";
@@ -23,8 +22,10 @@ import {provinceValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import {NextAuthSession} from "@/types/session";
-import type {ProvinceDTO} from "@/types/master";
+import type {CountryDTO, ProvinceDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+
+import SearchSelect from "@/components/ui/SearchSelect";
 
 type UpdateOrCreateProvinceProps = {
     onRefresh: () => void,
@@ -42,8 +43,8 @@ const UpdateOrCreateProvince = ({
     const provinceForm = useForm<z.infer<typeof provinceValidation>>({
         resolver: zodResolver(provinceValidation),
         defaultValues: {
-            nama_provinsi: "",
-            status: "1"
+            nama: "",
+            id_negara: "1"
         }
     })
 
@@ -64,8 +65,8 @@ const UpdateOrCreateProvince = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_provinsi', "")
-        setValue('status', '1')
+        setValue('nama', "")
+        setValue('id_negara', '1')
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
@@ -80,7 +81,7 @@ const UpdateOrCreateProvince = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate visibilitas  ${selectedRecord?.nama_provinsi} 
+                description: `Berhasil mengupdate visibilitas  ${selectedRecord?.nama} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
@@ -89,9 +90,9 @@ const UpdateOrCreateProvince = ({
     const onUpdateOrCreateProvince = (provinceForm: ProvinceDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(provinceForm.id_ms_provinsi)
-        setValue('nama_provinsi', provinceForm.nama_provinsi)
-        setValue('status', provinceForm.status.toString())
+        setSelectedRecordId(provinceForm.id)
+        setValue('nama', provinceForm.nama)
+        setValue('id_negara', provinceForm.status.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -101,12 +102,12 @@ const UpdateOrCreateProvince = ({
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama_provinsi: values.nama_provinsi},
+                {status: Number(values.id_negara), nama: values.nama},
             )
         ) : (
             await updateData(
                 `/master/province/${selectedRecordId}`,
-                {status: Number(values.status), nama_provinsi: values.nama_provinsi},
+                {status: Number(values.id_negara), nama: values.nama},
             )
         )
 
@@ -115,11 +116,11 @@ const UpdateOrCreateProvince = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} jabatan ${response.data.nama_provinsi}`,
+                    : 'memperbarui data '} jabatan ${response.data.nama}`,
             })
             provinceForm.reset({
-                nama_provinsi: "",
-                status: "1"
+                nama: "",
+                id_negara: "0"
             })
             onRefresh();
         }
@@ -129,7 +130,7 @@ const UpdateOrCreateProvince = ({
         if (selectedRecord) {
             if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreateProvince(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_ms_provinsi, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
@@ -138,12 +139,12 @@ const UpdateOrCreateProvince = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah Data</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Kawin
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Provinsi
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
@@ -153,7 +154,31 @@ const UpdateOrCreateProvince = ({
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_provinsi"
+                                        name="id_negara"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Negara</FormLabel>
+                                                    <FormControl>
+                                                        <SearchSelect<CountryDTO>
+                                                            url="/master/country"
+                                                            placeholder="Cari negara..."
+                                                            onSelect={(selected) => {
+                                                              field.onChange(selected?.id.toString());
+                                                            }}
+                                                            displayField="nama"
+                                                            valueField="id"
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="nama"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
@@ -166,66 +191,7 @@ const UpdateOrCreateProvince = ({
                                             )
                                         }}/>
                                 </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="status"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Negara</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={field.onChange}
-                                                                defaultValue={field.value}>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Pilih status / visibilitas"/>
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectItem value="1">
-                                                                        Aktif
-                                                                    </SelectItem>
-                                                                    <SelectItem value="0">
-                                                                        Non Aktif
-                                                                    </SelectItem>
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                    <FormField
-                                        control={control}
-                                        name="status"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Status</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={field.onChange}
-                                                                defaultValue={field.value}>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Pilih status / visibilitas"/>
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectItem value="1">
-                                                                        Aktif
-                                                                    </SelectItem>
-                                                                    <SelectItem value="0">
-                                                                        Non Aktif
-                                                                    </SelectItem>
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
+
                                 <FormError
                                     errors={postError || patchError}
                                 />

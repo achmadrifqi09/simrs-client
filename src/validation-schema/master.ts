@@ -61,10 +61,10 @@ const positionValidation = z.object({
 })
 
 const provinceValidation = z.object({
-    nama_provinsi:z.string({message: 'Nama provinsi harus di idi'})
+    nama:z.string({message: 'Nama provinsi harus di idi'})
         .min(4, {message: 'Nama Provinsi harus diisi minimal 4'})
         .max(50, {message: 'Nama Provinsi harus diisi minimal 4'}),
-    status : z.string({message: 'Status harus di isi'})
+    id_negara : z.string({message: 'Negara harus di isi'})
 })
 export {
     religionValidation,

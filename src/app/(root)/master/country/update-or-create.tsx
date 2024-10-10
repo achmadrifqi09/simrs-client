@@ -84,7 +84,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
     const onUpdateCountry = (countryForm: CountryDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(countryForm.id_ms_negara)
+        setSelectedRecordId(countryForm.id)
         setValue('nama', countryForm.nama)
         setValue('status', countryForm.status.toString())
     }
@@ -124,7 +124,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
        if(selectedRecord){
            if(actionType === Action.UPDATE_FIELDS) onUpdateCountry(selectedRecord);
            if(actionType === Action.UPDATE_STATUS) {
-               updateStatus(selectedRecord.id_ms_negara, selectedRecord.status)
+               updateStatus(selectedRecord.id, selectedRecord.status)
            }
        }
     }, [selectedRecord])

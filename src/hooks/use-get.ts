@@ -8,9 +8,11 @@ type GetProps = {
     url: string,
     headers?: Record<string, string>,
     keyword?: string,
+    cursor?: number,
+    take?: number,
 }
 
-const useGet = <T>({url, headers, keyword}: GetProps) => {
+const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | object>();
@@ -19,8 +21,12 @@ const useGet = <T>({url, headers, keyword}: GetProps) => {
     const getData = useCallback(async () => {
         if (status === 'authenticated') {
             setLoading(true);
-            const endpoint = keyword ? `${url}?keyword=${keyword}` : url;
+            let endpoint = keyword ? `${url}?keyword=${keyword}` : url;
 
+
+            if(cursor !== null && take) {
+                endpoint = endpoint + `${keyword ? '&' : '?cursor='}${cursor}&take=${take}`;
+            }
             try {
                 const currentHeader: Record<string, string | null | undefined> = {
                     'client-signature': generateClientKey(),
@@ -41,7 +47,7 @@ const useGet = <T>({url, headers, keyword}: GetProps) => {
                 setLoading(false)
             }
         }
-    }, [url, headers, keyword, session]);
+    }, [url, headers, keyword, session, take, cursor]);
 
     useEffect(() => {
         getData().catch((error) => {

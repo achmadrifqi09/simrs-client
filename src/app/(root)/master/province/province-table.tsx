@@ -2,21 +2,21 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {ProvinceDTO} from "@/types/master";
+import type {ProvinceDTO, ProvincesDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
-import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import CursorPagination from "@/components/ui/cursor-pagination";
 
 interface ProvinceProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<ProvinceDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ProvinceTable = (
@@ -29,15 +29,36 @@ const ProvinceTable = (
     const url: string = '/master/province'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<ProvinceDTO[]>({
+    const [cursor, setCursor] = useState<number>(0);
+    const [takeData, setTakeData] = useState<number>(10);
+    const {data, loading, error, getData} = useGet<ProvincesDTO>({
         url: url,
         keyword: searchKeyword,
+        take: takeData,
+        cursor: cursor
     })
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const keyword = e.target.value;
+        const keyword: string = e.target.value;
         setSearchKeyword(keyword);
-    }
+        setCursor(0);
+    };
+
+    const handleChangeDataPerPage = (value: number) => {
+        setTakeData(value);
+        setCursor(0);
+    };
+
+    const handleNextPage = () => {
+        if (data?.pagination?.current_cursor !== undefined) {
+            setCursor(data.pagination.current_cursor + takeData);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        const newCursor = Math.max(0, cursor - takeData);
+        setCursor(newCursor);
+    };
 
     const debouncedChangeSearch = useCallback(
         debounce(handleChangeSearch, 500),
@@ -53,6 +74,10 @@ const ProvinceTable = (
             })
         }
     }, [error])
+
+    useEffect(() => {
+        setCursor(data?.pagination?.current_cursor || 0)
+    }, [data]);
 
     useEffect(() => {
         if (status === 'authenticated') {
@@ -75,29 +100,17 @@ const ProvinceTable = (
                     <TableRow>
                         <TableHead>No</TableHead>
                         <TableHead>Nama Provinsi</TableHead>
-                        <TableHead>Status (Visibilitas)</TableHead>
                         <TableHead>Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((province: ProvinceDTO, index: number) => {
+                        data?.results?.map((province: ProvinceDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
-                                        <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{province.nama_provinsi}</TableCell>
-                                        <TableCell>
-                                            <Switch
-                                                checked={province.status === 1}
-                                                onCheckedChange={
-                                                    () => {
-                                                        selectRecord(province);
-                                                        setAction(Action.UPDATE_STATUS)
-                                                    }
-                                                }
-                                            />
-                                        </TableCell>
+                                        <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
+                                        <TableCell className="font-medium">{province.nama}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
                                                 <Button
@@ -124,7 +137,7 @@ const ProvinceTable = (
                             )
                         })
                     }
-                    {(data && data.length === 0 && !loading) && (
+                    {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
                             <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
@@ -152,7 +165,14 @@ const ProvinceTable = (
                     }
                 </TableBody>
             </Table>
-
+            <CursorPagination
+                currentCursor={data?.pagination?.current_cursor || 0}
+                take={takeData}
+                onNextPage={handleNextPage}
+                onPreviousPage={handlePreviousPage}
+                onItemsPerPageChange={handleChangeDataPerPage}
+                hasMore={(data?.results?.length || 0) >= takeData}
+            />
         </>
     )
 }
