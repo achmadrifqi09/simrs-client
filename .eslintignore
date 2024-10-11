@@ -14,6 +14,7 @@
 /coverage/
 !.*
 .eslintcache
+.env
 
 # ember-try
 /.node_modules.ember-try/
