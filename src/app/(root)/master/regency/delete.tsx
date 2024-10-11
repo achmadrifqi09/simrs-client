@@ -1,4 +1,4 @@
-import type {DoctorSpecialistDTO} from "@/types/master";
+import type {RegencyDTO} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -15,21 +15,21 @@ import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
 
-type DoctotSpecialistProps = {
+type DeleteProvinceProps = {
     onRefresh: () => void,
-    selectedRecord: DoctorSpecialistDTO | null,
+    selectedRecord: RegencyDTO | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CountryDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DoctotSpecialistProps) => {
+const DeleteProvince = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteProvinceProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete(
 
     )
     const handleDelete = async () => {
-        if(action === Action.DELETE){
-            const result = await deleteData(`/master/specialist/${selectedRecord?.id_ms_spesialis}`)
+        if (action === Action.DELETE) {
+            const result = await deleteData(`/master/province/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -37,7 +37,7 @@ const CountryDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAle
                     description: 'Berhasil manghapus data terkait',
                 })
                 onRefresh()
-            }else{
+            } else {
                 toast({
                     title: 'Delete Gagal',
                     description: deleteError?.toString(),
@@ -53,7 +53,7 @@ const CountryDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAle
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data Spesialis Dokter {selectedRecord?.id_ms_spesialis}?
+                            Apakah anda yakin akan menghapus data provinsi {selectedRecord?.nama}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -77,4 +77,4 @@ const CountryDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAle
     );
 }
 
-export default CountryDelete;
+export default DeleteProvince;

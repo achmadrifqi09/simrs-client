@@ -52,7 +52,7 @@ const UpdateOrCreateCountry = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/doctor-specialist')
+    const {postData, postLoading, postError} = usePost('/master/specialist')
     const {updateData, patchError, patchLoading} = usePatch()
     const {handleSubmit, control, setValue} = doctorSpecialistForm
 
@@ -72,7 +72,7 @@ const UpdateOrCreateCountry = ({
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/doctor-specialist/${id}/status`,
+            `/master/specialist/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -80,7 +80,7 @@ const UpdateOrCreateCountry = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate status negara ${selectedRecord?.nama_spesialis} 
+                description: `Berhasil mengupdate status dokter spesialis ${selectedRecord?.nama_spesialis} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
@@ -105,7 +105,7 @@ const UpdateOrCreateCountry = ({
             )
         ) : (
             await updateData(
-                `/master/country/${selectedRecordId}`,
+                `/master/specialist/${selectedRecordId}`,
                 {status: Number(values.status), nama_spesialis: values.nama_spesialis},
             )
         )

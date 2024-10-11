@@ -18,32 +18,32 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {provinceValidation} from "@/validation-schema/master";
+import {regencyValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import {NextAuthSession} from "@/types/session";
-import type {CountryDTO, ProvinceDTO} from "@/types/master";
+import type {ProvinceDTO, RegencyDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 
-type UpdateOrCreateProvinceProps = {
+type UpdateOrCreateRegencyProps = {
     onRefresh: () => void,
-    selectedRecord: ProvinceDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<ProvinceDTO | null>>
+    selectedRecord: RegencyDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RegencyDTO | null>>
     actionType: Action
 }
 
-const UpdateOrCreateProvince = ({
+const UpdateOrCreateRegency = ({
                                     onRefresh,
                                     selectedRecord,
                                     setSelectedRecord,
                                     actionType
-                                }: UpdateOrCreateProvinceProps) => {
-    const provinceForm = useForm<z.infer<typeof provinceValidation>>({
-        resolver: zodResolver(provinceValidation),
+                                }: UpdateOrCreateRegencyProps) => {
+    const provinceForm = useForm<z.infer<typeof regencyValidation>>({
+        resolver: zodResolver(regencyValidation),
         defaultValues: {
             nama: "",
-            id_negara: 0,
+            id_provinsi: "",
             id: ""
         }
     })
@@ -53,11 +53,11 @@ const UpdateOrCreateProvince = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError, setPostError} = usePost('/master/province')
+    const {postData, postLoading, postError, setPostError} = usePost('/master/regency')
     const {updateData, patchError, patchLoading, setPatchError} = usePatch()
     const {handleSubmit, control, setValue} = provinceForm
 
-    const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
+    const [selectedRecordId, setSelectedRecordId] = useState<string | null | undefined>(null);
 
     const handleOpenDialog = () => {
         setShowDialog(!showDialog)
@@ -66,19 +66,18 @@ const UpdateOrCreateProvince = ({
 
     const handleCloseDialog = () => {
         provinceForm.setValue('nama', "")
-        provinceForm.setValue('id_negara', 0)
+        provinceForm.setValue('id_provinsi',"")
         provinceForm.setValue("id", "")
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
-
-    const onUpdateOrCreateProvince = (provinceForm: ProvinceDTO) => {
+    const onUpdateOrCreateRegency = (provinceForm: RegencyDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(provinceForm.id)
+        setSelectedRecordId(provinceForm.id.toString())
         setValue('nama', provinceForm.nama)
-        setValue('id_negara', provinceForm.id_negara)
+        setValue('id_provinsi', provinceForm.id.toString())
         setValue('id', provinceForm.id.toString())
     }
 
@@ -86,21 +85,21 @@ const UpdateOrCreateProvince = ({
         if (!session?.accessToken) {
             return;
         }
-
+        console.log(values)
         const response = submitMode === 'POST' ? (
             await postData(
                 {
                     id: values.id.toString(),
-                    id_negara: Number(values.id_negara),
+                    id_provinsi: values.id_provinsi,
                     nama: values.nama
                 },
             )
         ) : (
             await updateData(
-                `/master/province/${selectedRecordId}`,
+                `/master/regency/${selectedRecordId}`,
                 {
                     id: values.id.toString(),
-                    id_negara: Number(values.id_negara),
+                    id_provinsi: values.id_provinsi,
                     nama: values.nama
                 },
             )
@@ -115,7 +114,7 @@ const UpdateOrCreateProvince = ({
             })
             provinceForm.reset({
                 nama: "",
-                id_negara: 0,
+                id_provinsi: "",
                 id: "",
             })
             onRefresh();
@@ -124,7 +123,7 @@ const UpdateOrCreateProvince = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreateProvince(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreateRegency(selectedRecord);
         }
     }, [selectedRecord])
 
@@ -143,7 +142,7 @@ const UpdateOrCreateProvince = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Provinsi
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Kabupaten / Kota
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
@@ -153,17 +152,17 @@ const UpdateOrCreateProvince = ({
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="id_negara"
+                                        name="id_provinsi"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Pilih Negara</FormLabel>
+                                                    <FormLabel>Pilih Provinsi</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<CountryDTO>
-                                                            url="/master/country"
+                                                        <SelectSearch<ProvinceDTO>
+                                                            url="/master/province"
                                                             labelName="nama"
                                                             valueName="id"
-                                                            placeholder="Masukkan nama negara untuk mencari..."
+                                                            placeholder="Masukkan nama Provinsi untuk mencari..."
                                                             onChange={field.onChange}
                                                             defaultValue={field.value || undefined}
                                                         />
@@ -196,7 +195,7 @@ const UpdateOrCreateProvince = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Provinsi</FormLabel>
+                                                    <FormLabel>Nama Kabupaten / Kota</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -232,4 +231,4 @@ const UpdateOrCreateProvince = ({
     )
 }
 
-export default UpdateOrCreateProvince
+export default UpdateOrCreateRegency

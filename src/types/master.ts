@@ -54,6 +54,11 @@ type ProvinceRelationDTO = {
     nama: string
 }
 
+type PaginationDTO = {
+    current_cursor: number,
+    take: number
+}
+
 type ProvinceDTO = {
     id: number;
     nama: string;
@@ -61,16 +66,27 @@ type ProvinceDTO = {
     ms_negara?: ProvinceRelationDTO
 }
 
-type PaginationDTO = {
-    current_cursor: number,
-    take: number
-}
-
 type ProvincesDTO = {
     pagination: PaginationDTO
     results: ProvinceDTO[]
 }
 
+type RegencyRelationDTO = {
+    id: number;
+    nama: string;
+}
+
+type RegencyDTO = {
+    id: string,
+    id_provinsi: string,
+    nama: string,
+    ms_provinsi?: RegencyRelationDTO;
+}
+
+type RegenciesDTO = {
+    pagination: PaginationDTO,
+    results: RegencyDTO[];
+}
 export type {
     ReligionDTO,
     BloodTypeDTO,
@@ -82,5 +98,7 @@ export type {
     DoctorSpecialistDTO,
     PositionDTO,
     ProvincesDTO,
-    ProvinceDTO
+    ProvinceDTO,
+    RegencyDTO,
+    RegenciesDTO
 };

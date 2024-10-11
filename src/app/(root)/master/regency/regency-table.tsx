@@ -2,42 +2,63 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {RankOrClassDTO} from "@/types/master";
+import type {RegencyDTO, RegenciesDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
-import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import CursorPagination from "@/components/ui/cursor-pagination";
 
-interface RankOrClassTableProps {
+interface RegencyProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<RankOrClassDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<RegencyDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const RankOrClassTable = (
+const RegencyTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete
-    }: RankOrClassTableProps) => {
-    const url: string = '/master/rank-or-class'
+    }: RegencyProps) => {
+    const url: string = '/master/regency'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<RankOrClassDTO[]>({
+    const [cursor, setCursor] = useState<number>(0);
+    const [takeData, setTakeData] = useState<number>(10);
+    const {data, loading, error, getData} = useGet<RegenciesDTO>({
         url: url,
         keyword: searchKeyword,
+        take: takeData,
+        cursor: cursor
     })
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const keyword = e.target.value;
+        const keyword: string = e.target.value;
         setSearchKeyword(keyword);
-    }
+        setCursor(0);
+    };
+
+    const handleChangeDataPerPage = (value: number) => {
+        setTakeData(value);
+        setCursor(0);
+    };
+
+    const handleNextPage = () => {
+        if (data?.pagination?.current_cursor !== undefined) {
+            setCursor(data.pagination.current_cursor + takeData);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        const newCursor = Math.max(0, cursor - takeData);
+        setCursor(newCursor);
+    };
 
     const debouncedChangeSearch = useCallback(
         debounce(handleChangeSearch, 500),
@@ -53,6 +74,10 @@ const RankOrClassTable = (
             })
         }
     }, [error])
+
+    useEffect(() => {
+        setCursor(data?.pagination?.current_cursor || 0)
+    }, [data]);
 
     useEffect(() => {
         if (status === 'authenticated') {
@@ -74,35 +99,25 @@ const RankOrClassTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Golongan / Pangkat</TableHead>
-                        <TableHead>Status</TableHead>
+                        <TableHead>Nama Kabupaten / Kota</TableHead>
+                        <TableHead>Provinsi</TableHead>
                         <TableHead>Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((rankOrClass: RankOrClassDTO, index: number) => {
+                        data?.results?.map((province: RegencyDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
-                                        <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{rankOrClass.nama_pangkat}</TableCell>
-                                        <TableCell>
-                                            <Switch
-                                                checked={rankOrClass.status === 1}
-                                                onCheckedChange={
-                                                    () => {
-                                                        selectRecord(rankOrClass);
-                                                        setAction(Action.UPDATE_STATUS)
-                                                    }
-                                                }
-                                            />
-                                        </TableCell>
+                                        <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
+                                        <TableCell className="font-medium">{province.nama}</TableCell>
+                                        <TableCell className="font-medium">{province.ms_provinsi?.nama || '-'}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
                                                 <Button
                                                     onClick={() => {
-                                                        selectRecord(rankOrClass);
+                                                        selectRecord(province);
                                                         setAction(Action.UPDATE_FIELDS)
                                                     }}
                                                     size="sm">
@@ -110,7 +125,7 @@ const RankOrClassTable = (
                                                 </Button>
                                                 <Button
                                                     onClick={() => {
-                                                        selectRecord(rankOrClass);
+                                                        selectRecord(province);
                                                         setAction(Action.DELETE)
                                                         setAlertDelete(true)
                                                     }}
@@ -124,7 +139,7 @@ const RankOrClassTable = (
                             )
                         })
                     }
-                    {(data && data.length === 0 && !loading) && (
+                    {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
                             <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
@@ -134,14 +149,15 @@ const RankOrClassTable = (
                             Array.from({length: 4}, (_, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-12 rounded-lg"/>
+                                        <Skeleton className="h-5 w-16 rounded-lg"/>
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Skeleton className="h-8 w-12 rounded-lg"/>
+                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
                                     </TableCell>
+
                                     <TableCell className="text-center flex gap-4">
                                         <Skeleton className="h-10 w-16 rounded-lg"/>
                                         <Skeleton className="h-10 w-16 rounded-lg"/>
@@ -152,9 +168,16 @@ const RankOrClassTable = (
                     }
                 </TableBody>
             </Table>
-
+            <CursorPagination
+                currentCursor={data?.pagination?.current_cursor || 0}
+                take={takeData}
+                onNextPage={handleNextPage}
+                onPreviousPage={handlePreviousPage}
+                onItemsPerPageChange={handleChangeDataPerPage}
+                hasMore={(data?.results?.length || 0) >= takeData}
+            />
         </>
     )
 }
 
-export default RankOrClassTable
+export default RegencyTable;

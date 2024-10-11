@@ -27,7 +27,7 @@ const DoctorSpecialistTable
         setAction,
         setAlertDelete
     }: DoctorSpecialistTableProps) => {
-    const url: string = '/master/doctor-specialist'
+    const url: string = '/master/specialist'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const {data, loading, error, getData} = useGet<DoctorSpecialistDTO[]>({
