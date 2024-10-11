@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {signOut, useSession} from "next-auth/react";
-import {NextAuthSession} from "@/types/session";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
 import axios, {AxiosResponse, isAxiosError} from "axios";
 import {useRouter} from "next/navigation";
@@ -9,7 +8,7 @@ const useDelete = () => {
     const router = useRouter();
     const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
     const [deleteError, setDeleteError] = useState<string | object | [] | null>(null);
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
 
     const deleteData = async (url: string, headers?: object) => {
         setDeleteLoading(true);

@@ -1,6 +1,9 @@
 import {Menu} from "@/types/menu-type";
 import {CounterMenu, DemographicMenu, InventoryMenu} from "@/enums/Menu";
 
+const MENU_CACHE_KEY = 'user_menu';
+const LAST_FETCH_KEY = 'last_menu_fetch';
+
 const counterMenus: Menu[] = [
     {
         label: "Loket Admisi",
@@ -50,4 +53,4 @@ const demographicMenus: Menu[] = [
     }
 ]
 
-export {counterMenus, inventoryMenus, demographicMenus};
+export {counterMenus, inventoryMenus, demographicMenus, MENU_CACHE_KEY, LAST_FETCH_KEY};

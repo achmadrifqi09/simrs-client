@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Menu as MenuType} from "@/types/menu-type";
 import {LuAlignLeft, LuChevronDown, LuLogOut} from "react-icons/lu";
+import {LAST_FETCH_KEY, MENU_CACHE_KEY} from "@/const/menu";
 
 
 type TopBarProps = {
@@ -25,7 +26,13 @@ const TopBar = ({onToggleMenu, menus}: TopBarProps) => {
 
     const handleLogout = () => {
         signOut()
-            .then(() => router.push('/login'))
+            .then(() => {
+                if(localStorage){
+                    localStorage.removeItem(MENU_CACHE_KEY)
+                    localStorage.removeItem(LAST_FETCH_KEY)
+                }
+                router.push('/login')
+            })
             .catch((error) => {
                 toast({
                     title: "Terjadi kesalahan",

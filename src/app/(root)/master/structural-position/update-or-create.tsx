@@ -19,11 +19,10 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import { structuralPositionValidation} from "@/validation-schema/master";
+import {structuralPositionValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import {NextAuthSession} from "@/types/session";
-import type { StructuralPositionDTO} from "@/types/master";
+import type {StructuralPositionDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 
 type UpdateOrCreateStructuralPositionProps = {
@@ -34,11 +33,11 @@ type UpdateOrCreateStructuralPositionProps = {
 }
 
 const UpdateOrCreateStructuralPosition = ({
-                                    onRefresh,
-                                    selectedRecord,
-                                    setSelectedRecord,
-                                    actionType
-                                }: UpdateOrCreateStructuralPositionProps) => {
+                                              onRefresh,
+                                              selectedRecord,
+                                              setSelectedRecord,
+                                              actionType
+                                          }: UpdateOrCreateStructuralPositionProps) => {
     const structuralPositionForm = useForm<z.infer<typeof structuralPositionValidation>>({
         resolver: zodResolver(structuralPositionValidation),
         defaultValues: {
@@ -47,7 +46,7 @@ const UpdateOrCreateStructuralPosition = ({
         }
     })
 
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');

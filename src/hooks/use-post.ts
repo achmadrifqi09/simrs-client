@@ -1,7 +1,6 @@
 import {useState} from "react";
 import axios, {AxiosResponse, isAxiosError} from "axios";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
-import {NextAuthSession} from "@/types/session";
 import {signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
 
@@ -9,7 +8,7 @@ const usePost = <T>(url: string) => {
     const router = useRouter();
     const [postLoading, setPostLoading] = useState<boolean>(false);
     const [postError, setPostError] = useState<string | object | [] | null>(null);
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
 
     const postData = async (body: T, headers?: object) => {
         setPostLoading(true);

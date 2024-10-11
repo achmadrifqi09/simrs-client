@@ -106,76 +106,88 @@ const ProvinceTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.results?.map((province: ProvinceDTO, index: number) => {
-                            return (
-                                <React.Fragment key={index}>
-                                    <TableRow>
-                                        <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
-                                        <TableCell className="font-medium">{province.nama}</TableCell>
-                                        <TableCell className="font-medium">{province.ms_negara?.nama || '-'}</TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(province);
-                                                        setAction(Action.UPDATE_FIELDS)
-                                                    }}
-                                                    size="sm">
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(province);
-                                                        setAction(Action.DELETE)
-                                                        setAlertDelete(true)
-                                                    }}
-                                                    size="sm" variant="outline">
-                                                    Hapus
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                </React.Fragment>
-                            )
-                        })
+                       loading || status == 'loading' ? (
+                           Array.from({length: 4}, (_, index) => (
+                               <TableRow key={index}>
+                                   <TableCell className="text-center">
+                                       <Skeleton className="h-5 w-16 rounded-lg"/>
+                                   </TableCell>
+                                   <TableCell className="text-center">
+                                       <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                   </TableCell>
+                                   <TableCell className="text-center">
+                                       <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                   </TableCell>
+
+                                   <TableCell className="text-center flex gap-4">
+                                       <Skeleton className="h-10 w-16 rounded-lg"/>
+                                       <Skeleton className="h-10 w-16 rounded-lg"/>
+                                   </TableCell>
+                               </TableRow>
+                           ))
+                       ) : (
+                           data?.results?.map((province: ProvinceDTO, index: number) => {
+                               return (
+                                   <React.Fragment key={index}>
+                                       <TableRow>
+                                           <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
+                                           <TableCell className="font-medium">{province.nama}</TableCell>
+                                           <TableCell className="font-medium">{province.ms_negara?.nama || '-'}</TableCell>
+                                           <TableCell>
+                                               <div className="flex gap-2">
+                                                   <Button
+                                                       onClick={() => {
+                                                           selectRecord(province);
+                                                           setAction(Action.UPDATE_FIELDS)
+                                                       }}
+                                                       size="sm">
+                                                       Update
+                                                   </Button>
+                                                   <Button
+                                                       onClick={() => {
+                                                           selectRecord(province);
+                                                           setAction(Action.DELETE)
+                                                           setAlertDelete(true)
+                                                       }}
+                                                       size="sm" variant="outline">
+                                                       Hapus
+                                                   </Button>
+                                               </div>
+                                           </TableCell>
+                                       </TableRow>
+                                   </React.Fragment>
+                               )
+                           })
+                       )
                     }
                     {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
                             <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
-                    {
-                        loading || status === 'loading' && (
-                            Array.from({length: 4}, (_, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-16 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                    </TableCell>
-
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )
-                    }
                 </TableBody>
             </Table>
-            <CursorPagination
-                currentCursor={data?.pagination?.current_cursor || 0}
-                take={takeData}
-                onNextPage={handleNextPage}
-                onPreviousPage={handlePreviousPage}
-                onItemsPerPageChange={handleChangeDataPerPage}
-                hasMore={(data?.results?.length || 0) >= takeData}
-            />
+
+            {
+                loading || status === 'loading' ? (
+                    <div className="flex justify-between items-center">
+                        <Skeleton className="h-10 w-[128px] rounded-lg"/>
+                        <div className="flex gap-4">
+                            <Skeleton className="h-10 w-10 rounded-lg"/>
+                            <Skeleton className="h-10 w-10 rounded-lg"/>
+                        </div>
+                    </div>
+                ) : (
+                    <CursorPagination
+                        currentCursor={data?.pagination?.current_cursor || 0}
+                        take={takeData}
+                        onNextPage={handleNextPage}
+                        onPreviousPage={handlePreviousPage}
+                        onItemsPerPageChange={handleChangeDataPerPage}
+                        hasMore={(data?.results?.length || 0) >= takeData}
+                    />
+                )
+            }
         </>
     )
 }

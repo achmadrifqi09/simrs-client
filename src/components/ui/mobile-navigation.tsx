@@ -104,8 +104,8 @@ const MobileNavigation = ({menus}: NavigationProps) => {
                                                     id={`${menu.label.replace(' ', '-')}-${index}`}
                                                     iconName={menu.icon}
                                                     label={menu.label}
-                                                    submenus={menu.submenu || []}
-                                                    active={findPathname(menu.submenu || [])}
+                                                    submenus={menu.children || []}
+                                                    active={findPathname(menu.children || [])}
                                                     open={openCollapseId === `${menu.label.replace(' ', '-')}-${index}`}
                                                     onToggle={handleToggleCollapse}
                                                     closeMenu={() => setOpen(!open)}/>

@@ -1,7 +1,6 @@
 import axios, {AxiosResponse, isAxiosError} from "axios";
 import {useCallback, useEffect, useState} from "react";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
-import {NextAuthSession} from "@/types/session";
 import {signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
 
@@ -18,7 +17,7 @@ const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | object>();
-    const {data: session, status} = useSession() as { data: NextAuthSession, status: string };
+    const {data: session, status} = useSession();
 
     const getData = useCallback(async () => {
         if (status === 'authenticated') {

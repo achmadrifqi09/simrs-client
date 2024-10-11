@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {signOut, useSession} from "next-auth/react";
-import {NextAuthSession} from "@/types/session";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
 import axios, {AxiosResponse, isAxiosError} from "axios";
 import {useRouter} from "next/navigation";
@@ -9,7 +8,7 @@ const usePatch = <T>() => {
     const router = useRouter();
     const [patchLoading, setPatchLoading] = useState<boolean>(false);
     const [patchError, setPatchError] = useState<string | object | [] | null>(null);
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
 
     const updateData = async (url: string, body: T, headers?: object) => {
         setPatchLoading(true);
