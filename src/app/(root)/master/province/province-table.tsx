@@ -100,6 +100,7 @@ const ProvinceTable = (
                     <TableRow>
                         <TableHead>No</TableHead>
                         <TableHead>Nama Provinsi</TableHead>
+                        <TableHead>Negara</TableHead>
                         <TableHead>Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -111,6 +112,7 @@ const ProvinceTable = (
                                     <TableRow>
                                         <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
                                         <TableCell className="font-medium">{province.nama}</TableCell>
+                                        <TableCell className="font-medium">{province.ms_negara?.nama || '-'}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
                                                 <Button
@@ -139,7 +141,7 @@ const ProvinceTable = (
                     }
                     {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
@@ -153,8 +155,9 @@ const ProvinceTable = (
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Skeleton className="h-8 w-12 rounded-lg"/>
+                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
                                     </TableCell>
+
                                     <TableCell className="text-center flex gap-4">
                                         <Skeleton className="h-10 w-16 rounded-lg"/>
                                         <Skeleton className="h-10 w-16 rounded-lg"/>

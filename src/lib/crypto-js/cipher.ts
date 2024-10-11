@@ -3,15 +3,13 @@ import moment from 'moment-timezone';
 import { enc } from 'crypto-js';
 
 const generateClientKey = () => {
-    const currentDate = moment.tz('Asia/Jakarta');
-    const formatedDate = currentDate.format('YYYY-MM-DD HH:mm:ss')
     const secretKey =  process.env.NEXT_PUBLIC_SECRET_KEY
 
     if(secretKey){
         const signature = AES.encrypt(
             JSON.stringify({
                 client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-                timestamp: formatedDate,
+                timestamp: generateCurrentDate(),
             }),
             secretKey
         ).toString();
@@ -20,6 +18,12 @@ const generateClientKey = () => {
     }
     return null;
 }
+
+const generateCurrentDate = (): Date => {
+    const createdAt = moment.tz('Asia/Jakarta');
+    const finalDate = `${createdAt.format('YYYY-MM-DDTHH:mm:ss')}Z`;
+    return new Date(finalDate);
+};
 
 const encryptCookies = (encrypt: string) => {
     const secretKey =  process.env.NEXT_PUBLIC_SECRET_KEY

@@ -1,8 +1,9 @@
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosResponse, isAxiosError} from "axios";
 import {useCallback, useEffect, useState} from "react";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
 import {NextAuthSession} from "@/types/session";
-import {useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 type GetProps = {
     url: string,
@@ -13,6 +14,7 @@ type GetProps = {
 }
 
 const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
+    const router = useRouter();
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | object>();
@@ -24,7 +26,7 @@ const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
             let endpoint = keyword ? `${url}?keyword=${keyword}` : url;
 
 
-            if(cursor !== null && take) {
+            if (cursor !== null && take) {
                 endpoint = endpoint + `${keyword ? '&' : '?cursor='}${cursor}&take=${take}`;
             }
             try {
@@ -40,8 +42,13 @@ const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
                 const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
                     headers: currentHeader
                 })
+
                 setData(response.data.data)
             } catch (error: any) {
+                if (isAxiosError(error) && error.status === 401) {
+                    await signOut()
+                    return router.push('/login');
+                }
                 setError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga')
             } finally {
                 setLoading(false)

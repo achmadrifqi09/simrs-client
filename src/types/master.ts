@@ -50,10 +50,15 @@ type PositionDTO = {
     status: number;
 }
 
+type ProvinceRelationDTO = {
+    nama: string
+}
+
 type ProvinceDTO = {
     id: number;
     nama: string;
-    status: number;
+    id_negara: number;
+    ms_negara?: ProvinceRelationDTO
 }
 
 type PaginationDTO = {

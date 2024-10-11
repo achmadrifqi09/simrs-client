@@ -2,8 +2,7 @@ import {getToken} from 'next-auth/jwt'
 import {NextFetchEvent, NextMiddleware, NextRequest, NextResponse} from "next/server";
 import moment from "moment-timezone";
 import {guestRoutes} from "@/const/routeWithoutPanel";
-// import {cookies} from "next/headers";
-// import {decryptCookies} from "@/lib/crypto-js/cipher";
+import {generateCurrentTimestamp} from "@/lib/formatter/date-formatter";
 
 export default function withAuth(
     middleware: NextMiddleware,
@@ -15,8 +14,6 @@ export default function withAuth(
         const isAllowedPath = guestRoutes.some(path => pathname.startsWith(path));
 
         const session = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
-        // const sessionCookies = cookies().get('session')?.value
-        // const session = decryptCookies(sessionCookies || "{}")
 
         if (!isAllowedPath && !isStaticAsset) {
 
@@ -25,16 +22,21 @@ export default function withAuth(
                 return NextResponse.redirect(url);
             }
 
-            const expired = moment.tz(session?.expires, 'Asia/Jakarta');
-            if (moment.tz('Asia/Jakarta').isAfter(expired)) {
-                return clearSessionAndRedirect(req);
+            if(session?.expires){
+                const expired = moment.utc(session.expires);
+                const currentTimestamp = moment.utc(generateCurrentTimestamp());
+                if (currentTimestamp.isAfter(expired)) {
+                    // return NextResponse.redirect(new URL('/api/auth/signout', req.url))
+                    return clearSessionAndRedirect(req);
+                }
+            }
+
+            if (pathname.includes('/login') && session?.accessToken) {
+                const url = new URL('/', req.url);
+                return NextResponse.redirect(url);
             }
         }
 
-        if (pathname.includes('/login') && session?.accessToken) {
-            const url = new URL('/', req.url);
-            return NextResponse.redirect(url);
-        }
         return middleware(req, next);
     }
 
@@ -46,6 +48,8 @@ const clearSessionAndRedirect = (req: NextRequest) => {
     )
 
     response.cookies.delete('next-auth.session-token');
+    response.cookies.delete('next-auth.session-token.0');
+    response.cookies.delete('next-auth.session-token.1');
     response.cookies.delete('next-auth.csrf-token');
     response.cookies.delete('next-auth.callback-url');
 

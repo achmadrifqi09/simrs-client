@@ -61,11 +61,15 @@ const positionValidation = z.object({
 })
 
 const provinceValidation = z.object({
-    nama:z.string({message: 'Nama provinsi harus di idi'})
-        .min(4, {message: 'Nama Provinsi harus diisi minimal 4'})
-        .max(50, {message: 'Nama Provinsi harus diisi minimal 4'}),
-    id_negara : z.string({message: 'Negara harus di isi'})
+    nama: z.string({ message: 'Nama provinsi harus diisi' })
+        .min(4, { message: 'Nama Provinsi minimal 4 karakter' })
+        .max(50, { message: 'Nama Provinsi harus diisi maksimal 50' }),
+    id_negara: z.number({ message: 'Negara harus diisi' }),
+    id: z.string({ message: 'Kode wilayah provinsi harus diisi' })
+        .max(2, {message: 'Kode wilayah maksimal 2 karakter'})
+        .regex(/^\d+$/, { message: 'Kode wilayah provinsi harus berupa angka' }) // Regex to ensure only digits
 })
+
 export {
     religionValidation,
     bloodTypeValidation,

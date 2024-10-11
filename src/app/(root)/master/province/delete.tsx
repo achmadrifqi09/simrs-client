@@ -29,7 +29,7 @@ const DeleteProvince = ({onRefresh, selectedRecord, action, showAlert, setShowAl
     )
     const handleDelete = async () => {
         if (action === Action.DELETE) {
-            const result = await deleteData(`/master/province/${selectedRecord?.id_ms_provinsi}`)
+            const result = await deleteData(`/master/province/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -53,7 +53,7 @@ const DeleteProvince = ({onRefresh, selectedRecord, action, showAlert, setShowAl
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data provinse? {selectedRecord?. nama_provinsi}?
+                            Apakah anda yakin akan menghapus data provinsi {selectedRecord?.nama}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

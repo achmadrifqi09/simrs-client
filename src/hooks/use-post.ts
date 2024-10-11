@@ -1,11 +1,12 @@
 import {useState} from "react";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosResponse, isAxiosError} from "axios";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
 import {NextAuthSession} from "@/types/session";
-import {useSession} from "next-auth/react";
-
+import {signOut, useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 const usePost = <T>(url: string) => {
+    const router = useRouter();
     const [postLoading, setPostLoading] = useState<boolean>(false);
     const [postError, setPostError] = useState<string | object | [] | null>(null);
     const {data: session} = useSession() as { data: NextAuthSession };
@@ -32,11 +33,16 @@ const usePost = <T>(url: string) => {
             );
             return response.data
         } catch (error: any) {
+            if (isAxiosError(error) && error.status === 401) {
+                await signOut()
+                return router.push('/login');
+            }
             setPostError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga');
         } finally {
             setPostLoading(false);
         }
     };
+
 
     return {postData, postLoading, postError, setPostError};
 };

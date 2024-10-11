@@ -1,10 +1,12 @@
 import {useState} from "react";
-import {useSession} from "next-auth/react";
+import {signOut, useSession} from "next-auth/react";
 import {NextAuthSession} from "@/types/session";
 import {generateClientKey} from "@/lib/crypto-js/cipher";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosResponse, isAxiosError} from "axios";
+import {useRouter} from "next/navigation";
 
 const useDelete = () => {
+    const router = useRouter();
     const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
     const [deleteError, setDeleteError] = useState<string | object | [] | null>(null);
     const {data: session} = useSession() as { data: NextAuthSession };
@@ -29,6 +31,10 @@ const useDelete = () => {
             );
             return response.data
         } catch (error: any) {
+            if (isAxiosError(error) && error.status === 401) {
+                await signOut()
+                return router.push('/login');
+            }
             setDeleteError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga');
         } finally {
             setDeleteLoading(false);

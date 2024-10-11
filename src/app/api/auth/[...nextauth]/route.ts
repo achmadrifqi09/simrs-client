@@ -63,6 +63,9 @@ const authOptions: NextAuthOptions = {
             return token;
         },
         async session({session, token}: { session: any; token: JWT }) {
+            if (token.error === "RefreshAccessTokenError") {
+                session.error = "RefreshAccessTokenError"
+            }
             session.accessToken = token.accessToken as string;
             session.expires = token.expires;
             session.user = token.user;

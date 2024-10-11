@@ -24,8 +24,7 @@ import {useSession} from "next-auth/react";
 import {NextAuthSession} from "@/types/session";
 import type {CountryDTO, ProvinceDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-
-import SearchSelect from "@/components/ui/SearchSelect";
+import SelectSearch from "@/components/ui/select-search";
 
 type UpdateOrCreateProvinceProps = {
     onRefresh: () => void,
@@ -44,7 +43,8 @@ const UpdateOrCreateProvince = ({
         resolver: zodResolver(provinceValidation),
         defaultValues: {
             nama: "",
-            id_negara: "1"
+            id_negara: 0,
+            id: ""
         }
     })
 
@@ -53,8 +53,8 @@ const UpdateOrCreateProvince = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/province')
-    const {updateData, patchError, patchLoading} = usePatch()
+    const {postData, postLoading, postError, setPostError} = usePost('/master/province')
+    const {updateData, patchError, patchLoading, setPatchError} = usePatch()
     const {handleSubmit, control, setValue} = provinceForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
@@ -65,8 +65,9 @@ const UpdateOrCreateProvince = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama', "")
-        setValue('id_negara', '1')
+        provinceForm.setValue('nama', "")
+        provinceForm.setValue('id_negara', 0)
+        provinceForm.setValue("id", "")
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
@@ -92,7 +93,8 @@ const UpdateOrCreateProvince = ({
         setShowDialog(true)
         setSelectedRecordId(provinceForm.id)
         setValue('nama', provinceForm.nama)
-        setValue('id_negara', provinceForm.status.toString())
+        setValue('id_negara', provinceForm.id_negara)
+        setValue('id', provinceForm.id.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -102,12 +104,20 @@ const UpdateOrCreateProvince = ({
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.id_negara), nama: values.nama},
+                {
+                    id: values.id.toString(),
+                    id_negara: Number(values.id_negara),
+                    nama: values.nama
+                },
             )
         ) : (
             await updateData(
                 `/master/province/${selectedRecordId}`,
-                {status: Number(values.id_negara), nama: values.nama},
+                {
+                    id: values.id.toString(),
+                    id_negara: Number(values.id_negara),
+                    nama: values.nama
+                },
             )
         )
 
@@ -116,11 +126,12 @@ const UpdateOrCreateProvince = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} jabatan ${response.data.nama}`,
+                    : 'memperbarui data '} provinsi ${response.data.nama}`,
             })
             provinceForm.reset({
                 nama: "",
-                id_negara: "0"
+                id_negara: 0,
+                id: "",
             })
             onRefresh();
         }
@@ -130,10 +141,16 @@ const UpdateOrCreateProvince = ({
         if (selectedRecord) {
             if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreateProvince(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.id_negara)
             }
         }
     }, [selectedRecord])
+
+    useEffect(() => {
+        setPostError(null)
+        setPatchError(null)
+        provinceForm.clearErrors()
+    }, [showDialog]);
 
     return (
         <div>
@@ -160,15 +177,30 @@ const UpdateOrCreateProvince = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Negara</FormLabel>
                                                     <FormControl>
-                                                        <SearchSelect<CountryDTO>
+                                                        <SelectSearch<CountryDTO>
                                                             url="/master/country"
-                                                            placeholder="Cari negara..."
-                                                            onSelect={(selected) => {
-                                                              field.onChange(selected?.id.toString());
-                                                            }}
-                                                            displayField="nama"
-                                                            valueField="id"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan nama negara untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={field.value || undefined}
                                                         />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="id"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Kode Wilayah</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="text" inputMode="numeric" {...field}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
