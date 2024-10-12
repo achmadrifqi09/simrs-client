@@ -22,7 +22,6 @@ import {z} from "zod";
 import {maritalStatusValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import {NextAuthSession} from "@/types/session";
 import type {MaritalStatusDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 
@@ -34,11 +33,11 @@ type UpdateOrCreateMaritalStatusProps = {
 }
 
 const UpdateOrCreateMaritalStatus = ({
-                                    onRefresh,
-                                    selectedRecord,
-                                    setSelectedRecord,
-                                    actionType
-                                }: UpdateOrCreateMaritalStatusProps) => {
+                                         onRefresh,
+                                         selectedRecord,
+                                         setSelectedRecord,
+                                         actionType
+                                     }: UpdateOrCreateMaritalStatusProps) => {
     const maritalStatusForm = useForm<z.infer<typeof maritalStatusValidation>>({
         resolver: zodResolver(maritalStatusValidation),
         defaultValues: {
@@ -47,7 +46,7 @@ const UpdateOrCreateMaritalStatus = ({
         }
     })
 
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');

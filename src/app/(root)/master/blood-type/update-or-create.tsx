@@ -22,18 +22,22 @@ import {z} from "zod";
 import {bloodTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import {NextAuthSession} from "@/types/session";
 import type {BloodTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 
 type UpdateOrCreateBloodTypeProps = {
     onRefresh: () => void,
     selectedRecord: BloodTypeDTO | null,
-    setSelectedRecord:React.Dispatch<React.SetStateAction<BloodTypeDTO | null>>
+    setSelectedRecord: React.Dispatch<React.SetStateAction<BloodTypeDTO | null>>
     actionType: Action
 }
 
-const UpdateOrCreateBloodType = ({onRefresh, selectedRecord, setSelectedRecord, actionType}: UpdateOrCreateBloodTypeProps) => {
+const UpdateOrCreateBloodType = ({
+                                     onRefresh,
+                                     selectedRecord,
+                                     setSelectedRecord,
+                                     actionType
+                                 }: UpdateOrCreateBloodTypeProps) => {
     const bloodTypeForm = useForm<z.infer<typeof bloodTypeValidation>>({
         resolver: zodResolver(bloodTypeValidation),
         defaultValues: {
@@ -42,7 +46,7 @@ const UpdateOrCreateBloodType = ({onRefresh, selectedRecord, setSelectedRecord, 
         }
     })
 
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
@@ -121,12 +125,12 @@ const UpdateOrCreateBloodType = ({onRefresh, selectedRecord, setSelectedRecord, 
     });
 
     useEffect(() => {
-       if(selectedRecord){
-           if(actionType === Action.UPDATE_FIELDS) onUpdateBloodType(selectedRecord);
-           if(actionType === Action.UPDATE_STATUS) {
-               updateStatus(selectedRecord.id_ms_golongan_darah, selectedRecord.status)
-           }
-       }
+        if (selectedRecord) {
+            if (actionType === Action.UPDATE_FIELDS) onUpdateBloodType(selectedRecord);
+            if (actionType === Action.UPDATE_STATUS) {
+                updateStatus(selectedRecord.id_ms_golongan_darah, selectedRecord.status)
+            }
+        }
     }, [selectedRecord])
 
     return (

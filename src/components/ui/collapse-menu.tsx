@@ -52,10 +52,10 @@ const CollapseMenu = ({iconName, label, submenus, active, onToggle, id, open, cl
                     <div className="ms-10 border-l border-l-gray-300 mt-1 space-y-1.5 ps-4 relative">
                         {submenus.map((submenu: Submenu, index: number) => (
                             <Link
-                                className={`${baseClassSubmenu} ${findPathname(submenu.pathname) && (
+                                className={`${baseClassSubmenu} ${findPathname(submenu.pathname || '') && (
                                     cn('bg-gray-50 before:slide-down before:content-[""] before:w-1 before:h-8 before:absolute before:bg-red-600 before:-left-[1px] before:rounded text-red-600')
                                 )}`}
-                                href={submenu.pathname}
+                                href={submenu.pathname || ''}
                                 onClick={closeMenu}
                                 key={index}
                             >

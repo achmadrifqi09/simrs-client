@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import AsyncSelect, { AsyncProps } from 'react-select/async';
 import axios, { AxiosResponse } from "axios";
 import { useSession } from "next-auth/react";
-import { NextAuthSession } from "@/types/session";
 import { generateClientKey } from "@/lib/crypto-js/cipher";
 import {components, GroupBase, DropdownIndicatorProps} from 'react-select';
 import debounce from "debounce";
@@ -39,7 +38,7 @@ const SelectSearch = <T extends Record<string, any>>({
                                                          placeholder = "Pilih opsi ...",
                                                          onChange
                                                      }: SelectSearchProps<T>) => {
-    const { data: session } = useSession() as { data: NextAuthSession };
+    const { data: session } = useSession();
     const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
     const generateOptions = (options: T[] | { results?: T[] }): Option[] => {

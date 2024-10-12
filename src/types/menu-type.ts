@@ -1,7 +1,11 @@
 type Submenu = {
+    id?: number;
     label: string;
-    pathname: string;
-    id_menu: number;
+    order?: number;
+    icon?: string;
+    pathname?: string | null;
+    is_submenu?: boolean;
+    tag?: string,
 }
 
 type Menu = {
@@ -11,7 +15,7 @@ type Menu = {
     icon: string;
     pathname?: string | null;
     is_submenu?: boolean;
-    submenu?: Submenu[] | [];
+    children?: Submenu[] | [];
     tag?: string,
 }
 

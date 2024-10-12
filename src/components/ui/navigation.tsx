@@ -1,5 +1,5 @@
 "use client"
-import React, {useEffect, useState} from "react"
+import React, {useState} from "react"
 import CollapseMenu from "@/components/ui/collapse-menu";
 import Menu from "@/components/ui/menu";
 import {usePathname} from "next/navigation";
@@ -16,7 +16,6 @@ export const Navigation = ({show, menus}: NavigationProps) => {
     const pathname = usePathname();
     const [openCollapseId, setOpenCollapseId] = useState<string | null>(null);
     const navBaseClass: string = 'w-[324px] h-content border-r border-r-gray-200 p-6 transition-all duration-50 bg-white top-[72px]';
-    const [loading, setLoading] = useState<boolean>(true);
 
     const findPathname = (menus: Submenu[]) => {
         return menus.some(menu => {
@@ -28,20 +27,6 @@ export const Navigation = ({show, menus}: NavigationProps) => {
     const handleToggle = (id: string) => {
         setOpenCollapseId(prevId => (prevId === id ? null : id));
     };
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 4000);
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
-        if (menus) {
-            setLoading(false);
-        }
-    }, [menus]);
 
     return (
         <nav
@@ -57,8 +42,8 @@ export const Navigation = ({show, menus}: NavigationProps) => {
                                             id={`${menu.label.replace(' ', '-')}-${index}`}
                                             iconName={menu.icon}
                                             label={menu.label}
-                                            submenus={menu.submenu || []}
-                                            active={findPathname(menu.submenu || [])}
+                                            submenus={menu.children || []}
+                                            active={findPathname(menu.children || [])}
                                             open={openCollapseId === `${menu.label.replace(' ', '-')}-${index}`}
                                             onToggle={handleToggle}/>
                                     ) : (
@@ -69,7 +54,7 @@ export const Navigation = ({show, menus}: NavigationProps) => {
                             )
                         })
                     }
-                    {loading && (
+                    {menus.length === 0 && (
                         Array.from({length: 4}, (_, index) => (
                             <Skeleton className="h-10 w-full rounded-lg" key={index}/>
                         ))

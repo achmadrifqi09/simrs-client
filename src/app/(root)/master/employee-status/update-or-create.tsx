@@ -22,18 +22,22 @@ import {z} from "zod";
 import {employeeStatusValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import {NextAuthSession} from "@/types/session";
 import type {EmployeeStatusDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 
 type UpdateOrCreateEmployeeStatusProps = {
     onRefresh: () => void,
     selectedRecord: EmployeeStatusDTO | null,
-    setSelectedRecord:React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
+    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
     actionType: Action
 }
 
-const UpdateOrCreateEmplyeeStatus = ({onRefresh, selectedRecord, setSelectedRecord, actionType}: UpdateOrCreateEmployeeStatusProps) => {
+const UpdateOrCreateEmplyeeStatus = ({
+                                         onRefresh,
+                                         selectedRecord,
+                                         setSelectedRecord,
+                                         actionType
+                                     }: UpdateOrCreateEmployeeStatusProps) => {
     const employeeStatusForm = useForm<z.infer<typeof employeeStatusValidation>>({
         resolver: zodResolver(employeeStatusValidation),
         defaultValues: {
@@ -42,7 +46,7 @@ const UpdateOrCreateEmplyeeStatus = ({onRefresh, selectedRecord, setSelectedReco
         }
     })
 
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
@@ -121,9 +125,9 @@ const UpdateOrCreateEmplyeeStatus = ({onRefresh, selectedRecord, setSelectedReco
     });
 
     useEffect(() => {
-        if(selectedRecord){
-            if(actionType === Action.UPDATE_FIELDS) onUpdateEmployeeStatus(selectedRecord);
-            if(actionType === Action.UPDATE_STATUS) {
+        if (selectedRecord) {
+            if (actionType === Action.UPDATE_FIELDS) onUpdateEmployeeStatus(selectedRecord);
+            if (actionType === Action.UPDATE_STATUS) {
                 updateStatus(selectedRecord.id_ms_status_pegawai, selectedRecord.status)
             }
         }

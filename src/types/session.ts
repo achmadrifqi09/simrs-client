@@ -1,5 +1,12 @@
-import { Session } from "next-auth";
+import { DefaultSession } from "next-auth";
 
-export interface NextAuthSession extends Session {
-    accessToken?: string;
+declare module "next-auth" {
+    interface Session {
+        accessToken?: string;
+        user?: {
+            id?: number;
+            email?: string;
+            name: string
+        } & DefaultSession["user"];
+    }
 }

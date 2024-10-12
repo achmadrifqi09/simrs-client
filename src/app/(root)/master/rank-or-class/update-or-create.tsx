@@ -22,7 +22,6 @@ import {z} from "zod";
 import {rankOrClassValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import {NextAuthSession} from "@/types/session";
 import type {RankOrClassDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 
@@ -42,7 +41,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
         }
     })
 
-    const {data: session} = useSession() as { data: NextAuthSession };
+    const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
