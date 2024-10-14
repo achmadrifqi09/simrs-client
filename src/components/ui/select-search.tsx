@@ -108,6 +108,8 @@ const SelectSearch = <T extends Record<string, any>>({
             if (defaultValue !== undefined) {
                 const options = await fetchOptions('');
                 const defaultOption = options.find(option => option.value === defaultValue);
+            console.log(defaultValue)
+            console.log(options);
                 if (defaultOption) {
                     setSelectedOption(defaultOption);
                     if (onChange) {

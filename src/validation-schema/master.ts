@@ -70,17 +70,44 @@ const provinceValidation = z.object({
         .regex(/^\d+$/, {message: 'Kode wilayah provinsi harus berupa angka'}) // Regex to ensure only digits
 })
 const regencyValidation = z.object({
-    nama: z.string({message: 'Nama kecamatan/kota harus diisi'})
-        .min(4, {message: 'Nama kecamatan/kota minimal 4 karakter'})
-        .max(50, {message: 'Nama kecamatan/kota harus diisi maksimal 50'}),
+    nama: z.string({message: 'Nama Kabupaten/kota harus diisi'})
+        .min(4, {message: 'Nama Kabupaten/kota minimal 4 karakter'})
+        .max(50, {message: 'Nama Kabupaten/kota harus diisi maksimal 50'}),
     id_provinsi: z
         .string({message: 'Provinsi harus diisi'})
         .min(2, {message: 'Kode provinsi harus 2 digit'})
         .max(2, {message: 'Kode provinsi harus 2 digit'}),
-    id: z.string({message: 'Kode kecamatan/kota provinsi harus diisi'})
-        .min(4, {message: 'Kode kecamatan/kota maksimal 4 digit'})
-        .max(4, {message: 'Kode kecamatan/kota maksimal 4 digit'})
-        .regex(/^\d+$/, {message: 'Kode kecamatan/kota provinsi harus berupa angka'}) // Regex to ensure only digits
+    id: z.string({message: 'Kode Kabupaten/kota provinsi harus diisi'})
+        .min(4, {message: 'Kode Kabupaten/kota maksimal 4 digit'})
+        .max(4, {message: 'Kode Kabupaten/kota maksimal 4 digit'})
+        .regex(/^\d+$/, {message: 'Kode Kabupaten/kota provinsi harus berupa angka'}) // Regex to ensure only digits
+})
+
+const districtValidation = z.object({
+    id: z
+        .string({ message: 'Kode wilayah kecamatan harus diisi' })
+        .min(6, { message: 'Kode wilayah kecamatan harus 6 digit' })
+        .max(6, { message: 'Kode wilayah kecamatan harus 6 digit' }),
+    nama: z
+        .string({ message: 'Nama kecamatan darah harus di isi' })
+        .min(4, { message: 'Nama kecamatan minimal 4 karakter' }),
+    id_kabkot: z
+        .string({ message: 'Kabupaten/kota harus diisi' })
+        .min(4, { message: 'Kode kabupaten/kota harus 4 digit' })
+        .max(4, { message: 'Kode kabupaten/kota harus 4 digit' }),
+})
+const villageValidation = z.object({
+    id: z
+        .string({ message: 'Kode wilayah desa harus diisi' })
+        .min(10, { message: 'Kode wilayah desa harus 10 digit' })
+        .max(10, { message: 'Kode wilayah desa harus 10 digit' }),
+    nama: z
+        .string({ message: 'Nama desa harus di isi' })
+        .min(4, { message: 'Nama desa minimal 4 karakter' }),
+    id_kecamatan: z
+        .string({ message: 'Kecamatan harus diisi' })
+        .min(6, { message: 'Kode kecamatan harus 6 digit' })
+        .max(6, { message: 'Kode kecamatan harus 6 digit' }),
 })
 
 export {
@@ -94,5 +121,7 @@ export {
     doctorSpecialistValidation,
     positionValidation,
     provinceValidation,
-    regencyValidation
+    regencyValidation,
+    districtValidation,
+    villageValidation
 }

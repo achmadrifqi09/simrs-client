@@ -18,31 +18,31 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {regencyValidation} from "@/validation-schema/master";
+import {districtValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {ProvinceDTO, RegencyDTO} from "@/types/master";
+import type {DistrictDTO, RegencyDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 
-type UpdateOrCreateRegencyProps = {
+type UpdateOrCreateDistrictProps = {
     onRefresh: () => void,
-    selectedRecord: RegencyDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RegencyDTO | null>>
+    selectedRecord: DistrictDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<DistrictDTO | null>>
     actionType: Action
 }
 
-const UpdateOrCreateRegency = ({
-                                   onRefresh,
-                                   selectedRecord,
-                                   setSelectedRecord,
-                                   actionType
-                               }: UpdateOrCreateRegencyProps) => {
-    const regencyForm = useForm<z.infer<typeof regencyValidation>>({
-        resolver: zodResolver(regencyValidation),
+const UpdateOrCreateDistrict = ({
+                                    onRefresh,
+                                    selectedRecord,
+                                    setSelectedRecord,
+                                    actionType
+                                }: UpdateOrCreateDistrictProps) => {
+    const districtForm = useForm<z.infer<typeof districtValidation>>({
+        resolver: zodResolver(districtValidation),
         defaultValues: {
             nama: "",
-            id_provinsi: "",
+            id_kabkot: "",
             id: ""
         }
     })
@@ -52,9 +52,9 @@ const UpdateOrCreateRegency = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError, setPostError} = usePost('/master/regency')
+    const {postData, postLoading, postError, setPostError} = usePost('/master/district')
     const {updateData, patchError, patchLoading, setPatchError} = usePatch()
-    const {handleSubmit, control, setValue} = regencyForm
+    const {handleSubmit, control, setValue} = districtForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<string | null | undefined>(null);
 
@@ -64,41 +64,40 @@ const UpdateOrCreateRegency = ({
     }
 
     const handleCloseDialog = () => {
-        regencyForm.setValue('nama', "")
-        regencyForm.setValue('id_provinsi', "")
-        regencyForm.setValue("id", "")
+        districtForm.setValue('nama', "")
+        districtForm.setValue('id_kabkot', "")
+        districtForm.setValue("id", "")
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
-    const onUpdateOrCreateRegency = (regencyForm: RegencyDTO) => {
+    const onUpdateOrCreateDistrict = (districtForm: DistrictDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(regencyForm.id.toString())
-        setValue('nama', regencyForm.nama)
-        setValue('id_provinsi', regencyForm.id_provinsi.toString())
-        setValue('id', regencyForm.id.toString())
+        setSelectedRecordId(districtForm.id.toString())
+        setValue('nama', districtForm.nama)
+        setValue('id_kabkot', districtForm.id_kabkot.toString())
+        setValue('id', districtForm.id.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;
         }
-        console.log(values)
         const response = submitMode === 'POST' ? (
             await postData(
                 {
                     id: values.id.toString(),
-                    id_provinsi: values.id_provinsi,
+                    id_kabkot: values.id_kabkot,
                     nama: values.nama
                 },
             )
         ) : (
             await updateData(
-                `/master/regency/${selectedRecordId}`,
+                `/master/district/${selectedRecordId}`,
                 {
                     id: values.id.toString(),
-                    id_provinsi: values.id_provinsi,
+                    id_kabkot: values.id_kabkot,
                     nama: values.nama
                 },
             )
@@ -109,11 +108,11 @@ const UpdateOrCreateRegency = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} provinsi ${response.data.nama}`,
+                    : 'memperbarui data '} kecamatan ${response.data.nama}`,
             })
-            regencyForm.reset({
+            districtForm.reset({
                 nama: "",
-                id_provinsi: "",
+                id_kabkot: "",
                 id: "",
             })
             onRefresh();
@@ -122,15 +121,16 @@ const UpdateOrCreateRegency = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreateRegency(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreateDistrict(selectedRecord);
         }
     }, [selectedRecord])
 
     useEffect(() => {
         setPostError(null)
         setPatchError(null)
-        regencyForm.clearErrors()
+        districtForm.clearErrors()
     }, [showDialog]);
+
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
@@ -140,27 +140,27 @@ const UpdateOrCreateRegency = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Kabupaten / Kota
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Kecamatan
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...regencyForm}>
+                        <Form {...districtForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="id_provinsi"
+                                        name="id_kabkot"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Pilih Provinsi</FormLabel>
+                                                    <FormLabel>Pilih Kabupaten / Kota</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<ProvinceDTO>
-                                                            url="/master/province"
+                                                        <SelectSearch<RegencyDTO>
+                                                            url="/master/regency"
                                                             labelName="nama"
                                                             valueName="id"
-                                                            placeholder="Masukkan nama Provinsi untuk mencari..."
+                                                            placeholder="Masukkan nama Kota..."
                                                             onChange={field.onChange}
                                                             defaultValue={field.value || undefined}
                                                         />
@@ -193,7 +193,7 @@ const UpdateOrCreateRegency = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Kabupaten / Kota</FormLabel>
+                                                    <FormLabel>Nama Kecamatan</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -229,4 +229,4 @@ const UpdateOrCreateRegency = ({
     )
 }
 
-export default UpdateOrCreateRegency
+export default UpdateOrCreateDistrict

@@ -48,6 +48,7 @@ type PositionDTO = {
     id_ms_jabatan: number;
     nama_jabatan: string;
     status: number;
+    results: PositionDTO;
 }
 
 type ProvinceRelationDTO = {
@@ -55,7 +56,7 @@ type ProvinceRelationDTO = {
 }
 
 type PaginationDTO = {
-    current_cursor: number,
+    current_cursor: number;
     take: number
 }
 
@@ -77,9 +78,9 @@ type RegencyRelationDTO = {
 }
 
 type RegencyDTO = {
-    id: string,
-    id_provinsi: string,
-    nama: string,
+    id: string;
+    id_provinsi: string;
+    nama: string;
     ms_provinsi?: RegencyRelationDTO;
 }
 
@@ -87,6 +88,39 @@ type RegenciesDTO = {
     pagination: PaginationDTO,
     results: RegencyDTO[];
 }
+
+type DistrictRelationDTO = {
+    id: number;
+    nama: string;
+}
+type DistrictDTO = {
+    id: string;
+    id_kabkot: string;
+    nama: string;
+    ms_kabkot?: DistrictRelationDTO
+}
+
+type DistrictsDTO = {
+    pagination: PaginationDTO;
+    results: DistrictDTO[];
+}
+
+type VillageRelationDTO = {
+    id: number;
+    nama: string;
+}
+type VillageDTO = {
+    id: string;
+    id_kecamatan: string;
+    nama: string;
+    ms_kecamatan?: VillageRelationDTO
+}
+type VillagesDTO = {
+    pagination: PaginationDTO;
+    results: VillageDTO[];
+}
+
+
 export type {
     ReligionDTO,
     BloodTypeDTO,
@@ -100,5 +134,11 @@ export type {
     ProvincesDTO,
     ProvinceDTO,
     RegencyDTO,
-    RegenciesDTO
+    RegenciesDTO,
+    DistrictsDTO,
+    DistrictRelationDTO,
+    DistrictDTO,
+    VillagesDTO,
+    VillageDTO,
+    VillageRelationDTO
 };

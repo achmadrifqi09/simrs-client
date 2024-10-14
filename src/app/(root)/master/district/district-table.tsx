@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {RegencyDTO, RegenciesDTO} from "@/types/master";
+import type {DistrictDTO, DistrictsDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -11,27 +11,27 @@ import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import CursorPagination from "@/components/ui/cursor-pagination";
 
-interface RegencyProps {
+interface DistrictProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<RegencyDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<DistrictDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const RegencyTable = (
+const DistrictTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete
-    }: RegencyProps) => {
-    const url: string = '/master/regency'
+    }: DistrictProps) => {
+    const url: string = '/master/district'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [cursor, setCursor] = useState<number>(0);
     const [takeData, setTakeData] = useState<number>(10);
-    const {data, loading, error, getData} = useGet<RegenciesDTO>({
+    const {data, loading, error, getData} = useGet<DistrictsDTO>({
         url: url,
         keyword: searchKeyword,
         take: takeData,
@@ -90,6 +90,7 @@ const RegencyTable = (
             });
         }
     }, [refreshTrigger, getData, status]);
+
     return (
         <>
             <Input type="search" className="w-full md:w-1/3" placeholder="Cari data ..."
@@ -98,8 +99,8 @@ const RegencyTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Kabupaten / Kota</TableHead>
-                        <TableHead>Provinsi</TableHead>
+                        <TableHead>Nama Kecamatan</TableHead>
+                        <TableHead>Kabupaten/Kota</TableHead>
                         <TableHead>Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -130,18 +131,18 @@ const RegencyTable = (
                                 </TableRow>
                             ))
                         ) : (
-                            data?.results?.map((province: RegencyDTO, index: number) => {
+                            data?.results?.map((district: DistrictDTO, index: number) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <TableRow>
-                                            <TableCell className="font-medium">{province.id}</TableCell>
-                                            <TableCell className="font-medium">{province.nama}</TableCell>
-                                            <TableCell className="font-medium">{province.ms_provinsi?.nama || '-'}</TableCell>
+                                            <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
+                                            <TableCell className="font-medium">{district.nama}</TableCell>
+                                            <TableCell className="font-medium">{district.ms_kabkot?.nama || '-'}</TableCell>
                                             <TableCell>
                                                 <div className="flex gap-2">
                                                     <Button
                                                         onClick={() => {
-                                                            selectRecord(province);
+                                                            selectRecord(district);
                                                             setAction(Action.UPDATE_FIELDS)
                                                         }}
                                                         size="sm">
@@ -149,7 +150,7 @@ const RegencyTable = (
                                                     </Button>
                                                     <Button
                                                         onClick={() => {
-                                                            selectRecord(province);
+                                                            selectRecord(district);
                                                             setAction(Action.DELETE)
                                                             setAlertDelete(true)
                                                         }}
@@ -178,4 +179,4 @@ const RegencyTable = (
     )
 }
 
-export default RegencyTable;
+export default DistrictTable;
