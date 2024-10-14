@@ -96,7 +96,7 @@ const PanelLayout = ({children}: { children: ReactNode }) => {
         <>
             <ProgressBar height="5px" color="#F1A7AC" options={{showSpinner: false}} shallowRouting/>
             <div className="w-screen h-dvh overflow-hidden">
-                <TopBar onToggleMenu={handleShowMenu} menus={menus || []}/>
+                <TopBar onToggleMenu={handleShowMenu}/>
                 <div className="flex h-content overflow-hidden">
                     <Navigation show={show}/>
                     <div className="main-wrapper overflow-hidden">
