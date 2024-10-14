@@ -9,48 +9,73 @@ import {usePathname} from 'next/navigation';
 import {routeWithoutPanel} from '@/const/routeWithoutPanel';
 import {useSession} from 'next-auth/react';
 import {fetcher} from '@/utils/fetcher';
-import {isAxiosError} from "axios";
 import {toast} from "@/hooks/use-toast";
 import {Menu} from "@/types/menu-type";
-import {LAST_FETCH_KEY, MENU_CACHE_KEY} from "@/const/menu";
+import Cookies from "js-cookie";
+import {isAxiosError} from "axios";
+import {compressToBase64} from "lz-string";
+import {Permission} from "@/types/permission";
+import {useMenuStore, usePermissionsStore} from "@/lib/zustand/store";
 
 const PanelLayout = ({children}: { children: ReactNode }) => {
     const pathName = usePathname();
     const [show, setShow] = useState<boolean>(true);
     const checkingPath = routeWithoutPanel.some((path) => pathName.includes(path));
     const {data: session, status} = useSession();
-    const [menus, setMenus] = useState<Menu[]>();
+    const {setPermissions, permissions} = usePermissionsStore();
+    const {setMenu, menus} = useMenuStore();
 
     useEffect(() => {
         const fetchMenus = async () => {
             if (session?.user?.id && session?.accessToken) {
-                const cachedMenus = localStorage.getItem(MENU_CACHE_KEY);
-                const lastFetch = localStorage.getItem(LAST_FETCH_KEY);
-                const now = new Date();
-                if (cachedMenus && lastFetch && (now.getTime() - new Date(lastFetch).getTime() < 60 * 60 * 1000)) {
-                    setMenus(JSON.parse(cachedMenus));
-                } else {
-                    try {
-                        const fetchedMenus = await fetcher(`/menu/user/${session.user.id}`, session.accessToken);
-                        setMenus(fetchedMenus);
-                        if (localStorage) {
-                            localStorage.setItem(MENU_CACHE_KEY, JSON.stringify(fetchedMenus));
-                            localStorage.setItem(LAST_FETCH_KEY, now.toISOString());
-                        }
-                    } catch (error) {
-                        if (isAxiosError(error)) {
+
+                try {
+                    if (menus.length === 0) {
+                        const fetchedMenus: Menu[] = await fetcher(`/menu/user`, session.accessToken);
+                        setMenu(fetchedMenus)
+
+                        const menuPaths = JSON.stringify(getMenuPath(fetchedMenus))
+                        const compressedMenu = compressToBase64(menuPaths)
+
+                        if (menuPaths.length < 4096) {
+                            Cookies.set("menu_paths", compressedMenu as string)
+                        } else {
                             toast({
-                                description: error?.message,
+                                title: "Terjadi Kesalahan",
+                                description: 'Akses menu user terlalu banyak, tidak dapat di kompres',
                             });
                         }
-                        if (cachedMenus) {
-                            setMenus(JSON.parse(cachedMenus));
-                        }
+
                     }
+                } catch (error) {
+                    if (isAxiosError(error)) {
+                        toast({
+                            title: "Terjadi Kesalahan",
+                            description: error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga',
+                        });
+                    }
+                }
+
+                if (permissions.length === 0) {
+                    const permissions: Permission[] = await fetcher(`/user-access/permission`, session.accessToken);
+                    setPermissions(permissions);
                 }
             }
         };
 
+        const getMenuPath = (menus: Menu[]) => {
+            const paths: string[] = [];
+            menus.forEach((menu) => {
+                if (menu?.children && menu.is_submenu) {
+                    menu?.children.forEach((submenu) => {
+                        if (submenu.pathname) paths.push(submenu?.pathname)
+                    })
+                } else {
+                    if (menu?.pathname) paths.push(menu.pathname)
+                }
+            })
+            return paths;
+        }
         fetchMenus().catch(() => {
             toast({description: 'Gagal mendapatkan data menu'})
         });
@@ -73,7 +98,7 @@ const PanelLayout = ({children}: { children: ReactNode }) => {
             <div className="w-screen h-dvh overflow-hidden">
                 <TopBar onToggleMenu={handleShowMenu} menus={menus || []}/>
                 <div className="flex h-content overflow-hidden">
-                    <Navigation show={show} menus={menus || []}/>
+                    <Navigation show={show}/>
                     <div className="main-wrapper overflow-hidden">
                         <main className="p-4 md:p-6 flex-1 main shadow-inner">
                             <DynamicBreadcrumb/>

@@ -9,29 +9,29 @@ import {useRouter} from "next/navigation";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Menu as MenuType} from "@/types/menu-type";
 import {LuAlignLeft, LuChevronDown, LuLogOut} from "react-icons/lu";
-import {LAST_FETCH_KEY, MENU_CACHE_KEY} from "@/const/menu";
+import {clearClientSideCookies} from "@/utils/cookies-cleaner";
+import {useMenuStore, usePermissionsStore} from "@/lib/zustand/store";
 
 
 type TopBarProps = {
     onToggleMenu: () => void
-    menus: MenuType[]
 }
 
-const TopBar = ({onToggleMenu, menus}: TopBarProps) => {
+const TopBar = ({onToggleMenu}: TopBarProps) => {
     const {data: session, status} = useSession()
     const router = useRouter()
     const handleToggleMenu = () => {
         onToggleMenu()
     }
-
+    const {clearPermissions} = usePermissionsStore()
+    const {clearMenu} = useMenuStore()
     const handleLogout = () => {
         signOut()
             .then(() => {
-                if(localStorage){
-                    localStorage.removeItem(MENU_CACHE_KEY)
-                    localStorage.removeItem(LAST_FETCH_KEY)
-                }
                 router.push('/login')
+                clearMenu()
+                clearClientSideCookies()
+                clearPermissions()
             })
             .catch((error) => {
                 toast({
@@ -106,7 +106,7 @@ const TopBar = ({onToggleMenu, menus}: TopBarProps) => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <MobileNavigation menus={menus}/>
+                <MobileNavigation/>
             </div>
         </div>
     )

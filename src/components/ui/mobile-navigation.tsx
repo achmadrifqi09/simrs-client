@@ -13,23 +13,23 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 import {Button} from "@/components/ui/button";
-import {AlignRight} from "lucide-react";
+import {AlignRight, TrafficCone} from "lucide-react";
 import {usePathname} from "next/navigation";
 import {Menu as MenuType, Submenu} from "@/types/menu-type";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {useWindowSize} from "@/hooks/use-window-size";
 import {Skeleton} from "@/components/ui/skeleton";
+import {useMenuStore} from "@/lib/zustand/store";
 
-type NavigationProps = {
-    menus: MenuType[]
-}
 
-const MobileNavigation = ({menus}: NavigationProps) => {
+
+const MobileNavigation = () => {
     const pathname = usePathname()
     const isMobile = useWindowSize()
     const [isOpen, setOpen] = React.useState(false);
     const [openCollapseId, setOpenCollapseId] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(true);
+    const {menus} = useMenuStore()
 
     const findPathname = (menus: Submenu[]) => {
         return menus.some(menu => {
@@ -94,37 +94,48 @@ const MobileNavigation = ({menus}: NavigationProps) => {
                 <ScrollArea className="[&>div>div[style]]:!block md:hidden mt-8">
                     <div className="ps-3.5 space-y-2 mr-2.5">
                         {
-                            menus?.map((menu: MenuType, index: number) => {
-                                return (
-                                    <SheetClose asChild key={index}>
-                                        <React.Fragment>
-                                            {menu.is_submenu ? (
-                                                <CollapseMenu
-                                                    key={index}
-                                                    id={`${menu.label.replace(' ', '-')}-${index}`}
-                                                    iconName={menu.icon}
-                                                    label={menu.label}
-                                                    submenus={menu.children || []}
-                                                    active={findPathname(menu.children || [])}
-                                                    open={openCollapseId === `${menu.label.replace(' ', '-')}-${index}`}
-                                                    onToggle={handleToggleCollapse}
-                                                    closeMenu={() => setOpen(!open)}/>
-                                            ) : (
+                            menus.length > 0 ? (
+                                menus?.map((menu: MenuType, index: number) => {
+                                    return (
+                                        <SheetClose asChild key={index}>
+                                            <React.Fragment>
+                                                {menu.is_submenu ? (
+                                                    <CollapseMenu
+                                                        key={index}
+                                                        id={`${menu.label.replace(' ', '-')}-${index}`}
+                                                        iconName={menu.icon}
+                                                        label={menu.label}
+                                                        submenus={menu.children || []}
+                                                        active={findPathname(menu.children || [])}
+                                                        open={openCollapseId === `${menu.label.replace(' ', '-')}-${index}`}
+                                                        onToggle={handleToggleCollapse}
+                                                        closeMenu={() => setOpen(!open)}/>
+                                                ) : (
 
-                                                <Menu iconName={menu.icon} href={`${menu.pathname}`} label={menu.label}
-                                                      active={pathname === menu.pathname}
-                                                      onClick={() => setOpen(!open)}></Menu>
-                                            )}
-                                        </React.Fragment>
-                                    </SheetClose>
-                                )
-                            })
+                                                    <Menu iconName={menu.icon} href={`${menu.pathname}`}
+                                                          label={menu.label}
+                                                          active={pathname === menu.pathname}
+                                                          onClick={() => setOpen(!open)}></Menu>
+                                                )}
+                                            </React.Fragment>
+                                        </SheetClose>
+                                    )
+                                })
+                            ) : loading ? (
+                                Array.from({length: 4}, (_, index) => (
+                                    <Skeleton className="h-10 w-full rounded-lg" key={index}/>
+                                ))
+                            ) : (
+                                <div className="text-center text-gray-500 mt-4">
+                                    <div className="bg-red-600 text-white w-12 h-12 p-2 rounded-full mx-auto mb-2">
+                                        <TrafficCone className="w-8 h-8 mb-2"/>
+                                    </div>
+                                    <span className="text-gray-900">Tidak ada menu yang tersedia</span>
+                                    <span className="text-sm block mt-1">Silakan hubungi pihak terkait untuk menambahkan akses anda</span>
+                                </div>
+                            )
                         }
-                        {loading && (
-                            Array.from({length: 4}, (_, index) => (
-                                <Skeleton className="h-10 w-full rounded-lg" key={index}/>
-                            ))
-                        )}
+
                     </div>
                 </ScrollArea>
             </SheetContent>

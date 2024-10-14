@@ -10,6 +10,7 @@ import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import CursorPagination from "@/components/ui/cursor-pagination";
+import {Permission} from "@/types/permission";
 
 interface ProvinceProps {
     refreshTrigger: number;
@@ -17,6 +18,7 @@ interface ProvinceProps {
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null
 }
 
 const ProvinceTable = (
@@ -24,7 +26,8 @@ const ProvinceTable = (
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: ProvinceProps) => {
     const url: string = '/master/province'
     const {status} = useSession();
@@ -90,7 +93,6 @@ const ProvinceTable = (
             });
         }
     }, [refreshTrigger, getData, status]);
-
     return (
         <>
             <Input type="search" className="w-full md:w-1/3" placeholder="Cari data ..."
@@ -101,64 +103,84 @@ const ProvinceTable = (
                         <TableHead>No</TableHead>
                         <TableHead>Nama Provinsi</TableHead>
                         <TableHead>Negara</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            (permission?.can_update || permission?.can_delete) && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
-                       loading || status == 'loading' ? (
-                           Array.from({length: 4}, (_, index) => (
-                               <TableRow key={index}>
-                                   <TableCell className="text-center">
-                                       <Skeleton className="h-5 w-16 rounded-lg"/>
-                                   </TableCell>
-                                   <TableCell className="text-center">
-                                       <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                   </TableCell>
-                                   <TableCell className="text-center">
-                                       <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                   </TableCell>
-
-                                   <TableCell className="text-center flex gap-4">
-                                       <Skeleton className="h-10 w-16 rounded-lg"/>
-                                       <Skeleton className="h-10 w-16 rounded-lg"/>
-                                   </TableCell>
-                               </TableRow>
-                           ))
-                       ) : (
-                           data?.results?.map((province: ProvinceDTO, index: number) => {
-                               return (
-                                   <React.Fragment key={index}>
-                                       <TableRow>
-                                           <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
-                                           <TableCell className="font-medium">{province.nama}</TableCell>
-                                           <TableCell className="font-medium">{province.ms_negara?.nama || '-'}</TableCell>
-                                           <TableCell>
-                                               <div className="flex gap-2">
-                                                   <Button
-                                                       onClick={() => {
-                                                           selectRecord(province);
-                                                           setAction(Action.UPDATE_FIELDS)
-                                                       }}
-                                                       size="sm">
-                                                       Update
-                                                   </Button>
-                                                   <Button
-                                                       onClick={() => {
-                                                           selectRecord(province);
-                                                           setAction(Action.DELETE)
-                                                           setAlertDelete(true)
-                                                       }}
-                                                       size="sm" variant="outline">
-                                                       Hapus
-                                                   </Button>
-                                               </div>
-                                           </TableCell>
-                                       </TableRow>
-                                   </React.Fragment>
-                               )
-                           })
-                       )
+                        loading || status == 'loading' ? (
+                            Array.from({length: 4}, (_, index) => (
+                                <TableRow key={index}>
+                                    <TableCell className="text-center">
+                                        <Skeleton className="h-5 w-16 rounded-lg"/>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                    </TableCell>
+                                    {
+                                        (permission?.can_update || permission?.can_delete) && (
+                                            <TableCell className="text-center flex gap-4">
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                            </TableCell>
+                                        )
+                                    }
+                                </TableRow>
+                            ))
+                        ) : (
+                            data?.results?.map((province: ProvinceDTO, index: number) => {
+                                return (
+                                    <React.Fragment key={index}>
+                                        <TableRow>
+                                            <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
+                                            <TableCell className="font-medium">{province.nama}</TableCell>
+                                            <TableCell
+                                                className="font-medium">{province.ms_negara?.nama || '-'}</TableCell>
+                                            {
+                                               ( permission?.can_update || permission?.can_delete) && (
+                                                    <TableCell>
+                                                        <div className="flex gap-2">
+                                                            {
+                                                                permission.can_update && (
+                                                                    <Button
+                                                                        onClick={() => {
+                                                                            selectRecord(province);
+                                                                            setAction(Action.UPDATE_FIELDS)
+                                                                        }}
+                                                                        size="sm">
+                                                                        Update
+                                                                    </Button>
+                                                                )
+                                                            }
+                                                            {
+                                                                permission?.can_delete && (
+                                                                    <Button
+                                                                        onClick={() => {
+                                                                            selectRecord(province);
+                                                                            setAction(Action.DELETE)
+                                                                            setAlertDelete(true)
+                                                                        }}
+                                                                        size="sm" variant="outline">
+                                                                        Hapus
+                                                                    </Button>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </TableCell>
+                                                )
+                                            }
+                                        </TableRow>
+                                    </React.Fragment>
+                                )
+                            })
+                        )
                     }
                     {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
