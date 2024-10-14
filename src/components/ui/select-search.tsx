@@ -106,10 +106,8 @@ const SelectSearch = <T extends Record<string, any>>({
     useEffect(() => {
         const loadDefaultValue = async () => {
             if (defaultValue !== undefined) {
-                const options = await fetchOptions('');
+                const options = await fetchOptions(defaultValue as string);
                 const defaultOption = options.find(option => option.value === defaultValue);
-            console.log(defaultValue)
-            console.log(options);
                 if (defaultOption) {
                     setSelectedOption(defaultOption);
                     if (onChange) {

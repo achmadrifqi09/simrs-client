@@ -90,7 +90,6 @@ const VillageTable = (
             });
         }
     }, [refreshTrigger, getData, status]);
-    console.log(data)
     return (
         <>
             <Input type="search" className="w-full md:w-1/3" placeholder="Cari data ..."
