@@ -24,19 +24,22 @@ import {useSession} from "next-auth/react";
 import type {CountryDTO, ProvinceDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
+import {Permission} from "@/types/permission";
 
 type UpdateOrCreateProvinceProps = {
     onRefresh: () => void,
     selectedRecord: ProvinceDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<ProvinceDTO | null>>
-    actionType: Action
+    actionType: Action,
+    permission: Permission | null
 }
 
 const UpdateOrCreateProvince = ({
                                     onRefresh,
                                     selectedRecord,
                                     setSelectedRecord,
-                                    actionType
+                                    actionType,
+                                    permission
                                 }: UpdateOrCreateProvinceProps) => {
     const provinceForm = useForm<z.infer<typeof provinceValidation>>({
         resolver: zodResolver(provinceValidation),
@@ -46,7 +49,6 @@ const UpdateOrCreateProvince = ({
             id: ""
         }
     })
-
     const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
@@ -155,7 +157,12 @@ const UpdateOrCreateProvince = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah Data</Button>
+                    {
+                        permission?.can_create && (
+                            <Button className="mb-4"
+                                    onClick={handleOpenDialog}>Tambah Data</Button>
+                        )
+                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

@@ -13,11 +13,12 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {signIn, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
 import {LuEye, LuEyeOff, LuFolderLock, LuLoader2} from "react-icons/lu";
+import {toast} from "@/hooks/use-toast";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const route = useRouter();
+    const router = useRouter();
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
     const credentials = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -26,7 +27,7 @@ const Login = () => {
             password: ""
         }
     })
-    const {status} = useSession() as { status: string };
+    const {status} = useSession();
 
     const {handleSubmit, control} = credentials
 
@@ -34,8 +35,8 @@ const Login = () => {
         setErrorMessage(null);
         setLoadingSubmit(true);
 
-        if (status === 'authenticate') {
-            return route.push('/')
+        if (status === 'authenticated') {
+            return router.push('/')
         }
 
         const result = await signIn('credentials', {
@@ -48,8 +49,9 @@ const Login = () => {
             setLoadingSubmit(false);
             return
         }
-        setLoadingSubmit(false);
-        return route.push('/')
+        setLoadingSubmit(false)
+        toast({description: 'Login berhasil', duration: 2000})
+        return router.push('/')
     })
 
     return (

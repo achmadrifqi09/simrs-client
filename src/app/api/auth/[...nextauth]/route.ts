@@ -56,7 +56,6 @@ const authOptions: NextAuthOptions = {
                     id: user.id,
                     name: user.name,
                     email: user.email,
-                    permissions: user.permissions,
                 };
             }
 
@@ -71,7 +70,7 @@ const authOptions: NextAuthOptions = {
             session.user = token.user;
             return session;
         },
-    },
+    }
 };
 const handler: any = NextAuth(authOptions);
 
