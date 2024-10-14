@@ -7,7 +7,6 @@ import {signOut, useSession} from "next-auth/react";
 import {toast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 import {Skeleton} from "@/components/ui/skeleton";
-import {Menu as MenuType} from "@/types/menu-type";
 import {LuAlignLeft, LuChevronDown, LuLogOut} from "react-icons/lu";
 import {clearClientSideCookies} from "@/utils/cookies-cleaner";
 import {useMenuStore, usePermissionsStore} from "@/lib/zustand/store";

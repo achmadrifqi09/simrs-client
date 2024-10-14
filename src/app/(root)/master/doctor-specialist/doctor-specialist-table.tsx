@@ -127,7 +127,7 @@ const DoctorSpecialistTable
                     }
                     {(data && data.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
