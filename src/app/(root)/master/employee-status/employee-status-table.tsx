@@ -10,13 +10,15 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Permission} from "@/types/permission"
 
 interface EmployeeStatusProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null
 }
 
 const EmployeeStatusTable = (
@@ -24,7 +26,8 @@ const EmployeeStatusTable = (
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: EmployeeStatusProps) => {
     const url: string = '/master/employee-status'
     const {status} = useSession();
@@ -76,7 +79,11 @@ const EmployeeStatusTable = (
                         <TableHead>No</TableHead>
                         <TableHead>Nama Status Pegawai</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            (permission?.can_update || permission?.can_delete) && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -86,39 +93,56 @@ const EmployeeStatusTable = (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{employeeStatus.nama_status_pegawai}</TableCell>
+                                        <TableCell
+                                            className="font-medium">{employeeStatus.nama_status_pegawai}</TableCell>
                                         <TableCell>
-                                            <Switch
-                                                checked={employeeStatus.status === 1}
-                                                onCheckedChange={
-                                                    () => {
-                                                        selectRecord(employeeStatus);
-                                                        setAction(Action.UPDATE_STATUS)
-                                                    }
-                                                }
-                                            />
+                                            {
+                                                permission?.can_update ? (
+                                                    <Switch
+                                                        checked={employeeStatus.status === 1}
+                                                        onCheckedChange={
+                                                            () => {
+                                                                selectRecord(employeeStatus);
+                                                                setAction(Action.UPDATE_STATUS)
+                                                            }
+                                                        }
+                                                    />
+                                                ): (employeeStatus.status === 1 ? 'Aktif' : 'Non Aktif')
+                                            }
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(employeeStatus);
-                                                        setAction(Action.UPDATE_FIELDS)
-                                                    }}
-                                                    size="sm">
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(employeeStatus);
-                                                        setAction(Action.DELETE)
-                                                        setAlertDelete(true)
-                                                    }}
-                                                    size="sm" variant="outline">
-                                                    Hapus
-                                                </Button>
-                                            </div>
-                                        </TableCell>
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell>
+                                                    <div className="flex gap-2">
+                                                        {
+                                                            permission?.can_update && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(employeeStatus);
+                                                                        setAction(Action.UPDATE_FIELDS)
+                                                                    }}
+                                                                    size="sm">
+                                                                    Update
+                                                                </Button>
+                                                            )
+                                                        }
+                                                        {
+                                                            permission?.can_delete && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(employeeStatus);
+                                                                        setAction(Action.DELETE)
+                                                                        setAlertDelete(true)
+                                                                    }}
+                                                                    size="sm" variant="outline">
+                                                                    Hapus
+                                                                </Button>
+                                                            )
+                                                        }
+                                                    </div>
+                                                </TableCell>
+                                            )
+                                        }
                                     </TableRow>
                                 </React.Fragment>
                             )

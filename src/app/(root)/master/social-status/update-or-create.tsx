@@ -19,32 +19,32 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {maritalStatusValidation} from "@/validation-schema/master";
+import {socialStatusValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {MaritalStatusDTO} from "@/types/master";
+import type {SocialStatusDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
-type UpdateOrCreateMaritalStatusProps = {
+type UpdateOrCreateSocialStatusProps = {
     onRefresh: () => void,
-    selectedRecord: MaritalStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<MaritalStatusDTO | null>>
-    actionType: Action
+    selectedRecord: SocialStatusDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<SocialStatusDTO | null>>
+    actionType: Action,
     permission: Permission | null
 }
 
-const UpdateOrCreateMaritalStatus = ({
-                                         onRefresh,
-                                         selectedRecord,
-                                         setSelectedRecord,
-                                         actionType,
-                                         permission
-                                     }: UpdateOrCreateMaritalStatusProps) => {
-    const maritalStatusForm = useForm<z.infer<typeof maritalStatusValidation>>({
-        resolver: zodResolver(maritalStatusValidation),
+const UpdateOrCreateSocialStatus = ({
+                                        onRefresh,
+                                        selectedRecord,
+                                        setSelectedRecord,
+                                        actionType,
+                                        permission
+                                    }: UpdateOrCreateSocialStatusProps) => {
+    const religionForm = useForm<z.infer<typeof socialStatusValidation>>({
+        resolver: zodResolver(socialStatusValidation),
         defaultValues: {
-            nama_status_kawin: "",
+            nama_status_sosial: "",
             status: "1"
         }
     })
@@ -54,9 +54,9 @@ const UpdateOrCreateMaritalStatus = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/marital-status')
+    const {postData, postLoading, postError} = usePost('/master/social-status')
     const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = maritalStatusForm
+    const {handleSubmit, control, setValue} = religionForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -66,15 +66,16 @@ const UpdateOrCreateMaritalStatus = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_status_kawin', "")
+        setValue('nama_status_sosial', "")
         setValue('status', '1')
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
+        console.log(id)
         const response = await updateData(
-            `/master/marital-status/${id}/status`,
+            `/master/social-status/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,18 +83,18 @@ const UpdateOrCreateMaritalStatus = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate visibilitas  ${selectedRecord?.nama_status_kawin} 
+                description: `Berhasil mengupdate Status Sosial  ${selectedRecord?.nama_status_sosial} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateMaritalStatus = (maritalStatusForm: MaritalStatusDTO) => {
+    const onUpdateSocialStatus = (religionForm: SocialStatusDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(maritalStatusForm.id_ms_status_kawin)
-        setValue('nama_status_kawin', maritalStatusForm.nama_status_kawin)
-        setValue('status', maritalStatusForm.status.toString())
+        setSelectedRecordId(religionForm.id)
+        setValue('nama_status_sosial', religionForm.nama_status_sosial)
+        setValue('status', religionForm.status.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -103,12 +104,14 @@ const UpdateOrCreateMaritalStatus = ({
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama_status_kawin: values.nama_status_kawin},
+                {   status: Number(values.status),
+                    nama_status_sosial: values.nama_status_sosial
+                },
             )
         ) : (
             await updateData(
-                `/master/marital-status/${selectedRecordId}`,
-                {status: Number(values.status), nama_status_kawin: values.nama_status_kawin},
+                `/master/social-status/${selectedRecordId}`,
+                {status: Number(values.status), nama_status_sosial: values.nama_status_sosial},
             )
         )
 
@@ -117,10 +120,10 @@ const UpdateOrCreateMaritalStatus = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} status kawin ${response.data.nama_status_kawin}`,
+                    : 'memperbarui data '} Status Sosial ${response.data.nama_status_sosial}`,
             })
-            maritalStatusForm.reset({
-                nama_status_kawin: "",
+            religionForm.reset({
+                nama_status_sosial: "",
                 status: "1"
             })
             onRefresh();
@@ -129,9 +132,9 @@ const UpdateOrCreateMaritalStatus = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateMaritalStatus(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateSocialStatus(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_ms_status_kawin, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
@@ -141,7 +144,7 @@ const UpdateOrCreateMaritalStatus = ({
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
                     {
-                        permission?.can_create &&(
+                        permission?.can_create && (
                             <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
                         )
                     }
@@ -149,21 +152,21 @@ const UpdateOrCreateMaritalStatus = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Kawin
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Keluarga
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...maritalStatusForm}>
+                        <Form {...religionForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_status_kawin"
+                                        name="nama_status_sosial"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Perkawinan</FormLabel>
+                                                    <FormLabel>Nama Status Keluarga</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -229,4 +232,4 @@ const UpdateOrCreateMaritalStatus = ({
     )
 }
 
-export default UpdateOrCreateMaritalStatus
+export default UpdateOrCreateSocialStatus

@@ -10,21 +10,24 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Permission} from "@/types/permission";
 
 interface RankOrClassTableProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<RankOrClassDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null
 }
 
-const RankOrClassTable = (
+const EmployeeRankTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: RankOrClassTableProps) => {
     const url: string = '/master/employee-rank'
     const {status} = useSession();
@@ -76,7 +79,11 @@ const RankOrClassTable = (
                         <TableHead>No</TableHead>
                         <TableHead>Nama Golongan / Pangkat</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            (permission?.can_update || permission?.can_delete) && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -88,37 +95,54 @@ const RankOrClassTable = (
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell className="font-medium">{rankOrClass.nama_pangkat}</TableCell>
                                         <TableCell>
-                                            <Switch
-                                                checked={rankOrClass.status === 1}
-                                                onCheckedChange={
-                                                    () => {
-                                                        selectRecord(rankOrClass);
-                                                        setAction(Action.UPDATE_STATUS)
-                                                    }
-                                                }
-                                            />
+                                            {
+                                                permission?.can_update && (
+                                                    <Switch
+                                                        checked={rankOrClass.status === 1}
+                                                        onCheckedChange={
+                                                            () => {
+                                                                selectRecord(rankOrClass);
+                                                                setAction(Action.UPDATE_STATUS)
+                                                            }
+                                                        }
+                                                    />
+                                                )
+                                            }
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(rankOrClass);
-                                                        setAction(Action.UPDATE_FIELDS)
-                                                    }}
-                                                    size="sm">
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(rankOrClass);
-                                                        setAction(Action.DELETE)
-                                                        setAlertDelete(true)
-                                                    }}
-                                                    size="sm" variant="outline">
-                                                    Hapus
-                                                </Button>
-                                            </div>
-                                        </TableCell>
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell>
+                                                    <div className="flex gap-2">
+                                                        {
+                                                            permission?.can_update && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(rankOrClass);
+                                                                        setAction(Action.UPDATE_FIELDS)
+                                                                    }}
+                                                                    size="sm">
+                                                                    Update
+                                                                </Button>
+                                                            )
+                                                        }
+                                                        {
+                                                            permission?.can_delete && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(rankOrClass);
+                                                                        setAction(Action.DELETE)
+                                                                        setAlertDelete(true)
+                                                                    }}
+                                                                    size="sm" variant="outline">
+                                                                    Hapus
+                                                                </Button>
+                                                            )
+                                                        }
+                                                    </div>
+                                                </TableCell>
+                                            )
+                                        }
+
                                     </TableRow>
                                 </React.Fragment>
                             )
@@ -142,10 +166,14 @@ const RankOrClassTable = (
                                     <TableCell className="text-center">
                                         <Skeleton className="h-8 w-12 rounded-lg"/>
                                     </TableCell>
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
+                                    {
+                                        permission?.can_update || permission?.can_delete && (
+                                            <TableCell className="text-center flex gap-4">
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                            </TableCell>
+                                        )
+                                    }
                                 </TableRow>
                             ))
                         )
@@ -157,4 +185,4 @@ const RankOrClassTable = (
     )
 }
 
-export default RankOrClassTable
+export default EmployeeRankTable

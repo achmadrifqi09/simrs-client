@@ -10,13 +10,15 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Permission} from "@/types/permission";
 
 interface BloodTypeTableProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<BloodTypeDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null
 }
 
 const BloodTypeTable = (
@@ -24,7 +26,8 @@ const BloodTypeTable = (
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: BloodTypeTableProps) => {
     const url: string = '/master/blood-type'
     const {status} = useSession();
@@ -76,7 +79,11 @@ const BloodTypeTable = (
                         <TableHead>No</TableHead>
                         <TableHead>Nama Golongan Darah</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            permission?.can_update || permission?.can_delete && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -88,36 +95,45 @@ const BloodTypeTable = (
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell className="font-medium">{bloodType.nama_golongan_darah}</TableCell>
                                         <TableCell>
-                                            <Switch
-                                                checked={bloodType.status === 1}
-                                                onCheckedChange={
-                                                    () => {
-                                                        selectRecord(bloodType);
-                                                        setAction(Action.UPDATE_STATUS)
-                                                    }
-                                                }
-                                            />
+                                            {
+                                                permission?.can_update || permission?.can_update && (
+
+                                                    <Switch
+                                                        checked={bloodType.status === 1}
+                                                        onCheckedChange={
+                                                            () => {
+                                                                selectRecord(bloodType);
+                                                                setAction(Action.UPDATE_STATUS)
+                                                            }
+                                                        }
+                                                    />
+                                                )
+                                            }
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(bloodType);
-                                                        setAction(Action.UPDATE_FIELDS)
-                                                    }}
-                                                    size="sm">
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(bloodType);
-                                                        setAction(Action.DELETE)
-                                                        setAlertDelete(true)
-                                                    }}
-                                                    size="sm" variant="outline">
-                                                    Hapus
-                                                </Button>
-                                            </div>
+                                            {
+                                                permission?.can_update || permission?.can_delete && (
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            onClick={() => {
+                                                                selectRecord(bloodType);
+                                                                setAction(Action.UPDATE_FIELDS)
+                                                            }}
+                                                            size="sm">
+                                                            Update
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => {
+                                                                selectRecord(bloodType);
+                                                                setAction(Action.DELETE)
+                                                                setAlertDelete(true)
+                                                            }}
+                                                            size="sm" variant="outline">
+                                                            Hapus
+                                                        </Button>
+                                                    </div>
+                                                )
+                                            }
                                         </TableCell>
                                     </TableRow>
                                 </React.Fragment>

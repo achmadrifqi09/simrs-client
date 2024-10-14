@@ -2,45 +2,46 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {MaritalStatusDTO} from "@/types/master";
+import type { RoomTypeDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
-import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
+import {Switch} from "@/components/ui/switch";
 
-interface MaritalStatusProps {
+interface RoomTypeProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<MaritalStatusDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<RoomTypeDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
     permission: Permission | null
 }
 
-const MaritalStatusTable = (
+const RoomTypeTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete,
         permission
-    }: MaritalStatusProps) => {
-    const url: string = '/master/marital-status'
+    }: RoomTypeProps) => {
+    const url: string = '/master/room-type'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<MaritalStatusDTO[]>({
+    const {data, loading, error, getData} = useGet<RoomTypeDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const keyword = e.target.value;
+        const keyword: string = e.target.value;
         setSearchKeyword(keyword);
-    }
+    };
+
 
     const debouncedChangeSearch = useCallback(
         debounce(handleChangeSearch, 500),
@@ -57,6 +58,7 @@ const MaritalStatusTable = (
         }
     }, [error])
 
+
     useEffect(() => {
         if (status === 'authenticated') {
             getData().catch(() => {
@@ -67,8 +69,7 @@ const MaritalStatusTable = (
                 })
             });
         }
-    }, [refreshTrigger, getData, status]);
-
+    }, [refreshTrigger, getData, status])
     return (
         <>
             <Input type="search" className="w-full md:w-1/3" placeholder="Cari data ..."
@@ -77,8 +78,9 @@ const MaritalStatusTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Status Perkawinan</TableHead>
-                        <TableHead>Status (Visibilitas)</TableHead>
+                        <TableHead>Nama Jenis Kamar</TableHead>
+                        <TableHead>Nama Kelas Kamar</TableHead>
+                        <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
                                 <TableHead>Aksi</TableHead>
@@ -88,49 +90,52 @@ const MaritalStatusTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((maritalStatus: MaritalStatusDTO, index: number) => {
+                        data?.map((roomType: RoomTypeDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{maritalStatus.nama_status_kawin}</TableCell>
+                                        <TableCell className="font-medium">{roomType.nama_jenis_kamar}</TableCell>
+                                        <TableCell className="font-medium">
+                                            {roomType?.kelas_kamar?.nama_kelas_kamar || '-'}
+                                        </TableCell>
                                         <TableCell>
                                             {
-                                                permission?.can_update ?(
+                                                permission?.can_update ? (
+
                                                     <Switch
-                                                        checked={maritalStatus.status === 1}
+                                                        checked={roomType.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(maritalStatus);
+                                                                selectRecord(roomType);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ):(maritalStatus.status === 1 ? 'aktif' : 'Non Aktif')
+                                                ) : (roomType.status === 1 ? 'Aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
-                                        <TableCell>
-                                            {
-                                                (permission?.can_update || permission?.can_delete) && (
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell>
                                                     <div className="flex gap-2">
                                                         {
-                                                            permission?.can_update && (
+                                                            permission.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(maritalStatus);
+                                                                        selectRecord(roomType);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
                                                                     size="sm">
                                                                     Update
                                                                 </Button>
-
                                                             )
                                                         }
                                                         {
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(maritalStatus);
+                                                                        selectRecord(roomType);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}
@@ -140,39 +145,43 @@ const MaritalStatusTable = (
                                                             )
                                                         }
                                                     </div>
-                                                )
-                                            }
-                                        </TableCell>
+                                                </TableCell>
+                                            )
+                                        }
                                     </TableRow>
                                 </React.Fragment>
                             )
                         })
                     }
-                    {(data && data.length === 0 && !loading) && (
+                    {(data && data?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
-                        loading || status === 'loading' && (
-                            Array.from({length: 4}, (_, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-16 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-8 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
-                                </TableRow>
+                        loading || status == 'loading' && (
+                            Array.from({length: 4}, (_, index: number) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-16 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell className="text-center flex gap-4">
+                                                    <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                    <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                </TableCell>
+                                            )
+                                        }
+                                    </TableRow>
+                                )
                             ))
-                        )
                     }
                 </TableBody>
             </Table>
@@ -181,4 +190,4 @@ const MaritalStatusTable = (
     )
 }
 
-export default MaritalStatusTable;
+export default RoomTypeTable

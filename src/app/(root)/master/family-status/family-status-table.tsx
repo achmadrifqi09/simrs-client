@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {MaritalStatusDTO} from "@/types/master";
+import type {FamilyStatusDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -12,27 +12,27 @@ import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
 
-interface MaritalStatusProps {
+interface FamilyStatusTableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<MaritalStatusDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<FamilyStatusDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
     permission: Permission | null
 }
 
-const MaritalStatusTable = (
+const FamilyStatusTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete,
         permission
-    }: MaritalStatusProps) => {
-    const url: string = '/master/marital-status'
+    }: FamilyStatusTableProps) => {
+    const url: string = '/master/family-status'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<MaritalStatusDTO[]>({
+    const {data, loading, error, getData} = useGet<FamilyStatusDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -77,8 +77,8 @@ const MaritalStatusTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Status Perkawinan</TableHead>
-                        <TableHead>Status (Visibilitas)</TableHead>
+                        <TableHead>Nama Status Keluarga</TableHead>
+                        <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
                                 <TableHead>Aksi</TableHead>
@@ -88,49 +88,49 @@ const MaritalStatusTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((maritalStatus: MaritalStatusDTO, index: number) => {
+                        data?.map((familyStatus: FamilyStatusDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{maritalStatus.nama_status_kawin}</TableCell>
+                                        <TableCell className="font-medium">{familyStatus.nama_status_keluarga}</TableCell>
                                         <TableCell>
                                             {
-                                                permission?.can_update ?(
+                                                permission?.can_update ? (
+
                                                     <Switch
-                                                        checked={maritalStatus.status === 1}
+                                                        checked={familyStatus.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(maritalStatus);
+                                                                selectRecord(familyStatus);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ):(maritalStatus.status === 1 ? 'aktif' : 'Non Aktif')
+                                                ) : (familyStatus.status === 1 ? 'Aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
-                                        <TableCell>
-                                            {
-                                                (permission?.can_update || permission?.can_delete) && (
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell>
                                                     <div className="flex gap-2">
                                                         {
-                                                            permission?.can_update && (
+                                                            permission.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(maritalStatus);
+                                                                        selectRecord(familyStatus);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
                                                                     size="sm">
                                                                     Update
                                                                 </Button>
-
                                                             )
                                                         }
                                                         {
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(maritalStatus);
+                                                                        selectRecord(familyStatus);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}
@@ -140,9 +140,9 @@ const MaritalStatusTable = (
                                                             )
                                                         }
                                                     </div>
-                                                )
-                                            }
-                                        </TableCell>
+                                                </TableCell>
+                                            )
+                                        }
                                     </TableRow>
                                 </React.Fragment>
                             )
@@ -150,7 +150,7 @@ const MaritalStatusTable = (
                     }
                     {(data && data.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
@@ -181,4 +181,4 @@ const MaritalStatusTable = (
     )
 }
 
-export default MaritalStatusTable;
+export default FamilyStatusTable

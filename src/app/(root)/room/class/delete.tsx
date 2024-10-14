@@ -1,4 +1,4 @@
-import type {RegencyDTO} from "@/types/master";
+import type {RoomClassDTO} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -15,21 +15,21 @@ import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
 
-type DeleteProvinceProps = {
+type DeleteRoomClassProps = {
     onRefresh: () => void,
-    selectedRecord: RegencyDTO | null,
+    selectedRecord: RoomClassDTO | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DeleteProvince = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteProvinceProps) => {
+const DeleteRoomClass = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteRoomClassProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete(
 
     )
     const handleDelete = async () => {
         if (action === Action.DELETE) {
-            const result = await deleteData(`/master/regency/${selectedRecord?.id}`)
+            const result = await deleteData(`/master/kelas-kamar/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -53,7 +53,8 @@ const DeleteProvince = ({onRefresh, selectedRecord, action, showAlert, setShowAl
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data kabupaten / Kota {selectedRecord?.nama}?
+                            Apakah anda yakin akan menghapus data Kelas Kamar dengan
+                            nama {selectedRecord?.nama_kelas_kamar}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -77,4 +78,4 @@ const DeleteProvince = ({onRefresh, selectedRecord, action, showAlert, setShowAl
     );
 }
 
-export default DeleteProvince;
+export default DeleteRoomClass;

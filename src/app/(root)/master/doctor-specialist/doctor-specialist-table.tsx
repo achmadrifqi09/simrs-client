@@ -10,13 +10,15 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Permission} from "@/types/permission";
 
 interface DoctorSpecialistTableProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<DoctorSpecialistDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null;
 }
 
 const DoctorSpecialistTable
@@ -25,7 +27,8 @@ const DoctorSpecialistTable
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: DoctorSpecialistTableProps) => {
     const url: string = '/master/specialist'
     const {status} = useSession();
@@ -77,7 +80,11 @@ const DoctorSpecialistTable
                         <TableHead>No</TableHead>
                         <TableHead>Nama Dokter Spesialis</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            (permission?.can_update || permission?.can_delete) && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -89,36 +96,52 @@ const DoctorSpecialistTable
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell className="font-medium">{doctorSpecialist.nama_spesialis}</TableCell>
                                         <TableCell>
-                                            <Switch
-                                                checked={doctorSpecialist.status === 1}
-                                                onCheckedChange={
-                                                    () => {
-                                                        selectRecord(doctorSpecialist);
-                                                        setAction(Action.UPDATE_STATUS)
-                                                    }
-                                                }
-                                            />
+                                            {
+                                                permission?.can_update ? (
+                                                    <Switch
+                                                        checked={doctorSpecialist.status === 1}
+                                                        onCheckedChange={
+                                                            () => {
+                                                                selectRecord(doctorSpecialist);
+                                                                setAction(Action.UPDATE_STATUS)
+                                                            }
+                                                        }
+                                                    />
+                                                ) : (doctorSpecialist.status === 1 ? 'aktif' : 'Non Aktif')
+                                            }
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(doctorSpecialist);
-                                                        setAction(Action.UPDATE_FIELDS)
-                                                    }}
-                                                    size="sm">
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(doctorSpecialist);
-                                                        setAction(Action.DELETE)
-                                                        setAlertDelete(true)
-                                                    }}
-                                                    size="sm" variant="outline">
-                                                    Hapus
-                                                </Button>
-                                            </div>
+                                            {
+                                                (permission?.can_update || permission?.can_delete) && (
+                                                    <div className="flex gap-2">
+                                                        {
+                                                            permission?.can_update && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(doctorSpecialist);
+                                                                        setAction(Action.UPDATE_FIELDS)
+                                                                    }}
+                                                                    size="sm">
+                                                                    Update
+                                                                </Button>
+                                                            )
+                                                        }
+                                                        {
+                                                            permission?.can_delete && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(doctorSpecialist);
+                                                                        setAction(Action.DELETE)
+                                                                        setAlertDelete(true)
+                                                                    }}
+                                                                    size="sm" variant="outline">
+                                                                    Hapus
+                                                                </Button>
+                                                            )
+                                                        }
+                                                    </div>
+                                                )
+                                            }
                                         </TableCell>
                                     </TableRow>
                                 </React.Fragment>
@@ -127,7 +150,7 @@ const DoctorSpecialistTable
                     }
                     {(data && data.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {

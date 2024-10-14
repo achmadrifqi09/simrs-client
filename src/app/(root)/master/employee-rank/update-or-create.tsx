@@ -24,15 +24,23 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import type {RankOrClassDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission";
 
 type RankOrClassProps = {
     onRefresh: () => void,
     selectedRecord: RankOrClassDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<RankOrClassDTO | null>>
     actionType: Action
+    permission: Permission | null
 }
 
-const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, actionType}: RankOrClassProps) => {
+const UpdateOrCreateCountry = ({
+                                   onRefresh,
+                                   selectedRecord,
+                                   setSelectedRecord,
+                                   actionType,
+                                   permission
+                               }: RankOrClassProps) => {
     const rankOrClassForm = useForm<z.infer<typeof rankOrClassValidation>>({
         resolver: zodResolver(rankOrClassValidation),
         defaultValues: {
@@ -95,12 +103,12 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama: values.nama_pangkat},
+                {status: Number(values.status), nama_pangkat: values.nama_pangkat},
             )
         ) : (
             await updateData(
                 `/master/employee-rank/${selectedRecordId}`,
-                {status: Number(values.status), nama: values.nama_pangkat},
+                {status: Number(values.status), nama_pangkat: values.nama_pangkat},
             )
         )
 
@@ -127,12 +135,16 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
             }
         }
     }, [selectedRecord])
-
+    console.log(rankOrClassForm.getValues())
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    {
+                        permission?.can_create && (
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        )
+                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

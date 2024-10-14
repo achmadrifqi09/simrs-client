@@ -23,8 +23,9 @@ const Province = () => {
     }
 
     useEffect(() => {
-        const permission = getPermissions('/master/province');
+        const permission = getPermissions('provinsi');
         if(permission) setProvincePermission(permission)
+        console.log(permission)
     }, [])
 
     return (

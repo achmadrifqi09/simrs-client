@@ -19,29 +19,32 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {positionValidation} from "@/validation-schema/master";
+import {employeeTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {PositionDTO} from "@/types/master";
+import type {EmployeeTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission";
 
-type UpdateOrCreatePositionProps = {
+type UpdateOrCreateEmployeeTypeProps = {
     onRefresh: () => void,
-    selectedRecord: PositionDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<PositionDTO | null>>
+    selectedRecord: EmployeeTypeDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeTypeDTO | null>>
     actionType: Action
+    permission: Permission | null
 }
 
-const UpdateOrCreatePosition = ({
-                                    onRefresh,
-                                    selectedRecord,
-                                    setSelectedRecord,
-                                    actionType
-                                }: UpdateOrCreatePositionProps) => {
-    const positionForm = useForm<z.infer<typeof positionValidation>>({
-        resolver: zodResolver(positionValidation),
+const UpdateOrCreateEmployeeType = ({
+                                        onRefresh,
+                                        selectedRecord,
+                                        setSelectedRecord,
+                                        actionType,
+                                        permission
+                                    }: UpdateOrCreateEmployeeTypeProps) => {
+    const employeeTypeForm = useForm<z.infer<typeof employeeTypeValidation>>({
+        resolver: zodResolver(employeeTypeValidation),
         defaultValues: {
-            nama_jabatan: "",
+            status_jenis_pegawai: "",
             status: "1"
         }
     })
@@ -51,9 +54,9 @@ const UpdateOrCreatePosition = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/marital-status')
+    const {postData, postLoading, postError} = usePost('/master/employee-type')
     const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = positionForm
+    const {handleSubmit, control, setValue} = employeeTypeForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -63,7 +66,7 @@ const UpdateOrCreatePosition = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_jabatan', "")
+        setValue('status_jenis_pegawai', "")
         setValue('status', '1')
         setShowDialog(!showDialog)
         setSelectedRecord(null)
@@ -71,7 +74,7 @@ const UpdateOrCreatePosition = ({
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/position/${id}/status`,
+            `/master/employee-type/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -79,18 +82,18 @@ const UpdateOrCreatePosition = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate visibilitas  ${selectedRecord?.nama_jabatan} 
+                description: `Berhasil mengupdate status Pegawai ${selectedRecord?.status_jenis_pegawai} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateOrCreateProvince = (positionForm: PositionDTO) => {
+    const onUpdateEmployeeType = (employeeTypeForm: EmployeeTypeDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(positionForm.id_ms_jabatan)
-        setValue('nama_jabatan', positionForm.nama_jabatan)
-        setValue('status', positionForm.status.toString())
+        setSelectedRecordId(employeeTypeForm.id_ms_jenis_pegawai_status)
+        setValue('status_jenis_pegawai', employeeTypeForm.status_jenis_pegawai.toString())
+        setValue('status', employeeTypeForm.status.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -100,12 +103,12 @@ const UpdateOrCreatePosition = ({
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama_jabatan: values.nama_jabatan},
+                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
             )
         ) : (
             await updateData(
-                `/master/position/${selectedRecordId}`,
-                {status: Number(values.status), nama_jabatan: values.nama_jabatan},
+                `/master/employee-type/${selectedRecordId}`,
+                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
             )
         )
 
@@ -114,10 +117,10 @@ const UpdateOrCreatePosition = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} jabatan ${response.data.nama_jabatan}`,
+                    : 'memperbarui data '} Kategori Pegawai ${response.data.status_jenis_pegawai}`,
             })
-            positionForm.reset({
-                nama_jabatan: "",
+            employeeTypeForm.reset({
+                status_jenis_pegawai: "",
                 status: "1"
             })
             onRefresh();
@@ -126,9 +129,9 @@ const UpdateOrCreatePosition = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreateProvince(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateEmployeeType(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_ms_jabatan, selectedRecord.status)
+                updateStatus(selectedRecord.id_ms_jenis_pegawai_status, selectedRecord.status)
             }
         }
     }, [selectedRecord])
@@ -137,26 +140,30 @@ const UpdateOrCreatePosition = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    {
+                        permission?.can_create && (
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        )
+                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Kawin
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Nama Kategori Pegawai
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...positionForm}>
+                        <Form {...employeeTypeForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_jabatan"
+                                        name="status_jenis_pegawai"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Perkawinan</FormLabel>
+                                                    <FormLabel>Nama Status Pegawai</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -222,4 +229,4 @@ const UpdateOrCreatePosition = ({
     )
 }
 
-export default UpdateOrCreatePosition
+export default UpdateOrCreateEmployeeType

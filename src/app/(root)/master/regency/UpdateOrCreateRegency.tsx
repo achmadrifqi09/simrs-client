@@ -109,7 +109,7 @@ const UpdateOrCreateRegency = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} provinsi ${response.data.nama}`,
+                    : 'memperbarui data '} Kabupaten / Kota ${response.data.nama}`,
             })
             regencyForm.reset({
                 nama: "",

@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import AsyncSelect, { AsyncProps } from 'react-select/async';
-import axios, { AxiosResponse } from "axios";
-import { useSession } from "next-auth/react";
-import { generateClientKey } from "@/lib/crypto-js/cipher";
-import {components, GroupBase, DropdownIndicatorProps} from 'react-select';
+import React, {useCallback, useEffect, useState} from 'react';
+import AsyncSelect, {AsyncProps} from 'react-select/async';
+import axios, {AxiosResponse} from "axios";
+import {useSession} from "next-auth/react";
+import {generateClientKey} from "@/lib/crypto-js/cipher";
+import {components, DropdownIndicatorProps, GroupBase} from 'react-select';
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
 import {ChevronsUpDown} from "lucide-react";
@@ -38,7 +38,7 @@ const SelectSearch = <T extends Record<string, any>>({
                                                          placeholder = "Pilih opsi ...",
                                                          onChange
                                                      }: SelectSearchProps<T>) => {
-    const { data: session } = useSession();
+    const {data: session} = useSession();
     const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
     const generateOptions = (options: T[] | { results?: T[] }): Option[] => {
@@ -64,9 +64,9 @@ const SelectSearch = <T extends Record<string, any>>({
                 'Authorization': session?.accessToken ? `Bearer ${session.accessToken}` : undefined
             };
 
-            const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}${inputValue && '?keyword=' + inputValue}`, {
+            const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}${url.includes('?') ? (inputValue && '&keyword=' + inputValue) : (inputValue && '?keyword=' + inputValue)}`, {
                 headers: currentHeader,
-                params: { search: inputValue }
+                params: {search: inputValue}
             });
 
             if (response.status === 200) {
@@ -147,7 +147,7 @@ const SelectSearch = <T extends Record<string, any>>({
             cursor: 'pointer',
             '&:hover': {
                 backgroundColor: state.isSelected ? 'rgb(220 38 38)' : 'rgb(243 244 246)',
-                color: state.isSelected ? 'white' :'black'
+                color: state.isSelected ? 'white' : 'black'
             },
         }),
     };

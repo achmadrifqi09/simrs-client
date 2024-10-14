@@ -6,5 +6,6 @@ export type Permission = {
     can_create: boolean;
     menu: {
         pathname: string;
+        tag: string;
     }
 }

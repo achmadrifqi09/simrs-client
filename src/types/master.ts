@@ -37,6 +37,11 @@ type RankOrClassDTO = {
     nama_pangkat: string;
     status: number;
 }
+type EmployeeTypeDTO = {
+    id_ms_jenis_pegawai_status: number;
+    status_jenis_pegawai: string;
+    status: number;
+}
 
 type DoctorSpecialistDTO = {
     id_ms_spesialis: number;
@@ -44,12 +49,6 @@ type DoctorSpecialistDTO = {
     status: number;
 }
 
-type PositionDTO = {
-    id_ms_jabatan: number;
-    nama_jabatan: string;
-    status: number;
-    results: PositionDTO;
-}
 
 type ProvinceRelationDTO = {
     nama: string
@@ -120,7 +119,43 @@ type VillagesDTO = {
     results: VillageDTO[];
 }
 
+type EducationDTO = {
+    id_ms_tingkat_pendidikan: number;
+    nama_tingkat_pendidikan: string;
+    status: number;
+}
 
+type FamilyStatusDTO = {
+    id:number;
+    nama_status_keluarga:string;
+    status: number;
+}
+
+type SocialStatusDTO = {
+    id: number;
+    nama_status_sosial: string;
+    status: number;
+}
+
+type RoomClassDTO = {
+    id: number;
+    nama_kelas_kamar: string;
+    kode_bpjs_kamar: string;
+    status: number;
+}
+
+type RoomTypeRelationDTO = {
+    id: number;
+    nama_kelas_kamar: string;
+}
+type RoomTypeDTO = {
+    id: number;
+    id_kamar_kelas: number;
+    nama_jenis_kamar: string;
+    id_kelas_kamar?: RoomTypeRelationDTO;
+    kelas_kamar?: RoomTypeRelationDTO,
+    status:number;
+}
 export type {
     ReligionDTO,
     BloodTypeDTO,
@@ -130,7 +165,6 @@ export type {
     EmployeeStatusDTO,
     RankOrClassDTO,
     DoctorSpecialistDTO,
-    PositionDTO,
     ProvincesDTO,
     ProvinceDTO,
     RegencyDTO,
@@ -140,5 +174,12 @@ export type {
     DistrictDTO,
     VillagesDTO,
     VillageDTO,
-    VillageRelationDTO
+    VillageRelationDTO,
+    EmployeeTypeDTO,
+    EducationDTO,
+    FamilyStatusDTO,
+    SocialStatusDTO,
+    RoomClassDTO,
+    RoomTypeDTO,
+    RoomTypeRelationDTO,
 };

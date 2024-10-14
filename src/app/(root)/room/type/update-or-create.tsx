@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FormError from "@/components/ui/form-error";
 import {Button} from "@/components/ui/button";
 import {Loader2} from "lucide-react";
@@ -19,44 +18,46 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {maritalStatusValidation} from "@/validation-schema/master";
+import {roomTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {MaritalStatusDTO} from "@/types/master";
+import type {RoomClassDTO, RoomTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import SelectSearch from "@/components/ui/select-search";
 import {Permission} from "@/types/permission";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
-type UpdateOrCreateMaritalStatusProps = {
+type UpdateOrCreatedRoomTypeProps = {
     onRefresh: () => void,
-    selectedRecord: MaritalStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<MaritalStatusDTO | null>>
-    actionType: Action
+    selectedRecord: RoomTypeDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomTypeDTO | null>>
+    actionType: Action,
     permission: Permission | null
 }
 
-const UpdateOrCreateMaritalStatus = ({
-                                         onRefresh,
-                                         selectedRecord,
-                                         setSelectedRecord,
-                                         actionType,
-                                         permission
-                                     }: UpdateOrCreateMaritalStatusProps) => {
-    const maritalStatusForm = useForm<z.infer<typeof maritalStatusValidation>>({
-        resolver: zodResolver(maritalStatusValidation),
+const UpdateOrCreatedRoomType = ({
+                                     onRefresh,
+                                     selectedRecord,
+                                     setSelectedRecord,
+                                     actionType,
+                                     permission
+                                 }: UpdateOrCreatedRoomTypeProps) => {
+    const roomTypeForm = useForm<z.infer<typeof roomTypeValidation>>({
+        resolver: zodResolver(roomTypeValidation),
         defaultValues: {
-            nama_status_kawin: "",
+            nama_jenis_kamar: "",
+            id_kelas_kamar: 0,
             status: "1"
         }
     })
-
     const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/marital-status')
-    const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = maritalStatusForm
+    const {postData, postLoading, postError, setPostError} = usePost('/master/room-type')
+    const {updateData, patchError, patchLoading, setPatchError} = usePatch()
+    const {handleSubmit, control, setValue} = roomTypeForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -66,15 +67,16 @@ const UpdateOrCreateMaritalStatus = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_status_kawin', "")
-        setValue('status', '1')
+        roomTypeForm.setValue('nama_jenis_kamar', "")
+        roomTypeForm.setValue('id_kelas_kamar', 0)
+        roomTypeForm.setValue('status', "1")
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/marital-status/${id}/status`,
+            `/master/room-type/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,33 +84,42 @@ const UpdateOrCreateMaritalStatus = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate visibilitas  ${selectedRecord?.nama_status_kawin} 
+                description: `Berhasil mengupdate Status Jenis Kamar  ${selectedRecord?.nama_jenis_kamar} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateMaritalStatus = (maritalStatusForm: MaritalStatusDTO) => {
+    const onUpdateOrCreatedRoomType = (roomTypeForm: RoomTypeDTO) => {
+        console.log('Updating Room Type:', roomTypeForm);
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(maritalStatusForm.id_ms_status_kawin)
-        setValue('nama_status_kawin', maritalStatusForm.nama_status_kawin)
-        setValue('status', maritalStatusForm.status.toString())
+        setSelectedRecordId(roomTypeForm.id)
+        setValue('nama_jenis_kamar', roomTypeForm.nama_jenis_kamar)
+        setValue('id_kelas_kamar', roomTypeForm?.kelas_kamar?.id ?? 0);
+        setValue('status', roomTypeForm.status.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;
         }
-
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama_status_kawin: values.nama_status_kawin},
+                {
+                    status: Number(values.status),
+                    id_kelas_kamar: Number(values.id_kelas_kamar.toString()),
+                    nama_jenis_kamar: values.nama_jenis_kamar,
+                },
             )
         ) : (
             await updateData(
-                `/master/marital-status/${selectedRecordId}`,
-                {status: Number(values.status), nama_status_kawin: values.nama_status_kawin},
+                `/master/room-type/${selectedRecordId}`,
+                {
+                    status: Number(values.status),
+                    id_kelas_kamar: Number(values.id_kelas_kamar.toString()),
+                    nama_jenis_kamar: values.nama_jenis_kamar
+                },
             )
         )
 
@@ -117,53 +128,83 @@ const UpdateOrCreateMaritalStatus = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} status kawin ${response.data.nama_status_kawin}`,
+                    : 'memperbarui data '} provinsi ${response.data.nama_jenis_kamar}`,
             })
-            maritalStatusForm.reset({
-                nama_status_kawin: "",
+            roomTypeForm.reset({
+                nama_jenis_kamar: "",
+                id_kelas_kamar: 0,
                 status: "1"
             })
             onRefresh();
         }
     });
-
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateMaritalStatus(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoomType(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_ms_status_kawin, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
+
+    useEffect(() => {
+        setPostError(null)
+        setPatchError(null)
+        roomTypeForm.clearErrors()
+    }, [showDialog]);
 
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
                     {
-                        permission?.can_create &&(
-                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        permission?.can_create && (
+                            <Button className="mb-4"
+                                    onClick={handleOpenDialog}>Tambah</Button>
                         )
                     }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Kawin
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Jenis Kamar
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...maritalStatusForm}>
+                        <Form {...roomTypeForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_status_kawin"
+                                        name="id_kelas_kamar"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Perkawinan</FormLabel>
+                                                    <FormLabel>Pilih Kelas kamar</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<RoomClassDTO>
+                                                            url="/master/room-class?status=1"
+                                                            labelName="nama_kelas_kamar"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kelas kamar untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="nama_jenis_kamar"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Nama Jenis Kamar</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -203,6 +244,8 @@ const UpdateOrCreateMaritalStatus = ({
                                             )
                                         }}/>
                                 </div>
+
+
                                 <FormError
                                     errors={postError || patchError}
                                 />
@@ -229,4 +272,4 @@ const UpdateOrCreateMaritalStatus = ({
     )
 }
 
-export default UpdateOrCreateMaritalStatus
+export default UpdateOrCreatedRoomType

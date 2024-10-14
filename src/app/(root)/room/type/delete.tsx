@@ -1,4 +1,4 @@
-import type {PositionDTO} from "@/types/master";
+import type {RoomTypeDTO} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -15,21 +15,21 @@ import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
 
-type DeletePositionProps = {
+type DeleteRoomTypeProps = {
     onRefresh: () => void,
-    selectedRecord: PositionDTO | null,
+    selectedRecord: RoomTypeDTO | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DeleteMaritalStatus = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeletePositionProps) => {
+const DeleteRoomType = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteRoomTypeProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete(
 
     )
     const handleDelete = async () => {
         if (action === Action.DELETE) {
-            const result = await deleteData(`/master/position/${selectedRecord?.id_ms_jabatan}`)
+            const result = await deleteData(`/master/room-type/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -53,8 +53,7 @@ const DeleteMaritalStatus = ({onRefresh, selectedRecord, action, showAlert, setS
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data status jabatan
-                            nama {selectedRecord?. nama_jabatan}?
+                            Apakah anda yakin akan menghapus data Jenis Kamar{selectedRecord?.nama_jenis_kamar}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -78,4 +77,4 @@ const DeleteMaritalStatus = ({onRefresh, selectedRecord, action, showAlert, setS
     );
 }
 
-export default DeleteMaritalStatus;
+export default DeleteRoomType;

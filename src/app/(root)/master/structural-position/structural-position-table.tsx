@@ -10,13 +10,15 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Permission} from "@/types/permission"
 
 interface StructuralPositionTableProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<StructuralPositionDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null
 }
 
 const StructuralPositionTable = (
@@ -24,7 +26,8 @@ const StructuralPositionTable = (
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: StructuralPositionTableProps) => {
     const url: string = '/master/structural-position'
     const {status} = useSession();
@@ -76,7 +79,11 @@ const StructuralPositionTable = (
                         <TableHead>No</TableHead>
                         <TableHead>Nama Jabatan</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            (permission?.can_update || permission?.can_delete) && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -88,36 +95,53 @@ const StructuralPositionTable = (
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell className="font-medium">{structuralPosition.nama_jabatan}</TableCell>
                                         <TableCell>
-                                            <Switch
-                                                checked={structuralPosition.status === 1}
-                                                onCheckedChange={
-                                                    () => {
-                                                        selectRecord(structuralPosition);
-                                                        setAction(Action.UPDATE_STATUS)
-                                                    }
-                                                }
-                                            />
+                                            {
+                                                permission?.can_update ? (
+                                                    <Switch
+                                                        checked={structuralPosition.status === 1}
+                                                        onCheckedChange={
+                                                            () => {
+                                                                selectRecord(structuralPosition);
+                                                                setAction(Action.UPDATE_STATUS)
+                                                            }
+                                                        }
+                                                    />
+
+                                                ) : (structuralPosition.status === 1 ? 'Aktif' : 'Non Aktif')
+                                            }
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(structuralPosition);
-                                                        setAction(Action.UPDATE_FIELDS)
-                                                    }}
-                                                    size="sm">
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(structuralPosition);
-                                                        setAction(Action.DELETE)
-                                                        setAlertDelete(true)
-                                                    }}
-                                                    size="sm" variant="outline">
-                                                    Hapus
-                                                </Button>
-                                            </div>
+                                            {
+                                                (permission?.can_update || permission?.can_delete) && (
+                                                    <div className="flex gap-2">
+                                                        {
+                                                            permission.can_update && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(structuralPosition);
+                                                                        setAction(Action.UPDATE_FIELDS)
+                                                                    }}
+                                                                    size="sm">
+                                                                    Update
+                                                                </Button>
+                                                            )
+                                                        }
+                                                        {
+                                                            permission?.can_delete && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(structuralPosition);
+                                                                        setAction(Action.DELETE)
+                                                                        setAlertDelete(true)
+                                                                    }}
+                                                                    size="sm" variant="outline">
+                                                                    Hapus
+                                                                </Button>
+                                                            )
+                                                        }
+                                                    </div>
+                                                )
+                                            }
                                         </TableCell>
                                     </TableRow>
                                 </React.Fragment>

@@ -10,13 +10,15 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Permission} from "@/types/permission";
 
 interface ReligionTableProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<ReligionDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete:  React.Dispatch<React.SetStateAction<boolean>>
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null
 }
 
 const ReligionTable = (
@@ -24,7 +26,8 @@ const ReligionTable = (
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: ReligionTableProps) => {
     const url: string = '/master/religion'
     const {status} = useSession();
@@ -76,7 +79,11 @@ const ReligionTable = (
                         <TableHead>No</TableHead>
                         <TableHead>Nama Agama</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            (permission?.can_update || permission?.can_delete) && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -88,6 +95,9 @@ const ReligionTable = (
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell className="font-medium">{religion.nama_agama}</TableCell>
                                         <TableCell>
+                                            {
+                                                permission?.can_update ? (
+
                                             <Switch
                                                 checked={religion.status === 1}
                                                 onCheckedChange={
@@ -97,28 +107,42 @@ const ReligionTable = (
                                                     }
                                                 }
                                             />
+                                                ) : (religion.status === 1 ? 'Aktif' : 'Non Aktif')
+                                            }
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(religion);
-                                                        setAction(Action.UPDATE_FIELDS)
-                                                    }}
-                                                    size="sm">
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        selectRecord(religion);
-                                                        setAction(Action.DELETE)
-                                                        setAlertDelete(true)
-                                                    }}
-                                                    size="sm" variant="outline">
-                                                    Hapus
-                                                </Button>
-                                            </div>
-                                        </TableCell>
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell>
+                                                    <div className="flex gap-2">
+                                                        {
+                                                            permission.can_update && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(religion);
+                                                                        setAction(Action.UPDATE_FIELDS)
+                                                                    }}
+                                                                    size="sm">
+                                                                    Update
+                                                                </Button>
+                                                            )
+                                                        }
+                                                        {
+                                                            permission?.can_delete && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(religion);
+                                                                        setAction(Action.DELETE)
+                                                                        setAlertDelete(true)
+                                                                    }}
+                                                                    size="sm" variant="outline">
+                                                                    Hapus
+                                                                </Button>
+                                                            )
+                                                        }
+                                                    </div>
+                                                </TableCell>
+                                            )
+                                        }
                                     </TableRow>
                                 </React.Fragment>
                             )

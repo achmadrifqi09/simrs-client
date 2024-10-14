@@ -2,51 +2,49 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {EmployeeStatusDTO} from "@/types/master";
+import {EducationDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import EmployeeStatusTable from "@/app/(root)/master/employee-status/employee-status-table";
-import UpdateOrCreateEmployeeStatus from "@/app/(root)/master/employee-status/update-or-create";
-import EmployeeStatusDelete from "@/app/(root)/master/employee-status/delete";
+import EducationLevelTable from "@/app/(root)/master/education-level/education-level-table";
+import UpdateOrCreateEducationLevel from "@/app/(root)/master/education-level/update-or-create";
+import DeleteEducationLevel from "@/app/(root)/master/education-level/delete";
 import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";
 
-const EmployeeStatus = () => {
+const EducationLevel = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<EmployeeStatusDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<EducationDTO | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
-    const [employeeStatusPermission, setEmployeeStatusPermission] = useState<Permission | null>(null);
+    const [educationLevelPermission, setEducationLevelPermission] = useState<Permission | null>(null);
     const {getPermissions} = usePermissionsStore();
-
-    useEffect(() => {
-        const permission = getPermissions('status-pegawai');
-        if(permission) setEmployeeStatusPermission(permission);
-    }, []);
-
     const onRefresh = () => {
         setRefreshTrigger(prev => prev + 1);
     }
 
+    useEffect(() => {
+        const permission = getPermissions('status-pendidikan');
+        if(permission) setEducationLevelPermission(permission);
+    }, []);
     return (
         <>
-            <Heading headingLevel="h3" variant="page-title">Data Master Status Pegawai</Heading>
+            <Heading headingLevel="h3" variant="page-title">Data Master Tingkat Pendidikan</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateEmployeeStatus
+                    <UpdateOrCreateEducationLevel
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         setSelectedRecord={setSelectedRecord}
                         actionType={actionType}
-                        permission={employeeStatusPermission}
+                        permission={educationLevelPermission}
                     />
-                    <EmployeeStatusTable
+                    <EducationLevelTable
                         selectRecord={setSelectedRecord}
                         refreshTrigger={refreshTrigger}
                         setAction={setActionType}
                         setAlertDelete={setShowAlertDelete}
-                        permission={employeeStatusPermission}
+                        permission={educationLevelPermission}
                     />
-                    <EmployeeStatusDelete
+                    <DeleteEducationLevel
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         action={actionType}
@@ -59,4 +57,4 @@ const EmployeeStatus = () => {
     )
 }
 
-export default EmployeeStatus
+export default EducationLevel

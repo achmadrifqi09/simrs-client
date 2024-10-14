@@ -24,19 +24,22 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import type {ReligionDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission";
 
 type UpdateOrCreateReligionProps = {
     onRefresh: () => void,
     selectedRecord: ReligionDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<ReligionDTO | null>>
-    actionType: Action
+    actionType: Action,
+    permission: Permission | null
 }
 
 const UpdateOrCreateReligion = ({
                                     onRefresh,
                                     selectedRecord,
                                     setSelectedRecord,
-                                    actionType
+                                    actionType,
+                                    permission
                                 }: UpdateOrCreateReligionProps) => {
     const religionForm = useForm<z.infer<typeof religionValidation>>({
         resolver: zodResolver(religionValidation),
@@ -137,7 +140,11 @@ const UpdateOrCreateReligion = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    {
+                        permission?.can_create && (
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        )
+                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

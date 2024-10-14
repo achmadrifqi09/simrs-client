@@ -24,19 +24,22 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import type {StructuralPositionDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission";
 
 type UpdateOrCreateStructuralPositionProps = {
     onRefresh: () => void,
     selectedRecord: StructuralPositionDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<StructuralPositionDTO | null>>
     actionType: Action
+    permission: Permission | null
 }
 
 const UpdateOrCreateStructuralPosition = ({
                                               onRefresh,
                                               selectedRecord,
                                               setSelectedRecord,
-                                              actionType
+                                              actionType,
+                                              permission
                                           }: UpdateOrCreateStructuralPositionProps) => {
     const structuralPositionForm = useForm<z.infer<typeof structuralPositionValidation>>({
         resolver: zodResolver(structuralPositionValidation),
@@ -137,7 +140,11 @@ const UpdateOrCreateStructuralPosition = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    {
+                        permission?.can_create && (
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        )
+                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

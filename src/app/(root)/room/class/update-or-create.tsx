@@ -19,33 +19,34 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {maritalStatusValidation} from "@/validation-schema/master";
+import {roomClassValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {MaritalStatusDTO} from "@/types/master";
+import type {RoomClassDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
-type UpdateOrCreateMaritalStatusProps = {
+type RankOrClassProps = {
     onRefresh: () => void,
-    selectedRecord: MaritalStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<MaritalStatusDTO | null>>
+    selectedRecord: RoomClassDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomClassDTO | null>>
     actionType: Action
     permission: Permission | null
 }
 
-const UpdateOrCreateMaritalStatus = ({
-                                         onRefresh,
-                                         selectedRecord,
-                                         setSelectedRecord,
-                                         actionType,
-                                         permission
-                                     }: UpdateOrCreateMaritalStatusProps) => {
-    const maritalStatusForm = useForm<z.infer<typeof maritalStatusValidation>>({
-        resolver: zodResolver(maritalStatusValidation),
+const UpdateOrCreateCountry = ({
+                                   onRefresh,
+                                   selectedRecord,
+                                   setSelectedRecord,
+                                   actionType,
+                                   permission
+                               }: RankOrClassProps) => {
+    const roomClassForm = useForm<z.infer<typeof roomClassValidation>>({
+        resolver: zodResolver(roomClassValidation),
         defaultValues: {
-            nama_status_kawin: "",
-            status: "1"
+            nama_kelas_kamar: "",
+            status: "1",
+            kode_bpjs_kamar: ""
         }
     })
 
@@ -54,9 +55,9 @@ const UpdateOrCreateMaritalStatus = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/marital-status')
+    const {postData, postLoading, postError} = usePost('/master/room-class')
     const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = maritalStatusForm
+    const {handleSubmit, control, setValue} = roomClassForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -66,15 +67,16 @@ const UpdateOrCreateMaritalStatus = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_status_kawin', "")
+        setValue('nama_kelas_kamar', "")
         setValue('status', '1')
+        setValue('kode_bpjs_kamar', "")
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/marital-status/${id}/status`,
+            `/master/room-class/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,18 +84,19 @@ const UpdateOrCreateMaritalStatus = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate visibilitas  ${selectedRecord?.nama_status_kawin} 
+                description: `Berhasil mengupdate status kelas kamar ${selectedRecord?.nama_kelas_kamar} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateMaritalStatus = (maritalStatusForm: MaritalStatusDTO) => {
+    const onUpdateRankOrClass = (roomClassForm: RoomClassDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(maritalStatusForm.id_ms_status_kawin)
-        setValue('nama_status_kawin', maritalStatusForm.nama_status_kawin)
-        setValue('status', maritalStatusForm.status.toString())
+        setSelectedRecordId(roomClassForm.id)
+        setValue('nama_kelas_kamar', roomClassForm.nama_kelas_kamar)
+        setValue('status', roomClassForm.status.toString())
+        setValue('kode_bpjs_kamar', roomClassForm.kode_bpjs_kamar)
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -101,47 +104,48 @@ const UpdateOrCreateMaritalStatus = ({
             return;
         }
 
+        const payload = {
+            status: Number(values.status),
+            nama_kelas_kamar: values.nama_kelas_kamar,
+            kode_bpjs_kamar: values.kode_bpjs_kamar,
+        };
+
         const response = submitMode === 'POST' ? (
-            await postData(
-                {status: Number(values.status), nama_status_kawin: values.nama_status_kawin},
-            )
+            await postData(payload)
         ) : (
-            await updateData(
-                `/master/marital-status/${selectedRecordId}`,
-                {status: Number(values.status), nama_status_kawin: values.nama_status_kawin},
-            )
-        )
+            await updateData(`/master/room-class/${selectedRecordId}`, payload)
+        );
 
         if (response?.data) {
-            setShowDialog(false)
+            setShowDialog(false);
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} status kawin ${response.data.nama_status_kawin}`,
-            })
-            maritalStatusForm.reset({
-                nama_status_kawin: "",
-                status: "1"
-            })
+                description: `Berhasil ${submitMode === 'POST' ? 'menambah data' : 'memperbarui data'} Kelas Kamar ${response.data.nama_kelas_kamar}`,
+            });
+            roomClassForm.reset({
+                nama_kelas_kamar: "",
+                status: "1",
+                kode_bpjs_kamar: ""
+            });
             onRefresh();
         }
     });
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateMaritalStatus(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateRankOrClass(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_ms_status_kawin, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
-
+    console.log(roomClassForm.getValues())
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
                     {
-                        permission?.can_create &&(
+                        permission?.can_create && (
                             <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
                         )
                     }
@@ -149,21 +153,37 @@ const UpdateOrCreateMaritalStatus = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Kawin
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Kelas Kamar
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...maritalStatusForm}>
+                        <Form {...roomClassForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_status_kawin"
+                                        name="nama_kelas_kamar"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Perkawinan</FormLabel>
+                                                    <FormLabel>Nama Kelas Kamar</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="text" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="kode_bpjs_kamar"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Kode BPJS kamar</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -229,4 +249,4 @@ const UpdateOrCreateMaritalStatus = ({
     )
 }
 
-export default UpdateOrCreateMaritalStatus
+export default UpdateOrCreateCountry

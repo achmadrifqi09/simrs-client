@@ -166,7 +166,7 @@ const UpdateOrCreateProvince = ({
                                                     <FormLabel>Pilih Negara</FormLabel>
                                                     <FormControl>
                                                         <SelectSearch<CountryDTO>
-                                                            url="/master/country"
+                                                            url="/master/country?status=1"
                                                             labelName="nama"
                                                             valueName="id"
                                                             placeholder="Masukkan nama negara untuk mencari..."

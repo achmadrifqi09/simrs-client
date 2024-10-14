@@ -53,12 +53,6 @@ const doctorSpecialistValidation = z.object({
     status: z.string({message: 'Status harus di isi'})
 })
 
-const positionValidation = z.object({
-    nama_jabatan: z.string({message: 'Nama pangkat harus di isi'})
-        .min(2, {message: 'Nama pangkat harus di isi minimal 2 karakter'})
-        .max(50, {message: 'Nama pangkat harus di isi maximal 50 karakter'}),
-    status: z.string({message: 'Status harus di isi'})
-})
 
 const provinceValidation = z.object({
     nama: z.string({message: 'Nama provinsi harus diisi'})
@@ -85,30 +79,77 @@ const regencyValidation = z.object({
 
 const districtValidation = z.object({
     id: z
-        .string({ message: 'Kode wilayah kecamatan harus diisi' })
-        .min(6, { message: 'Kode wilayah kecamatan harus 6 digit' })
-        .max(6, { message: 'Kode wilayah kecamatan harus 6 digit' }),
+        .string({message: 'Kode wilayah kecamatan harus diisi'})
+        .min(6, {message: 'Kode wilayah kecamatan harus 6 digit'})
+        .max(6, {message: 'Kode wilayah kecamatan harus 6 digit'}),
     nama: z
-        .string({ message: 'Nama kecamatan darah harus di isi' })
-        .min(4, { message: 'Nama kecamatan minimal 4 karakter' }),
+        .string({message: 'Nama kecamatan darah harus di isi'})
+        .min(4, {message: 'Nama kecamatan minimal 4 karakter'}),
     id_kabkot: z
-        .string({ message: 'Kabupaten/kota harus diisi' })
-        .min(4, { message: 'Kode kabupaten/kota harus 4 digit' })
-        .max(4, { message: 'Kode kabupaten/kota harus 4 digit' }),
+        .string({message: 'Kabupaten/kota harus diisi'})
+        .min(4, {message: 'Kode kabupaten/kota harus 4 digit'})
+        .max(4, {message: 'Kode kabupaten/kota harus 4 digit'}),
 })
 const villageValidation = z.object({
     id: z
-        .string({ message: 'Kode wilayah desa harus diisi' })
-        .min(10, { message: 'Kode wilayah desa harus 10 digit' })
-        .max(10, { message: 'Kode wilayah desa harus 10 digit' }),
+        .string({message: 'Kode wilayah desa harus diisi'})
+        .min(10, {message: 'Kode wilayah desa harus 10 digit'})
+        .max(10, {message: 'Kode wilayah desa harus 10 digit'}),
     nama: z
-        .string({ message: 'Nama desa harus di isi' })
-        .min(4, { message: 'Nama desa minimal 4 karakter' }),
+        .string({message: 'Nama desa harus di isi'})
+        .min(4, {message: 'Nama desa minimal 4 karakter'}),
     id_kecamatan: z
-        .string({ message: 'Kecamatan harus diisi' })
-        .min(6, { message: 'Kode kecamatan harus 6 digit' })
-        .max(6, { message: 'Kode kecamatan harus 6 digit' }),
+        .string({message: 'Kecamatan harus diisi'})
+        .min(6, {message: 'Kode kecamatan harus 6 digit'})
+        .max(6, {message: 'Kode kecamatan harus 6 digit'}),
 })
+
+const employeeTypeValidation = z.object({
+    status_jenis_pegawai: z
+        .string({message: 'ID Jenis Pegawai harus diisi'})
+        .min(2, {message: 'ID Jenis Pegawai minimal 2'})
+        .max(20, {message: 'ID Jenis Pegawai maximal 20'}),
+    status: z.string({message: 'Status jabatan harus di isi'})
+})
+
+const educationLeveValidation = z.object({
+    nama_tingkat_pendidikan: z
+        .string({message: 'Nama Tingkat Pendidikan Harus diisi'}),
+    status: z.string({message: 'Status Tingkat Pendidikan harus di isi'})
+})
+
+const familyStatusValidation = z.object({
+    nama_status_keluarga: z
+        .string({message: 'Nama Status Keluarga Harus Diisi'}),
+    status: z.string({message: 'Status Keluarga Harus Diisi'}),
+})
+
+const socialStatusValidation = z.object({
+    nama_status_sosial: z
+        .string({message: 'Nama Sosial harus Diisi'}),
+    status: z.string({message: 'Status Sosial harus Diisi'}),
+})
+
+const roomClassValidation = z.object({
+    nama_kelas_kamar:z
+        .string({message: 'Nama kelas Kamar harus Diisi'})
+        .min(2,{message:'Nama Kelas Kamar Minimal 2 Karakter'})
+        .max(10,{message: 'Nama Kelas Kamar Maximal 10 Karakter'}),
+    status: z.string({message: 'Status Kamar harus Diisi'}),
+    kode_bpjs_kamar:z.string({message: 'Kode bpjs_kamar harus Diisi'})
+        .min(4,{ message: 'kode BPJS harus diisi minimal 4 karakter'})
+        .max(10, {message: 'Kode BPJS Maximal 10 Karakter'}),
+})
+
+const roomTypeValidation = z.object({
+    nama_jenis_kamar: z
+        .string({ message: 'Nama jenis_kamar harus Diisi' })
+        .min(2, { message: 'Nama jenis_kamar minimal 2 karakter' })
+        .max(50, { message: 'Nama jenis_kamar maximal 50 karakter' }),
+    status: z.string({ message: 'Status Kamar harus Diisi' }),
+    id_kelas_kamar: z
+        .number({ message: 'kelas kamar harus Diisi' }),
+});
 
 export {
     religionValidation,
@@ -119,9 +160,14 @@ export {
     employeeStatusValidation,
     rankOrClassValidation,
     doctorSpecialistValidation,
-    positionValidation,
     provinceValidation,
     regencyValidation,
     districtValidation,
-    villageValidation
+    villageValidation,
+    employeeTypeValidation,
+    educationLeveValidation,
+    familyStatusValidation,
+    socialStatusValidation,
+    roomClassValidation,
+    roomTypeValidation
 }

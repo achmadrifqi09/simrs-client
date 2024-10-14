@@ -17,9 +17,9 @@ export function useUserPermissions() {
         }
     }, [session]);
 
-    const getPermission = (path: string) => {
+    const getPermission = (tag: string) => {
         return permissions.forEach((permission) => {
-            if (permission.menu.pathname === path) {
+            if (permission.menu.tag === tag) {
                 return permission;
             }
         })

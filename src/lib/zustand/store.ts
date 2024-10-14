@@ -23,7 +23,7 @@ export const usePermissionsStore = create<PermissionsState>()(
             setPermissions: (permissions: Permission[]) => set({permissions}),
             getPermissions: (path: string): Permission | undefined => {
                 const state = get();
-                return state.permissions.find(permission => permission.menu.pathname === path);
+                return state.permissions.find(permission => permission.menu.tag === path);
             },
             clearPermissions: () => set({ permissions: [] })
         }),

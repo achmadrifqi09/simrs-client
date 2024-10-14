@@ -24,19 +24,22 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import type {DoctorSpecialistDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission"
 
 type UpdateOrCreateDoctorSpecialistProps = {
     onRefresh: () => void,
     selectedRecord: DoctorSpecialistDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<DoctorSpecialistDTO | null>>
     actionType: Action
+    permission: Permission | null
 }
 
 const UpdateOrCreateCountry = ({
                                    onRefresh,
                                    selectedRecord,
                                    setSelectedRecord,
-                                   actionType
+                                   actionType,
+                                   permission
                                }: UpdateOrCreateDoctorSpecialistProps) => {
     const doctorSpecialistForm = useForm<z.infer<typeof doctorSpecialistValidation>>({
         resolver: zodResolver(doctorSpecialistValidation),
@@ -137,12 +140,17 @@ const UpdateOrCreateCountry = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    {
+                        permission?.can_create &&(
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        )
+                    }
+
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Spesialis
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Spesialis Dokter
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>

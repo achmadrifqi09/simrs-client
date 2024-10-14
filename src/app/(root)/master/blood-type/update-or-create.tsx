@@ -24,19 +24,22 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import type {BloodTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission";
 
 type UpdateOrCreateBloodTypeProps = {
     onRefresh: () => void,
     selectedRecord: BloodTypeDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<BloodTypeDTO | null>>
-    actionType: Action
+    actionType: Action,
+    permission: Permission | null
 }
 
 const UpdateOrCreateBloodType = ({
                                      onRefresh,
                                      selectedRecord,
                                      setSelectedRecord,
-                                     actionType
+                                     actionType,
+                                     permission
                                  }: UpdateOrCreateBloodTypeProps) => {
     const bloodTypeForm = useForm<z.infer<typeof bloodTypeValidation>>({
         resolver: zodResolver(bloodTypeValidation),
@@ -137,7 +140,12 @@ const UpdateOrCreateBloodType = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    {
+                        permission?.can_create && (
+
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        )
+                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

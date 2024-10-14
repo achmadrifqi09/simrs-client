@@ -24,19 +24,22 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import type {EmployeeStatusDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission";
 
 type UpdateOrCreateEmployeeStatusProps = {
     onRefresh: () => void,
     selectedRecord: EmployeeStatusDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
     actionType: Action
+    permission: Permission | null
 }
 
 const UpdateOrCreateEmplyeeStatus = ({
                                          onRefresh,
                                          selectedRecord,
                                          setSelectedRecord,
-                                         actionType
+                                         actionType,
+                                         permission
                                      }: UpdateOrCreateEmployeeStatusProps) => {
     const employeeStatusForm = useForm<z.infer<typeof employeeStatusValidation>>({
         resolver: zodResolver(employeeStatusValidation),
@@ -114,7 +117,7 @@ const UpdateOrCreateEmplyeeStatus = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} nama ${response.data.nama_status_pegawai}`,
+                    : 'memperbarui data '} Status Pegawai ${response.data.nama_status_pegawai}`,
             })
             employeeStatusForm.reset({
                 nama_status_pegawai: "",
@@ -137,7 +140,11 @@ const UpdateOrCreateEmplyeeStatus = ({
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                    {
+                        permission?.can_create && (
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        )
+                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
