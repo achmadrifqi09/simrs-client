@@ -46,7 +46,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/rank-or-class')
+    const {postData, postLoading, postError} = usePost('/master/employee-rank')
     const {updateData, patchError, patchLoading} = usePatch()
     const {handleSubmit, control, setValue} = rankOrClassForm
 
@@ -66,7 +66,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/rank-or-class/${id}/status`,
+            `/master/employee-rank/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -99,7 +99,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
             )
         ) : (
             await updateData(
-                `/master/rank-or-class/${selectedRecordId}`,
+                `/master/employee-rank/${selectedRecordId}`,
                 {status: Number(values.status), nama: values.nama_pangkat},
             )
         )

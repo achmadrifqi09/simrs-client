@@ -26,7 +26,7 @@ const RankOrClassTable = (
         setAction,
         setAlertDelete
     }: RankOrClassTableProps) => {
-    const url: string = '/master/rank-or-class'
+    const url: string = '/master/employee-rank'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const {data, loading, error, getData} = useGet<RankOrClassDTO[]>({

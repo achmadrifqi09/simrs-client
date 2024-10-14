@@ -4,9 +4,9 @@ import Section from "@/components/ui/section";
 import React, {useState} from "react";
 import {RankOrClassDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import RankOrClassTable from "@/app/(root)/master/rank-or-class/rank-or-class-table";
-import UpdateOrCreateRankOrClass from "@/app/(root)/master/rank-or-class/update-or-create";
-import RankOrClassDelete from "@/app/(root)/master/rank-or-class/delete";
+import RankOrClassTable from "@/app/(root)/master/employee-rank/rank-or-class-table";
+import UpdateOrCreateRankOrClass from "@/app/(root)/master/employee-rank/update-or-create";
+import RankOrClassDelete from "@/app/(root)/master/employee-rank/delete";
 
 const RankOrClass = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);

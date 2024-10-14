@@ -29,7 +29,7 @@ const RankOrClassDelete = ({onRefresh, selectedRecord, action, showAlert, setSho
     )
     const handleDelete = async () => {
         if(action === Action.DELETE){
-            const result = await deleteData(`/master/rank-or-class/${selectedRecord?.id_ms_pangkat}`)
+            const result = await deleteData(`/master/employee-rank/${selectedRecord?.id_ms_pangkat}`)
 
             if (result?.status_code === 200) {
                 toast({
