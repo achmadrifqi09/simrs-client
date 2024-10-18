@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 .main-wrapper{
-  height: calc(100vh - 72px);
+  height: calc(100dvh - 72px);
   flex:1;
   overflow-y: scroll;
 }
 
 .h-content{
-  min-height: calc(100vh - 72px);
+  min-height: calc(100dvh - 72px);
 }
 
 .queue-wrapper{
-  height: calc(100vh - 132px - 40px - 54px);
+  height: calc(100dvh - 132px - 40px - 54px);
 }
 
 .main{
-  min-height: calc(100vh - 72px - 32px - 24px);
+  min-height: calc(100dvh - 72px - 32px - 24px);
 }
 
 input:-webkit-autofill {

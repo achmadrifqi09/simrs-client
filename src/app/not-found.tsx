@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const Custom404 = () => {
     return (
-        <main className="w-screen flex-col h-screen flex justify-center items-center text-gray-700">
+        <main className="w-screen flex-col h-dvh flex justify-center items-center text-gray-700 px-4">
             <div className="flex flex-col justify-center items-center flex-1">
                 <div className="relative w-64 h-64 md:h-96 md:w-96">
                     <Image src="/images/medicine.svg" alt="logo" fill/>
