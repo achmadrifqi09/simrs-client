@@ -1,6 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
-import {generateClientKey} from '@/lib/crypto-js/cipher';
+import {generateSignature} from '@/lib/crypto-js/cipher';
 import NextAuth, {NextAuthOptions} from 'next-auth';
 import {JWT} from 'next-auth/jwt';
 import type {LoginCredentials} from '@/types/auth';
@@ -25,7 +25,7 @@ const authOptions: NextAuthOptions = {
                         {
                             headers: {
                                 'Content-Type': 'application/json',
-                                'client-signature': generateClientKey(),
+                                'client-signature': generateSignature(),
                                 'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                             },
                         }
@@ -45,7 +45,8 @@ const authOptions: NextAuthOptions = {
         }),
     ],
     pages: {
-        signIn: '/login',
+        signIn: '/auth/login',
+        signOut: '/auth/logout',
     },
     callbacks: {
         async jwt({token, user}: { token: JWT; user: any }) {
@@ -69,6 +70,9 @@ const authOptions: NextAuthOptions = {
             session.expires = token.expires;
             session.user = token.user;
             return session;
+        },
+        async redirect({baseUrl}: {baseUrl: string}) {
+            return baseUrl;
         },
     }
 };

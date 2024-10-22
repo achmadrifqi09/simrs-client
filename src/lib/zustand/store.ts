@@ -1,7 +1,8 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import {create} from 'zustand';
+import {createJSONStorage, persist} from 'zustand/middleware';
 import {Permission} from "@/types/permission";
 import {Menu} from "@/types/menu-type";
+import {decryptData, encryptData} from "@/lib/crypto-js/cipher";
 
 interface PermissionsState {
     permissions: Permission[];
@@ -25,11 +26,26 @@ export const usePermissionsStore = create<PermissionsState>()(
                 const state = get();
                 return state.permissions.find(permission => permission.menu.tag === path);
             },
-            clearPermissions: () => set({ permissions: [] })
+            clearPermissions: () => set({permissions: []})
         }),
         {
             name: 'user_permissions',
-            storage: createJSONStorage(() => sessionStorage),
+            storage: createJSONStorage(() => ({
+                getItem: (name: string): string | null => {
+                    const value = sessionStorage.getItem(name);
+                    if (!value) return null;
+                    return decryptData(value);
+                },
+                setItem: (name: string, value: any): void => {
+                    const encryptedValue = encryptData(value);
+                    if (encryptedValue) {
+                        sessionStorage.setItem(name, encryptedValue);
+                    }
+                },
+                removeItem: (name: string): void => {
+                    sessionStorage.removeItem(name);
+                },
+            })),
         },
     ),
 );
@@ -39,7 +55,7 @@ export const useMenuStore = create<MenusState>()(
         (set) => ({
             menus: [],
             setMenu: (menus: Menu[]) => set({menus}),
-            clearMenu: () => set({ menus: [] })
+            clearMenu: () => set({menus: []})
         }),
         {
             name: 'user_menus',

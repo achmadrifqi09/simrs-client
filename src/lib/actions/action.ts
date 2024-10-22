@@ -1,6 +1,6 @@
 "use server"
 import axios, {isAxiosError} from 'axios';
-import {encryptCookies, generateClientKey} from "@/lib/crypto-js/cipher";
+import {encryptData, generateSignature} from "@/lib/crypto-js/cipher";
 import {loginSchema} from "@/validation-schema/auth";
 import {cookies} from "next/headers";
 import {redirect} from "next/navigation";
@@ -29,7 +29,7 @@ export async function authenticate(_currentState: unknown, formData: FormData) {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'client-signature': generateClientKey(),
+                    'client-signature': generateSignature(),
                     'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                 },
             }
@@ -52,7 +52,7 @@ export async function authenticate(_currentState: unknown, formData: FormData) {
 
 
 const createSession = async (data: any) => {
-    const sessionData = encryptCookies(
+    const sessionData = encryptData(
         JSON.stringify({
             user: {
                 id: data.id,

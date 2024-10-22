@@ -73,7 +73,6 @@ const UpdateOrCreateSocialStatus = ({
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
-        console.log(id)
         const response = await updateData(
             `/master/social-status/${id}/status`,
             {status: status === 1 ? 0 : 1},

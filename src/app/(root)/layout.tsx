@@ -33,7 +33,6 @@ const PanelLayout = ({children}: { children: ReactNode }) => {
                     if (menus.length === 0) {
                         const fetchedMenus: Menu[] = await fetcher(`/menu/user`, session.accessToken);
                         setMenu(fetchedMenus)
-
                         const menuPaths = JSON.stringify(getMenuPath(fetchedMenus))
                         const compressedMenu = compressToBase64(menuPaths)
 

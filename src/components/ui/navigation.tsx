@@ -27,7 +27,6 @@ export const Navigation = ({show}: NavigationProps) => {
 
         return () => clearTimeout(timer);
     }, []);
-
     const findPathname = (menus: Submenu[]) => {
         return menus.some(menu => {
             const regex = new RegExp(`^${menu.pathname}($|/)`);
@@ -61,7 +60,7 @@ export const Navigation = ({show}: NavigationProps) => {
                                     <Menu
                                         href={`${menu.pathname}`}
                                         label={menu.label}
-                                        active={pathname === menu.pathname}
+                                        active={(menu.pathname && menu?.pathname !== '/')? pathname.startsWith(menu.pathname) : pathname === '/'}
                                         iconName={menu.icon}
                                     />
                                 )}

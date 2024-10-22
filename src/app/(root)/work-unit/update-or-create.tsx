@@ -9,55 +9,52 @@ import {
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FormError from "@/components/ui/form-error";
 import {Button} from "@/components/ui/button";
-import {Loader2} from "lucide-react";
 import React, {useEffect, useState} from "react";
 import {usePost} from "@/hooks/use-post";
 import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {roomTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {RoomClassDTO, RoomTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import SelectSearch from "@/components/ui/select-search";
 import {Permission} from "@/types/permission";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {fieldOfWorkUnitValidation } from "@/validation-schema/work-unit";
+import {FieldOfWorkUnit} from "@/types/work-unit";
+import {Loader2} from "lucide-react";
 
-type UpdateOrCreatedRoomTypeProps = {
+type UpdateOrCreateFieldWorkUnitProps = {
     onRefresh: () => void,
-    selectedRecord: RoomTypeDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomTypeDTO | null>>
+    selectedRecord: FieldOfWorkUnit | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<FieldOfWorkUnit | null>>
     actionType: Action,
     permission: Permission | null
 }
 
-const UpdateOrCreatedRoomType = ({
-                                     onRefresh,
-                                     selectedRecord,
-                                     setSelectedRecord,
-                                     actionType,
-                                     permission
-                                 }: UpdateOrCreatedRoomTypeProps) => {
-    const roomTypeForm = useForm<z.infer<typeof roomTypeValidation>>({
-        resolver: zodResolver(roomTypeValidation),
+const UpdateOrCreateFieldWorkUnit = ({
+                                    onRefresh,
+                                    selectedRecord,
+                                    setSelectedRecord,
+                                    actionType,
+                                    permission
+                                }: UpdateOrCreateFieldWorkUnitProps) => {
+    const workUnitForm = useForm<z.infer<typeof fieldOfWorkUnitValidation>>({
+        resolver: zodResolver(fieldOfWorkUnitValidation),
         defaultValues: {
-            nama_jenis_kamar: "",
-            id_kelas_kamar: 0,
-            status: "1"
+            nama_bidang: "",
+            status: "1",
         }
     })
+
     const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
-
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
-
-    const {postData, postLoading, postError, setPostError} = usePost('/master/room-type')
-    const {updateData, patchError, patchLoading, setPatchError} = usePatch()
-    const {handleSubmit, control, setValue} = roomTypeForm
+    const {postData, postLoading, postError} = usePost('/field-of-work-unit')
+    const {updateData, patchError, patchLoading} = usePatch()
+    const {handleSubmit, control, setValue} = workUnitForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -67,16 +64,14 @@ const UpdateOrCreatedRoomType = ({
     }
 
     const handleCloseDialog = () => {
-        roomTypeForm.setValue('nama_jenis_kamar', "")
-        roomTypeForm.setValue('id_kelas_kamar', 0)
-        roomTypeForm.setValue('status', "1")
+        workUnitForm.reset();
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/room-type/${id}/status`,
+            `/field-of-work-unit/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -84,41 +79,34 @@ const UpdateOrCreatedRoomType = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate Status Jenis Kamar  ${selectedRecord?.nama_jenis_kamar} 
+                description: `Berhasil mengupdate status unit kerja ${selectedRecord?.nama_bidang} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateOrCreatedRoomType = (roomTypeForm: RoomTypeDTO) => {
+    const onUpdateBloodType = (fieldOfWorkUnit: FieldOfWorkUnit) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(roomTypeForm.id)
-        setValue('nama_jenis_kamar', roomTypeForm.nama_jenis_kamar)
-        setValue('id_kelas_kamar', roomTypeForm?.kelas_kamar?.id ?? 0);
-        setValue('status', roomTypeForm.status.toString())
+        setSelectedRecordId(fieldOfWorkUnit.id)
+        setValue('nama_bidang', fieldOfWorkUnit.nama_bidang)
+        setValue('status', fieldOfWorkUnit.status.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;
         }
+        const submitData: FieldOfWorkUnit = {
+            nama_bidang: values.nama_bidang,
+            status: Number(values.status),
+        }
         const response = submitMode === 'POST' ? (
-            await postData(
-                {
-                    status: Number(values.status),
-                    id_kelas_kamar: Number(values.id_kelas_kamar.toString()),
-                    nama_jenis_kamar: values.nama_jenis_kamar,
-                },
-            )
+            await postData(submitData)
         ) : (
             await updateData(
-                `/master/room-type/${selectedRecordId}`,
-                {
-                    status: Number(values.status),
-                    id_kelas_kamar: Number(values.id_kelas_kamar.toString()),
-                    nama_jenis_kamar: values.nama_jenis_kamar
-                },
+                `/field-of-work-unit/${selectedRecordId}`,
+                submitData
             )
         )
 
@@ -127,83 +115,51 @@ const UpdateOrCreatedRoomType = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} provinsi ${response.data.nama_jenis_kamar}`,
+                    : 'memperbarui data '} bidang unit kerja ${response.data.nama_golongan_darah}`,
             })
-            roomTypeForm.reset({
-                nama_jenis_kamar: "",
-                id_kelas_kamar: 0,
-                status: "1"
-            })
+            workUnitForm.reset();
             onRefresh();
         }
     });
+
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoomType(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateBloodType(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
                 updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
 
-    useEffect(() => {
-        setPostError(null)
-        setPatchError(null)
-        roomTypeForm.clearErrors()
-    }, [showDialog]);
-
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
                     {
-                        permission?.can_create && (
-                            <Button className="mb-4"
-                                    onClick={handleOpenDialog}>Tambah</Button>
+                        (permission?.can_create) && (
+
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah Bidang</Button>
                         )
                     }
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[480px] w-full">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Jenis Kamar
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Bidang Unit Kerja
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...roomTypeForm}>
+                        <Form {...workUnitForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="id_kelas_kamar"
+                                        name="nama_bidang"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Pilih Kelas kamar</FormLabel>
-                                                    <FormControl>
-                                                        <SelectSearch<RoomClassDTO>
-                                                            url="/master/room-class?status=1"
-                                                            labelName="nama_kelas_kamar"
-                                                            valueName="id"
-                                                            placeholder="Masukkan kelas kamar untuk mencari..."
-                                                            onChange={field.onChange}
-                                                            defaultValue={Number(field.value) || undefined}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="nama_jenis_kamar"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Nama Jenis Kamar</FormLabel>
+                                                    <FormLabel>Nama bidang</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -224,7 +180,8 @@ const UpdateOrCreatedRoomType = ({
                                                         <Select onValueChange={field.onChange}
                                                                 defaultValue={field.value}>
                                                             <SelectTrigger>
-                                                                <SelectValue placeholder="Pilih status / visibilitas"/>
+                                                                <SelectValue
+                                                                    placeholder="Pilih status"/>
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
@@ -243,8 +200,6 @@ const UpdateOrCreatedRoomType = ({
                                             )
                                         }}/>
                                 </div>
-
-
                                 <FormError
                                     errors={postError || patchError}
                                 />
@@ -271,4 +226,4 @@ const UpdateOrCreatedRoomType = ({
     )
 }
 
-export default UpdateOrCreatedRoomType
+export default UpdateOrCreateFieldWorkUnit

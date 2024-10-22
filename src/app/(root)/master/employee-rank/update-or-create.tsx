@@ -135,7 +135,7 @@ const UpdateOrCreateCountry = ({
             }
         }
     }, [selectedRecord])
-    console.log(rankOrClassForm.getValues())
+
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>

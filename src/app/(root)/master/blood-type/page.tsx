@@ -21,7 +21,6 @@ const BloodType = () => {
     useEffect(() => {
         const permission = getPermissions('golongan-darah');
         if(permission) setProvincePermission(permission)
-        console.log(permission)
     }, [])
 
     const onRefresh = () => {

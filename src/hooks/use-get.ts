@@ -1,6 +1,6 @@
 import axios, {AxiosResponse, isAxiosError} from "axios";
 import {useCallback, useEffect, useState} from "react";
-import {generateClientKey} from "@/lib/crypto-js/cipher";
+import {generateSignature} from "@/lib/crypto-js/cipher";
 import {signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
 
@@ -15,22 +15,21 @@ type GetProps = {
 const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
     const router = useRouter();
     const [data, setData] = useState<T | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | object>();
     const {data: session, status} = useSession();
 
     const getData = useCallback(async () => {
         if (status === 'authenticated') {
             setLoading(true);
-            let endpoint = keyword ? `${url}?keyword=${keyword}` : url;
-
+            let endpoint = keyword ? `${url}${url.includes('?') ? '&' : '?'}keyword=${keyword}` : url;
 
             if (cursor !== null && take) {
                 endpoint = endpoint + `${keyword ? '&' : '?cursor='}${cursor}&take=${take}`;
             }
             try {
                 const currentHeader: Record<string, string | null | undefined> = {
-                    'client-signature': generateClientKey(),
+                    'client-signature': generateSignature(),
                     'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                     ...headers,
                 };
@@ -46,7 +45,7 @@ const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
             } catch (error: any) {
                 if (isAxiosError(error) && error.status === 401) {
                     await signOut()
-                    return router.push('/login');
+                    return router.push('/auth/login');
                 }
                 setError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga')
             } finally {

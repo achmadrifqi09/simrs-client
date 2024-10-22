@@ -10,15 +10,12 @@ import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {signIn, useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
+import {signIn} from "next-auth/react";
 import {LuEye, LuEyeOff, LuFolderLock, LuLoader2} from "react-icons/lu";
-import {toast} from "@/hooks/use-toast";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const router = useRouter();
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
     const credentials = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -27,7 +24,6 @@ const Login = () => {
             password: ""
         }
     })
-    const {status} = useSession();
 
     const {handleSubmit, control} = credentials
 
@@ -35,23 +31,9 @@ const Login = () => {
         setErrorMessage(null);
         setLoadingSubmit(true);
 
-        if (status === 'authenticated') {
-            return router.push('/')
-        }
-
-        const result = await signIn('credentials', {
-            redirect: false,
+        await signIn('credentials', {
             ...values
         })
-
-        if (result?.error) {
-            setErrorMessage(result.error)
-            setLoadingSubmit(false);
-            return
-        }
-        setLoadingSubmit(false)
-        toast({description: 'Login berhasil', duration: 2000})
-        return router.push('/')
     })
 
     return (
@@ -68,12 +50,11 @@ const Login = () => {
                                 sizes="(max-width: 28rem) 100vw, 28rem"
                             />
                         </div>
-                        <Heading headingLevel="h2"
-                                 className="text-white text-center space-y-2 leading-relaxed font-bold">
+                        <h2 className="text-white text-center space-y-2 font-bold text-xl md:text-2xl xl:text-3xl">
                             <span className="block"> Rumah Sakit Umum</span>
                             <span className="block">Universitas Muhammadiyah Malang</span>
-                        </Heading>
-                        <p className="text-lg text-red-50">Layananku Pengabdianku</p>
+                        </h2>
+                        <p className="text-lg text-red-50 mt-2">Layananku Pengabdianku</p>
                     </div>
                     <div className="w-full h-full bg-login-banner bg-contain bg-no-repeat bg-bottom">
                     </div>
@@ -92,10 +73,9 @@ const Login = () => {
                             <LuFolderLock className="w-6 h-6"/>
                         </div>
                         <p className="text-gray-500">Selamat datang</p>
-                        <Heading headingLevel="h3" variant="page-title"
-                                 className="text-left space-y-2 leading-relaxed mb-6">
+                        <h2 className="text-left space-y-2 leading-relaxed mb-6 text-xl md:text-2xl text-[#054571] font-bold">
                             Portal Sistem Manajemen<br/>Rumah Sakit
-                        </Heading>
+                        </h2>
                         <Form {...credentials}>
                             <form onSubmit={onSubmit} autoComplete="off">
                                 <div className="my-4">
