@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {EmployeeTypeDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -10,15 +10,15 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
-import {Permission} from "@/types/permission";
+import {Permission} from "@/types/permission"
 
-interface EmployeeStatusProps {
+interface EmployeeTypeProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
-    onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
+    selectRecord: React.Dispatch<React.SetStateAction<EmployeeTypeDTO | null>>
+    onChangeType?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
-    permission: Permission | null;
+    permission: Permission | null
 }
 
 const EmployeeTypeTable = (
@@ -28,11 +28,11 @@ const EmployeeTypeTable = (
         setAction,
         setAlertDelete,
         permission
-    }: EmployeeStatusProps) => {
+    }: EmployeeTypeProps) => {
     const url: string = '/master/employee-type'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<EmployeeCategoryDTO[]>({
+    const {data, loading, error, getData} = useGet<EmployeeTypeDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -77,7 +77,7 @@ const EmployeeTypeTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Kategori Pegawai</TableHead>
+                        <TableHead>Nama Type Pegawai</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -88,13 +88,13 @@ const EmployeeTypeTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((employeeType: EmployeeCategoryDTO, index: number) => {
+                        data?.map((employeeType: EmployeeTypeDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell
-                                            className="font-medium">{employeeType.status_jenis_pegawai}</TableCell>
+                                            className="font-medium">{employeeType.nama_jenis_pegawai}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (
@@ -107,12 +107,12 @@ const EmployeeTypeTable = (
                                                             }
                                                         }
                                                     />
-                                                ) : (employeeType.status === 1 ? 'aktif' : 'Non Aktif')
+                                                ): (employeeType.status === 1 ? 'Aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
-                                        <TableCell>
-                                            {
-                                                (permission?.can_update || permission?.can_delete) && (
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell>
                                                     <div className="flex gap-2">
                                                         {
                                                             permission?.can_update && (
@@ -124,7 +124,6 @@ const EmployeeTypeTable = (
                                                                     size="sm">
                                                                     Update
                                                                 </Button>
-
                                                             )
                                                         }
                                                         {
@@ -138,13 +137,12 @@ const EmployeeTypeTable = (
                                                                     size="sm" variant="outline">
                                                                     Hapus
                                                                 </Button>
-
                                                             )
                                                         }
                                                     </div>
-                                                )
-                                            }
-                                        </TableCell>
+                                                </TableCell>
+                                            )
+                                        }
                                     </TableRow>
                                 </React.Fragment>
                             )

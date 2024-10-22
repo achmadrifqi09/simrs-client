@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {EmployeeTypeDTO} from "@/types/master";
+import {EmployeeCategoryDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import EmployeeTypeTable from "@/app/(root)/master/employee-category/employee-category-table";
 import UpdateOrCreateEmployeeType from "@/app/(root)/master/employee-category/update-or-create";
@@ -13,7 +13,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const EmployeeCategory = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<EmployeeTypeDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<EmployeeCategoryDTO | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [employeeCategoryPermission, setEmployeeCategoryPermission] = useState<Permission | null>(null);

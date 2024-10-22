@@ -2,52 +2,52 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {RoomDTO} from "@/types/master";
+import {RoomClassDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import UpdateOrCreateRoom from "@/app/(root)/room/availability/update-or-create";
-import RoomTable from "@/app/(root)/room/availability/avaibility-table";
-import RoomDelete from "@/app/(root)/room/availability/delete";
+import UpdateOrCreateRoomClass from "@/app/(root)/room/class/update-or-create";
+import RoomClassTable from "@/app/(root)/room/class/room-class-table";
+import RoomClassDelete from "@/app/(root)/room/class/delete";
 import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";
 
-const Room = () => {
+const RoomClass = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<RoomDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<RoomClassDTO | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
-    const [roomPermission, setRoomPermission] = useState<Permission | null>(null);
+    const [roomClassPermission, setRoomClassPermission] = useState<Permission | null>(null);
     const {getPermissions} = usePermissionsStore();
-    console.log(selectedRecord)
+
     const onRefresh = () => {
         setRefreshTrigger(prev => prev + 1);
     }
 
     useEffect(() => {
-        const permission = getPermissions('kamar-dan-inpatient');
-        if (permission) setRoomPermission(permission)
+        const permission = getPermissions('kelas-kamar');
+        if(permission) setRoomClassPermission(permission)
         console.log(permission)
     }, [])
 
     return (
         <>
-            <Heading headingLevel="h3" variant="page-title">Data Ketersediaan kamar</Heading>
+            <Heading headingLevel="h3" variant="page-title">Detail</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateRoom
+                    <UpdateOrCreateRoomClass
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         setSelectedRecord={setSelectedRecord}
                         actionType={actionType}
-                        permission={roomPermission}
+                        permission={roomClassPermission}
                     />
-                    <RoomTable
+                    <RoomClassTable
                         selectRecord={setSelectedRecord}
                         refreshTrigger={refreshTrigger}
                         setAction={setActionType}
                         setAlertDelete={setShowAlertDelete}
-                        permission={roomPermission}
+                        permission={roomClassPermission}
                     />
-                    <RoomDelete
+                    <RoomClassDelete
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         action={actionType}
@@ -60,4 +60,4 @@ const Room = () => {
     )
 }
 
-export default Room
+export default RoomClass

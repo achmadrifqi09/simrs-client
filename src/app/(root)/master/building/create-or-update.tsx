@@ -19,32 +19,32 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {employeeCategoryValidation} from "@/validation-schema/master";
+import {buildingValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {BuildingDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
-type UpdateOrCreateEmployeeTypeProps = {
+type UpdateOrCreateBuildingProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeCategoryDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
-    actionType: Action
+    selectedRecord: BuildingDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<BuildingDTO | null>>
+    actionType: Action,
     permission: Permission | null
 }
 
-const UpdateOrCreateEmployeeType = ({
+const UpdateOrCreateBuilding = ({
                                         onRefresh,
                                         selectedRecord,
                                         setSelectedRecord,
                                         actionType,
                                         permission
-                                    }: UpdateOrCreateEmployeeTypeProps) => {
-    const employeeTypeForm = useForm<z.infer<typeof employeeCategoryValidation>>({
-        resolver: zodResolver(employeeCategoryValidation),
+                                    }: UpdateOrCreateBuildingProps) => {
+    const religionForm = useForm<z.infer<typeof buildingValidation>>({
+        resolver: zodResolver(buildingValidation),
         defaultValues: {
-            status_jenis_pegawai: "",
+            nama_gedung: "",
             status: "1"
         }
     })
@@ -54,9 +54,9 @@ const UpdateOrCreateEmployeeType = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/employee-type')
+    const {postData, postLoading, postError} = usePost('/master/building')
     const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = employeeTypeForm
+    const {handleSubmit, control, setValue} = religionForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -66,15 +66,16 @@ const UpdateOrCreateEmployeeType = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('status_jenis_pegawai', "")
+        setValue('nama_gedung', "")
         setValue('status', '1')
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
+        console.log(id)
         const response = await updateData(
-            `/master/employee-type/${id}/status`,
+            `/master/building/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,18 +83,18 @@ const UpdateOrCreateEmployeeType = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate status Pegawai ${selectedRecord?.status_jenis_pegawai} 
+                description: `Berhasil mengupdate Status Sosial  ${selectedRecord?.nama_gedung} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateEmployeeType = (employeeTypeForm: EmployeeCategoryDTO) => {
+    const onUpdateBuilding = (religionForm: BuildingDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(employeeTypeForm.id_ms_jenis_pegawai_status)
-        setValue('status_jenis_pegawai', employeeTypeForm.status_jenis_pegawai.toString())
-        setValue('status', employeeTypeForm.status.toString())
+        setSelectedRecordId(religionForm.id)
+        setValue('nama_gedung', religionForm.nama_gedung)
+        setValue('status', religionForm.status.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -103,12 +104,14 @@ const UpdateOrCreateEmployeeType = ({
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
+                {   status: Number(values.status),
+                    nama_gedung: values.nama_gedung
+                },
             )
         ) : (
             await updateData(
-                `/master/employee-type/${selectedRecordId}`,
-                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
+                `/master/building/${selectedRecordId}`,
+                {status: Number(values.status), nama_gedung: values.nama_gedung},
             )
         )
 
@@ -117,10 +120,10 @@ const UpdateOrCreateEmployeeType = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} Kategori Pegawai ${response.data.status_jenis_pegawai}`,
+                    : 'memperbarui data '} Gedung ${response.data.nama_gedung}`,
             })
-            employeeTypeForm.reset({
-                status_jenis_pegawai: "",
+            religionForm.reset({
+                nama_gedung: "",
                 status: "1"
             })
             onRefresh();
@@ -129,9 +132,9 @@ const UpdateOrCreateEmployeeType = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateEmployeeType(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateBuilding(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_ms_jenis_pegawai_status, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
@@ -149,21 +152,21 @@ const UpdateOrCreateEmployeeType = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Nama Kategori Pegawai
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Gedung
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...employeeTypeForm}>
+                        <Form {...religionForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="status_jenis_pegawai"
+                                        name="nama_gedung"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Pegawai</FormLabel>
+                                                    <FormLabel>Nama Status Keluarga</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -229,4 +232,4 @@ const UpdateOrCreateEmployeeType = ({
     )
 }
 
-export default UpdateOrCreateEmployeeType
+export default UpdateOrCreateBuilding

@@ -2,51 +2,51 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {RoomDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
-import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
+import {Switch} from "@/components/ui/switch";
 
-interface EmployeeStatusProps {
+interface AvailableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<RoomDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
-    permission: Permission | null;
+    permission: Permission | null
 }
 
-const EmployeeTypeTable = (
+const AvailableTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete,
         permission
-    }: EmployeeStatusProps) => {
-    const url: string = '/master/employee-type'
+    }: AvailableProps) => {
+    const url: string = '/master/room'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<EmployeeCategoryDTO[]>({
+    const {data, loading, error, getData} = useGet<RoomDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const keyword = e.target.value;
+        const keyword: string = e.target.value;
         setSearchKeyword(keyword);
-    }
+    };
+
 
     const debouncedChangeSearch = useCallback(
         debounce(handleChangeSearch, 500),
         []
     );
-
     useEffect(() => {
         if (error) {
             toast({
@@ -56,6 +56,7 @@ const EmployeeTypeTable = (
             })
         }
     }, [error])
+
 
     useEffect(() => {
         if (status === 'authenticated') {
@@ -67,8 +68,7 @@ const EmployeeTypeTable = (
                 })
             });
         }
-    }, [refreshTrigger, getData, status]);
-
+    }, [refreshTrigger, getData, status])
     return (
         <>
             <Input type="search" className="w-full md:w-1/3" placeholder="Cari data ..."
@@ -77,7 +77,9 @@ const EmployeeTypeTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Kategori Pegawai</TableHead>
+                        <TableHead>Nama Kamar</TableHead>
+                        <TableHead>Jenis Kamar</TableHead>
+                        <TableHead>Gedung</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -88,93 +90,98 @@ const EmployeeTypeTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((employeeType: EmployeeCategoryDTO, index: number) => {
+                        data?.map((available: RoomDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
+                                        <TableCell className="font-medium">{available?.nama_kamar}</TableCell>
                                         <TableCell
-                                            className="font-medium">{employeeType.status_jenis_pegawai}</TableCell>
+                                            className="font-medium">{available?.jenis_kamar?.nama_jenis_kamar}</TableCell>
+                                        <TableCell className="font-medium">{available?.gedung?.nama_gedung}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (
+
                                                     <Switch
-                                                        checked={employeeType.status === 1}
+                                                        checked={available.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(employeeType);
+                                                                selectRecord(available);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ) : (employeeType.status === 1 ? 'aktif' : 'Non Aktif')
+                                                ) : (available.status === 1 ? 'Aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
-                                        <TableCell>
-                                            {
-                                                (permission?.can_update || permission?.can_delete) && (
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell>
                                                     <div className="flex gap-2">
                                                         {
-                                                            permission?.can_update && (
+                                                            permission.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeType);
+                                                                        selectRecord(available);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
                                                                     size="sm">
                                                                     Update
                                                                 </Button>
-
                                                             )
                                                         }
                                                         {
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeType);
+                                                                        selectRecord(available);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}
                                                                     size="sm" variant="outline">
                                                                     Hapus
                                                                 </Button>
-
                                                             )
                                                         }
                                                     </div>
-                                                )
-                                            }
-                                        </TableCell>
+                                                </TableCell>
+                                            )
+                                        }
                                     </TableRow>
                                 </React.Fragment>
                             )
                         })
                     }
-                    {(data && data.length === 0 && !loading) && (
+                    {(data && data?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
-                        loading || status === 'loading' && (
-                            Array.from({length: 4}, (_, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-8 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
-                                </TableRow>
+                        loading || status == 'loading' && (
+                            Array.from({length: 4}, (_, index: number) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-16 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell className="text-center flex gap-4">
+                                                    <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                    <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                </TableCell>
+                                            )
+                                        }
+                                    </TableRow>
+                                )
                             ))
-                        )
                     }
                 </TableBody>
             </Table>
@@ -183,4 +190,4 @@ const EmployeeTypeTable = (
     )
 }
 
-export default EmployeeTypeTable
+export default AvailableTable

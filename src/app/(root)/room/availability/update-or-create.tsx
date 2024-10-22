@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FormError from "@/components/ui/form-error";
 import {Button} from "@/components/ui/button";
 import {Loader2} from "lucide-react";
@@ -19,44 +18,48 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {employeeCategoryValidation} from "@/validation-schema/master";
+import {roomValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {BuildingDTO, RoomDTO, RoomTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import SelectSearch from "@/components/ui/select-search";
 import {Permission} from "@/types/permission";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
-type UpdateOrCreateEmployeeTypeProps = {
+type UpdateOrCreatedRoomProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeCategoryDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
-    actionType: Action
+    selectedRecord: RoomDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomDTO | null>>
+    actionType: Action,
     permission: Permission | null
 }
 
-const UpdateOrCreateEmployeeType = ({
-                                        onRefresh,
-                                        selectedRecord,
-                                        setSelectedRecord,
-                                        actionType,
-                                        permission
-                                    }: UpdateOrCreateEmployeeTypeProps) => {
-    const employeeTypeForm = useForm<z.infer<typeof employeeCategoryValidation>>({
-        resolver: zodResolver(employeeCategoryValidation),
+const UpdateOrCreatedRoom = ({
+                                     onRefresh,
+                                     selectedRecord,
+                                     setSelectedRecord,
+                                     actionType,
+                                     permission
+                                 }: UpdateOrCreatedRoomProps) => {
+    const avaibilityForm = useForm<z.infer<typeof roomValidation>>({
+        resolver: zodResolver(roomValidation),
         defaultValues: {
-            status_jenis_pegawai: "",
+            nama_kamar: "",
+            id_ms_kamar_jenis: 0,
+            lantai: 0,
+            id_gedung: 0,
             status: "1"
         }
     })
-
     const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/employee-type')
-    const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = employeeTypeForm
+    const {postData, postLoading, postError, setPostError} = usePost('/master/room')
+    const {updateData, patchError, patchLoading, setPatchError} = usePatch()
+    const {handleSubmit, control, setValue} = avaibilityForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -66,15 +69,18 @@ const UpdateOrCreateEmployeeType = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('status_jenis_pegawai', "")
-        setValue('status', '1')
+        avaibilityForm.setValue('nama_kamar', "")
+        avaibilityForm.setValue('id_ms_kamar_jenis', 0)
+        avaibilityForm.setValue('lantai',0)
+        avaibilityForm.setValue('id_gedung',0)
+        avaibilityForm.setValue('status', "1")
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/employee-type/${id}/status`,
+            `/master/room/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,33 +88,44 @@ const UpdateOrCreateEmployeeType = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate status Pegawai ${selectedRecord?.status_jenis_pegawai} 
+                description: `Berhasil mengupdate Status Kamar  ${selectedRecord?.nama_kamar} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateEmployeeType = (employeeTypeForm: EmployeeCategoryDTO) => {
+    const onUpdateOrCreatedRoom = (avaibilityForm: RoomDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(employeeTypeForm.id_ms_jenis_pegawai_status)
-        setValue('status_jenis_pegawai', employeeTypeForm.status_jenis_pegawai.toString())
-        setValue('status', employeeTypeForm.status.toString())
+        setSelectedRecordId(avaibilityForm.id)
+        setValue('nama_kamar', "")
+        setValue('id_ms_kamar_jenis', 0)
+        setValue('lantai',0)
+        setValue('id_gedung',0)
+        setValue('status', "1")
     }
 
+        console.log(avaibilityForm.getValues())
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;
         }
-
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
+                {
+                    status: Number(values.status),
+                    id_ms_kamar_jenis: Number(values.id_ms_kamar_jenis.toString()),
+                    nama_kamar: values.nama_kamar,
+                },
             )
         ) : (
             await updateData(
-                `/master/employee-type/${selectedRecordId}`,
-                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
+                `/master/room/${selectedRecordId}`,
+                {
+                    status: Number(values.status),
+                    id_ms_kamar_jenis: Number(values.id_ms_kamar_jenis.toString()),
+                    nama_kamar: values.nama_kamar
+                },
             )
         )
 
@@ -117,24 +134,30 @@ const UpdateOrCreateEmployeeType = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} Kategori Pegawai ${response.data.status_jenis_pegawai}`,
+                    : 'memperbarui data '} provinsi ${response.data.nama_kamar}`,
             })
-            employeeTypeForm.reset({
-                status_jenis_pegawai: "",
+            avaibilityForm.reset({
+                nama_kamar: "",
+                id_ms_kamar_jenis: 0,
                 status: "1"
             })
             onRefresh();
         }
     });
-
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateEmployeeType(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoom(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_ms_jenis_pegawai_status, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
+
+    useEffect(() => {
+        setPostError(null)
+        setPatchError(null)
+        avaibilityForm.clearErrors()
+    }, [showDialog]);
 
     return (
         <div>
@@ -142,30 +165,93 @@ const UpdateOrCreateEmployeeType = ({
                 <DialogTrigger asChild>
                     {
                         permission?.can_create && (
-                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                            <Button className="mb-4"
+                                    onClick={handleOpenDialog}>Tambah</Button>
                         )
                     }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Nama Kategori Pegawai
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Ketersediaan kamar
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...employeeTypeForm}>
+                        <Form {...avaibilityForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="status_jenis_pegawai"
+                                        name="id_gedung"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Pegawai</FormLabel>
+                                                    <FormLabel>Pilih Gedung</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<BuildingDTO>
+                                                            url="/master/building?status=1"
+                                                            labelName="nama_gedung"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kelas kamar untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_kamar_jenis"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Jenis kamar</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<RoomTypeDTO>
+                                                            url="/master/room-type?status=1"
+                                                            labelName="nama_jenis_kamar"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kelas kamar untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="nama_kamar"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Nama Kamar</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="lantai"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Lantai</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="number" {...field}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -203,6 +289,8 @@ const UpdateOrCreateEmployeeType = ({
                                             )
                                         }}/>
                                 </div>
+
+
                                 <FormError
                                     errors={postError || patchError}
                                 />
@@ -229,4 +317,4 @@ const UpdateOrCreateEmployeeType = ({
     )
 }
 
-export default UpdateOrCreateEmployeeType
+export default UpdateOrCreatedRoom

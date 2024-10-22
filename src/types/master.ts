@@ -37,7 +37,7 @@ type RankOrClassDTO = {
     nama_pangkat: string;
     status: number;
 }
-type EmployeeTypeDTO = {
+type EmployeeCategoryDTO = {
     id_ms_jenis_pegawai_status: number;
     status_jenis_pegawai: string;
     status: number;
@@ -126,8 +126,8 @@ type EducationDTO = {
 }
 
 type FamilyStatusDTO = {
-    id:number;
-    nama_status_keluarga:string;
+    id: number;
+    nama_status_keluarga: string;
     status: number;
 }
 
@@ -154,7 +154,66 @@ type RoomTypeDTO = {
     nama_jenis_kamar: string;
     id_kelas_kamar?: RoomTypeRelationDTO;
     kelas_kamar?: RoomTypeRelationDTO,
-    status:number;
+    status: number;
+}
+
+type BuildingDTO = {
+    id: number;
+    nama_gedung: string;
+    status: number;
+}
+
+type BedRelationDTO = {
+    id: number;
+    nama_kamar: string;
+}
+type BedDTO = {
+    id: number;
+    id_ms_kamar: BedRelationDTO;
+    kamar?: BedRelationDTO;
+    nama_bed: string;
+    keterangan: string;
+    status_bed: number;
+    status: number;
+}
+type BedsDTO = {
+    pagination: PaginationDTO;
+    results: BedDTO[];
+}
+
+type RoomRelationDTO = {
+    id: number;
+    nama_jenis_kamar: string;
+    nama_gedung: string;
+}
+type RoomDTO = {
+    id: number;
+    jenis_kamar?: RoomRelationDTO;
+    nama_jenis_kamar?: RoomRelationDTO,
+    gedung?: RoomRelationDTO;
+    lantai: number;
+    nama_kamar?: string;
+    status: number;
+}
+
+type AvailablesDTO = {
+    pagination: PaginationDTO;
+    results: RoomDTO[];
+}
+
+type EmployeeTypeRelationDTO = {
+    id_ms_jenis_pegawai_status: number;
+    nama_pegawai: string;
+}
+type EmployeeTypeDTO = {
+    id_ms_jenis_pegawai:number;
+    nama_jenis_pegawai: string;
+    nama_jenis_pegawai_status: EmployeeTypeRelationDTO
+    status: number;
+}
+type EmployeeTypePaginationDTO = {
+    pagination: PaginationDTO;
+    results: EmployeeTypeDTO[];
 }
 export type {
     ReligionDTO,
@@ -175,11 +234,21 @@ export type {
     VillagesDTO,
     VillageDTO,
     VillageRelationDTO,
-    EmployeeTypeDTO,
+    EmployeeCategoryDTO,
     EducationDTO,
     FamilyStatusDTO,
     SocialStatusDTO,
     RoomClassDTO,
     RoomTypeDTO,
     RoomTypeRelationDTO,
+    BuildingDTO,
+    BedsDTO,
+    BedDTO,
+    BedRelationDTO,
+    AvailablesDTO,
+    RoomRelationDTO,
+    RoomDTO,
+    EmployeeTypePaginationDTO,
+    EmployeeTypeDTO,
+    EmployeeTypeRelationDTO
 };
