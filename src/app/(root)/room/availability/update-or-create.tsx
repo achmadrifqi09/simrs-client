@@ -8,7 +8,6 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
 import FormError from "@/components/ui/form-error";
 import {Button} from "@/components/ui/button";
 import {Loader2} from "lucide-react";
@@ -18,137 +17,68 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {roomValidation} from "@/validation-schema/master";
+import {availabilityValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useSession} from "next-auth/react";
-import type {BuildingDTO, RoomDTO, RoomTypeDTO} from "@/types/master";
+import type {BedDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import SelectSearch from "@/components/ui/select-search";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select"
 import {Permission} from "@/types/permission";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 type UpdateOrCreatedRoomProps = {
     onRefresh: () => void,
-    selectedRecord: RoomDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomDTO | null>>
+    selectedRecord: BedDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<BedDTO | null>>
     actionType: Action,
     permission: Permission | null
 }
 
 const UpdateOrCreatedRoom = ({
-                                     onRefresh,
-                                     selectedRecord,
-                                     setSelectedRecord,
-                                     actionType,
-                                     permission
-                                 }: UpdateOrCreatedRoomProps) => {
-    const avaibilityForm = useForm<z.infer<typeof roomValidation>>({
-        resolver: zodResolver(roomValidation),
+                                 onRefresh,
+                                 selectedRecord,
+                                 setSelectedRecord,
+                                 actionType
+                             }: UpdateOrCreatedRoomProps) => {
+    const availabilityForm = useForm<z.infer<typeof availabilityValidation>>({
+        resolver: zodResolver(availabilityValidation),
         defaultValues: {
-            nama_kamar: "",
-            id_ms_kamar_jenis: 0,
-            lantai: 0,
-            id_gedung: 0,
-            status: "1"
+            status_bed: '0',
         }
     })
-    const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
-    const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
+    const [submitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError, setPostError} = usePost('/master/room')
+    const {postLoading, postError, setPostError} = usePost('/master/bed')
     const {updateData, patchError, patchLoading, setPatchError} = usePatch()
-    const {handleSubmit, control, setValue} = avaibilityForm
+    const {handleSubmit, control} = availabilityForm
 
-    const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
-
-    const handleOpenDialog = () => {
-        setShowDialog(!showDialog)
-        setSubmitMode('POST')
-    }
 
     const handleCloseDialog = () => {
-        avaibilityForm.setValue('nama_kamar', "")
-        avaibilityForm.setValue('id_ms_kamar_jenis', 0)
-        avaibilityForm.setValue('lantai',0)
-        avaibilityForm.setValue('id_gedung',0)
-        avaibilityForm.setValue('status', "1")
+        availabilityForm.reset();
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
-    const updateStatus = async (id: number | undefined, status: number | undefined) => {
+    const onSubmit = handleSubmit(async (values) => {
         const response = await updateData(
-            `/master/room/${id}/status`,
-            {status: status === 1 ? 0 : 1},
+            `/master/bed/${selectedRecord?.id}/availability`,
+            {status_bed: Number(values.status_bed)},
         )
 
         if (response?.status_code === 200) {
+            setShowDialog(false)
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate Status Kamar  ${selectedRecord?.nama_kamar} 
-                menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
+                description: `Berhasil mengupdate Status Kamar`,
             })
-        }
-    }
-
-    const onUpdateOrCreatedRoom = (avaibilityForm: RoomDTO) => {
-        setSubmitMode('PATCH')
-        setShowDialog(true)
-        setSelectedRecordId(avaibilityForm.id)
-        setValue('nama_kamar', "")
-        setValue('id_ms_kamar_jenis', 0)
-        setValue('lantai',0)
-        setValue('id_gedung',0)
-        setValue('status', "1")
-    }
-
-        console.log(avaibilityForm.getValues())
-    const onSubmit = handleSubmit(async (values) => {
-        if (!session?.accessToken) {
-            return;
-        }
-        const response = submitMode === 'POST' ? (
-            await postData(
-                {
-                    status: Number(values.status),
-                    id_ms_kamar_jenis: Number(values.id_ms_kamar_jenis.toString()),
-                    nama_kamar: values.nama_kamar,
-                },
-            )
-        ) : (
-            await updateData(
-                `/master/room/${selectedRecordId}`,
-                {
-                    status: Number(values.status),
-                    id_ms_kamar_jenis: Number(values.id_ms_kamar_jenis.toString()),
-                    nama_kamar: values.nama_kamar
-                },
-            )
-        )
-
-        if (response?.data) {
-            setShowDialog(false)
-            toast({
-                title: "Aksi Berhasil",
-                description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} provinsi ${response.data.nama_kamar}`,
-            })
-            avaibilityForm.reset({
-                nama_kamar: "",
-                id_ms_kamar_jenis: 0,
-                status: "1"
-            })
-            onRefresh();
         }
     });
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoom(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id, selectedRecord.status)
+                setShowDialog(true)
+                availabilityForm.setValue('status_bed', selectedRecord.status_bed.toString())
             }
         }
     }, [selectedRecord])
@@ -156,19 +86,13 @@ const UpdateOrCreatedRoom = ({
     useEffect(() => {
         setPostError(null)
         setPatchError(null)
-        avaibilityForm.clearErrors()
+        availabilityForm.clearErrors()
     }, [showDialog]);
 
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
-                    {
-                        permission?.can_create && (
-                            <Button className="mb-4"
-                                    onClick={handleOpenDialog}>Tambah</Button>
-                        )
-                    }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -178,108 +102,29 @@ const UpdateOrCreatedRoom = ({
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...avaibilityForm}>
+                        <Form {...availabilityForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="id_gedung"
+                                        name="status_bed"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Pilih Gedung</FormLabel>
+                                                    <FormLabel>Status Kasur</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<BuildingDTO>
-                                                            url="/master/building?status=1"
-                                                            labelName="nama_gedung"
-                                                            valueName="id"
-                                                            placeholder="Masukkan kelas kamar untuk mencari..."
-                                                            onChange={field.onChange}
-                                                            defaultValue={Number(field.value) || undefined}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="id_ms_kamar_jenis"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Pilih Jenis kamar</FormLabel>
-                                                    <FormControl>
-                                                        <SelectSearch<RoomTypeDTO>
-                                                            url="/master/room-type?status=1"
-                                                            labelName="nama_jenis_kamar"
-                                                            valueName="id"
-                                                            placeholder="Masukkan kelas kamar untuk mencari..."
-                                                            onChange={field.onChange}
-                                                            defaultValue={Number(field.value) || undefined}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="nama_kamar"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Nama Kamar</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="text" {...field}/>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="lantai"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Lantai</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="number" {...field}/>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="status"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Status</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={field.onChange}
-                                                                defaultValue={field.value}>
+                                                        <Select
+                                                            onValueChange={field.onChange}
+                                                            defaultValue={field.value}>
                                                             <SelectTrigger>
-                                                                <SelectValue placeholder="Pilih status / visibilitas"/>
+                                                                <SelectValue placeholder="Status kamar .."/>
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
-                                                                    <SelectItem value="1">
-                                                                        Aktif
-                                                                    </SelectItem>
-                                                                    <SelectItem value="0">
-                                                                        Non Aktif
-                                                                    </SelectItem>
+                                                                    <SelectItem value="0">Siap Digunakan</SelectItem>
+                                                                    <SelectItem value="1">Digunakan</SelectItem>
+                                                                    <SelectItem value="2">Dibersihkan</SelectItem>
+                                                                    <SelectItem value="3">Rusak</SelectItem>
                                                                 </SelectGroup>
                                                             </SelectContent>
                                                         </Select>
@@ -289,7 +134,6 @@ const UpdateOrCreatedRoom = ({
                                             )
                                         }}/>
                                 </div>
-
 
                                 <FormError
                                     errors={postError || patchError}

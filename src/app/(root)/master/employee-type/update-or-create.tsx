@@ -22,9 +22,10 @@ import {z} from "zod";
 import {employeeTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {EmployeeTypeDTO} from "@/types/master";
+import type {EmployeeCategoryDTO, EmployeeTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
+import SelectSearch from "@/components/ui/select-search";
 
 type UpdateOrCreateEmployeeTypeProps = {
     onRefresh: () => void,
@@ -34,18 +35,19 @@ type UpdateOrCreateEmployeeTypeProps = {
     permission: Permission | null
 }
 
-const UpdateOrCreateEmplyeeType = ({
-                                       onRefresh,
-                                       selectedRecord,
-                                       setSelectedRecord,
-                                       actionType,
-                                       permission
-                                   }: UpdateOrCreateEmployeeTypeProps) => {
+const UpdateOrCreateEmployeeType = ({
+                                        onRefresh,
+                                        selectedRecord,
+                                        setSelectedRecord,
+                                        actionType,
+                                        permission
+                                    }: UpdateOrCreateEmployeeTypeProps) => {
     const employeeTypeForm = useForm<z.infer<typeof employeeTypeValidation>>({
         resolver: zodResolver(employeeTypeValidation),
         defaultValues: {
             nama_jenis_pegawai: "",
-            status: '1'
+            status: "1",
+            id_ms_jenis_pegawai_status: 0
         }
     })
 
@@ -68,11 +70,12 @@ const UpdateOrCreateEmplyeeType = ({
     const handleCloseDialog = () => {
         setValue('nama_jenis_pegawai', "")
         setValue('status', '1')
+        setValue('id_ms_jenis_pegawai_status', 0)
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
-    const updateType = async (id: number | undefined, status: number | undefined) => {
+    const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
             `/master/employee-type/${id}/status`,
             {status: status === 1 ? 0 : 1},
@@ -82,7 +85,7 @@ const UpdateOrCreateEmplyeeType = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate jenis Pegawai ${selectedRecord?.nama_jenis_pegawai} 
+                description: `Berhasil mengupdate Jenis Pegawai ${selectedRecord?.nama_jenis_pegawai} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
@@ -91,9 +94,10 @@ const UpdateOrCreateEmplyeeType = ({
     const onUpdateEmployeeType = (employeeTypeForm: EmployeeTypeDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(employeeTypeForm.id_ms_jenis_pegawai)
-        setValue('nama_jenis_pegawai', employeeTypeForm.nama_jenis_pegawai)
+        setSelectedRecordId(Number(employeeTypeForm.id_ms_jenis_pegawai))
+        setValue('nama_jenis_pegawai', employeeTypeForm.nama_jenis_pegawai.toString())
         setValue('status', employeeTypeForm.status.toString())
+        setValue('id_ms_jenis_pegawai_status', employeeTypeForm.id_ms_jenis_pegawai_status)
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -103,12 +107,20 @@ const UpdateOrCreateEmplyeeType = ({
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), nama_jenis_pegawai: values.nama_jenis_pegawai},
+                {
+                    status: Number(values.status),
+                    nama_jenis_pegawai: values.nama_jenis_pegawai,
+                    id_ms_jenis_pegawai_status: values.id_ms_jenis_pegawai_status
+                },
             )
         ) : (
             await updateData(
-                `/master/employee-status/${selectedRecordId}`,
-                {status: Number(values.status), nama_jenis_pegawai: values.nama_jenis_pegawai},
+                `/master/employee-type/${selectedRecordId}`,
+                {
+                    status: Number(values.status),
+                    nama_jenis_pegawai: values.nama_jenis_pegawai,
+                    id_ms_jenis_pegawai_status: values.id_ms_jenis_pegawai_status
+                },
             )
         )
 
@@ -117,11 +129,12 @@ const UpdateOrCreateEmplyeeType = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} Type Pegawai ${response.data.nama_jenis_pegawai}`,
+                    : 'memperbarui data '} Jenis Pegawai ${response.data.nama_jenis_pegawai}`,
             })
             employeeTypeForm.reset({
                 nama_jenis_pegawai: "",
-                status: '1'
+                status: "1",
+                id_ms_jenis_pegawai_status: 0
             })
             onRefresh();
         }
@@ -131,7 +144,7 @@ const UpdateOrCreateEmplyeeType = ({
         if (selectedRecord) {
             if (actionType === Action.UPDATE_FIELDS) onUpdateEmployeeType(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateType(selectedRecord.id_ms_jenis_pegawai, selectedRecord.status)
+                updateStatus(Number(selectedRecord.id_ms_jenis_pegawai), selectedRecord.status)
             }
         }
     }, [selectedRecord])
@@ -149,7 +162,7 @@ const UpdateOrCreateEmplyeeType = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Nama Type Pegawai
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Nama Jenis Pegawai
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
@@ -159,11 +172,35 @@ const UpdateOrCreateEmplyeeType = ({
                                 <div className="my-4">
                                     <FormField
                                         control={control}
+                                        name="id_ms_jenis_pegawai_status"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Kategori Pegawai</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<EmployeeCategoryDTO>
+                                                            url="/master/employee-category?status=1"
+                                                            labelName="status_jenis_pegawai"
+                                                            valueName="id_ms_jenis_pegawai_status"
+                                                            placeholder="Pilih kamar..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={field.value || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}
+                                    />
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
                                         name="nama_jenis_pegawai"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Type Pegawai</FormLabel>
+                                                    <FormLabel>Nama Jenis Pegawai</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -229,4 +266,4 @@ const UpdateOrCreateEmplyeeType = ({
     )
 }
 
-export default UpdateOrCreateEmplyeeType
+export default UpdateOrCreateEmployeeType

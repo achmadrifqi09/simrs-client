@@ -91,7 +91,6 @@ const UpdateOrCreatedRoomType = ({
     }
 
     const onUpdateOrCreatedRoomType = (roomTypeForm: RoomTypeDTO) => {
-        console.log('Updating Room Type:', roomTypeForm);
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(roomTypeForm.id)

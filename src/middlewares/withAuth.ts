@@ -1,43 +1,52 @@
 import {getToken, JWT} from 'next-auth/jwt'
-import {NextFetchEvent, NextMiddleware, NextRequest, NextResponse} from "next/server";
+import {NextFetchEvent, NextMiddleware, NextResponse} from "next/server";
 import moment from "moment-timezone";
 import {guestRoutes} from "@/const/routeWithoutPanel";
 import {generateCurrentTimestamp} from "@/lib/formatter/date-formatter";
 import {decompressFromBase64} from "lz-string";
 import {clearSessionAndRedirect} from "@/utils/cookies-cleaner";
+import {NextRequestWithAuth} from "next-auth/middleware";
 
 export default function withAuth(
     middleware: NextMiddleware,
 ) {
-    return async (req: NextRequest, next: NextFetchEvent) => {
+    return async (req: NextRequestWithAuth, next: NextFetchEvent) => {
         const pathname: string = req.nextUrl.pathname
-        if (pathname === '/not-found' || pathname === '/login') {
+        if (pathname === '/not-found') {
             return middleware(req, next);
         }
 
         const isStaticAsset = pathname.startsWith('/_next/') || pathname.startsWith('/static/') || pathname.startsWith('/images');
         const isAllowedPath = guestRoutes.some(path => pathname.startsWith(path));
 
+        const session: JWT | null = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
+
+        if(session && pathname.startsWith('/auth/login')) {
+            return NextResponse.redirect(new URL('/', req.url));
+        }
+
         if (isStaticAsset || isAllowedPath) {
             return middleware(req, next);
         }
 
-        const session: JWT | null = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
-
         if (!session?.accessToken) {
-            return NextResponse.redirect(new URL('/login', req.url));
+            return NextResponse.redirect(new URL('/auth/login', req.url));
         }
 
         if (session.expires) {
             const expired = moment.utc(session.expires);
             const currentTimestamp = moment.utc(generateCurrentTimestamp());
             if (currentTimestamp.isAfter(expired)) {
-                return clearSessionAndRedirect(req);
-            }
-        }
+                const response = NextResponse.redirect(
+                    new URL('/auth/login', req.url)
+                )
 
-        if (pathname.startsWith('/login') && session.accessToken) {
-            return NextResponse.redirect(new URL('/', req.url));
+                response.cookies.delete('next-auth.session-token')
+                response.cookies.delete('next-auth.csrf-token')
+                response.cookies.delete('next-auth.callback-url')
+
+                return response
+            }
         }
 
         const cookieMenus = req.cookies.get('menu_paths')?.value
@@ -47,7 +56,6 @@ export default function withAuth(
                 if (Array.isArray(menus)) {
                     const isPathAllowed = checkPath(pathname, menus);
                     if (!isPathAllowed && pathname !== '/') {
-                        console.log('Redirecting to not-found');
                         return NextResponse.redirect(new URL('/not-found', req.url));
                     }
                     return middleware(req, next);
@@ -84,20 +92,3 @@ function checkPath(path: string, menuPaths: string[]) {
 
     return false;
 }
-
-// const clearSessionAndRedirect = (req: NextRequest) => {
-//     const response = NextResponse.redirect(
-//         new URL('/login', req.url)
-//     )
-//
-//     response.cookies.delete('next-auth.session-token');
-//     response.cookies.delete('next-auth.session-token.0');
-//     response.cookies.delete('next-auth.session-token.1');
-//     response.cookies.delete('next-auth.session-token.2');
-//     response.cookies.delete('next-auth.csrf-token');
-//     response.cookies.delete('next-auth.callback-url');
-//     response.cookies.delete('menu_paths');
-//     response.headers.set('Clear-Site-Data', '"cookies"');
-//
-//     return response;
-// }

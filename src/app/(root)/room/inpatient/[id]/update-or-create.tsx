@@ -21,18 +21,19 @@ import {z} from "zod";
 import {bedValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {BedDTO, RoomTypeDTO} from "@/types/master";
+import type {BedDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import SelectSearch from "@/components/ui/select-search";
+import {useRouter} from "next/navigation";
 
 type UpdateOrCreatedRoomProps = {
     onRefresh: () => void,
     selectedRecord: BedDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<BedDTO | null>>
     actionType: Action,
-    permission: Permission | null
+    permission: Permission | null,
+    id_params: string
 }
 
 const UpdateOrCreatedRoom = ({
@@ -40,40 +41,62 @@ const UpdateOrCreatedRoom = ({
                                  selectedRecord,
                                  setSelectedRecord,
                                  actionType,
-                                 permission
+                                 permission,
+                                 id_params
                              }: UpdateOrCreatedRoomProps) => {
     const bedForm = useForm<z.infer<typeof bedValidation>>({
         resolver: zodResolver(bedValidation),
         defaultValues: {
             nama_bed: "",
-            id_ms_kamar: 0,
+            id_ms_kamar: Number(id_params) || 0,
             keterangan: "",
-            status_bed: 0,
+            status_bed: '0',
             status: "1"
         }
     })
     const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
-
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
-
     const {postData, postLoading, postError, setPostError} = usePost('/master/bed')
     const {updateData, patchError, patchLoading, setPatchError} = usePatch()
     const {handleSubmit, control, setValue} = bedForm
-
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
+    useEffect(() => {
+        if (selectedRecord) {
+            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoom(selectedRecord);
+            if (actionType === Action.UPDATE_STATUS) {
+                updateStatus(selectedRecord.id, selectedRecord.status)
+            }
+        }
+
+        if (showDialog !== undefined) {
+            setPostError(null);
+            setPatchError(null);
+            bedForm.clearErrors();
+        }
+
+        if (id_params) {
+            bedForm.setValue('id_ms_kamar', Number(id_params));
+        }
+    }, [selectedRecord, showDialog, id_params, actionType]);
+
     const handleOpenDialog = () => {
+        if (id_params) {
+            setValue('id_ms_kamar', Number(id_params));
+        }
         setShowDialog(!showDialog)
         setSubmitMode('POST')
     }
 
     const handleCloseDialog = () => {
-        bedForm.setValue('nama_bed', "")
-        bedForm.setValue('id_ms_kamar', 0)
-        bedForm.setValue('keterangan', "")
-        bedForm.setValue('status_bed', 0)
-        bedForm.setValue('status', "1")
+        bedForm.reset({
+            nama_bed: "",
+            id_ms_kamar: Number(id_params) || 0,
+            keterangan: "",
+            status_bed: '0',
+            status: "1"
+        });
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
@@ -98,14 +121,13 @@ const UpdateOrCreatedRoom = ({
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(bedForm.id)
-        setValue('nama_bed', "")
-        setValue('id_ms_kamar', 0)
-        setValue('keterangan', "")
-        setValue('status_bed', 0)
-        setValue('status', "1")
+        setValue('nama_bed', bedForm.nama_bed);
+        setValue('id_ms_kamar', bedForm.id_ms_kamar?.id || 0);
+        setValue('keterangan', bedForm.keterangan);
+        setValue('status_bed', bedForm.status_bed.toString());
+        setValue('status', bedForm.status.toString());
     }
 
-    console.log(bedForm.getValues())
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;
@@ -114,10 +136,10 @@ const UpdateOrCreatedRoom = ({
             await postData(
                 {
                     status: Number(values.status),
-                    id_ms_kamar: Number(values.id_ms_kamar.toString()),
+                    id_ms_kamar: Number(id_params),
                     nama_bed: values.nama_bed,
                     keterangan: values.keterangan,
-                    status_bed: values.status_bed
+                    status_bed: Number(values.status_bed)
                 },
             )
         ) : (
@@ -125,8 +147,10 @@ const UpdateOrCreatedRoom = ({
                 `/master/bed/${selectedRecordId}`,
                 {
                     status: Number(values.status),
-                    id_ms_kamar: Number(values.id_ms_kamar.toString()),
-                    nama_bed: values.nama_bed
+                    id_ms_kamar: Number(id_params),
+                    nama_bed: values.nama_bed,
+                    keterangan: values.keterangan,
+                    status_bed: Number(values.status_bed)
                 },
             )
         )
@@ -142,38 +166,34 @@ const UpdateOrCreatedRoom = ({
                 nama_bed: "",
                 id_ms_kamar: 0,
                 keterangan: "",
-                status_bed: 0,
+                status_bed: '0',
                 status: "1"
             })
             onRefresh();
         }
     });
-    useEffect(() => {
-        if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoom(selectedRecord);
-            if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id, selectedRecord.status)
-            }
-        }
-    }, [selectedRecord])
 
-    useEffect(() => {
-        setPostError(null)
-        setPatchError(null)
-        bedForm.clearErrors()
-    }, [showDialog]);
+    const router = useRouter();
 
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
-                <DialogTrigger asChild>
-                    {
-                        permission?.can_create && (
-                            <Button className="mb-4"
-                                    onClick={handleOpenDialog}>Tambah</Button>
-                        )
-                    }
-                </DialogTrigger>
+                <div className="flex gap-4 mb-2">
+                    <DialogTrigger asChild>
+                        {
+                            permission?.can_create && (
+                                <Button className="mb-4"
+                                        onClick={handleOpenDialog}>Tambah Bed</Button>
+                            )
+                        }
+                    </DialogTrigger>
+                    <Button
+                        variant="outline"
+                        onClick={() => router.back()}
+                    >
+                        Kembali
+                    </Button>
+                </div>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
@@ -196,29 +216,6 @@ const UpdateOrCreatedRoom = ({
                                                         <Input type="text"
                                                                defaultValue="nama_bed"
                                                                {...field}/>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="id_ms_kamar"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Pilih Jenis kamar</FormLabel>
-                                                    <FormControl>
-                                                        <SelectSearch<RoomTypeDTO>
-                                                            url="/master/room-type?status=1"
-                                                            labelName="nama_jenis_kamar"
-                                                            valueName="id"
-                                                            placeholder="Masukkan kelas kamar untuk mencari..."
-                                                            onChange={field.onChange}
-                                                            defaultValue={Number(field.value) || undefined}
-                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -251,11 +248,21 @@ const UpdateOrCreatedRoom = ({
                                             <FormItem>
                                                 <FormLabel>Status Kasur</FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        value={field.value}
-                                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                                    />
+                                                    <Select
+                                                        onValueChange={field.onChange}
+                                                        defaultValue={field.value}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Status kamar .."/>
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="0">Siap Digunakan</SelectItem>
+                                                                <SelectItem value="1">Digunakan</SelectItem>
+                                                                <SelectItem value="2">Dibersihkan</SelectItem>
+                                                                <SelectItem value="3">Rusak</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
                                                 </FormControl>
                                                 <FormMessage/>
                                             </FormItem>

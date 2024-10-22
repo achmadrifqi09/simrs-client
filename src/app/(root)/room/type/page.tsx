@@ -17,7 +17,7 @@ const RoomType = () => {
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [roomTypePermission, setRoomTypePermission] = useState<Permission | null>(null);
     const {getPermissions} = usePermissionsStore();
-    console.log(selectedRecord)
+
     const onRefresh = () => {
         setRefreshTrigger(prev => prev + 1);
     }
@@ -25,7 +25,6 @@ const RoomType = () => {
     useEffect(() => {
         const permission = getPermissions('jenis-kamar');
         if(permission) setRoomTypePermission(permission)
-        console.log(permission)
     }, [])
 
     return (

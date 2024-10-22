@@ -26,7 +26,7 @@ import type {EmployeeCategoryDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
-type UpdateOrCreateEmployeeTypeProps = {
+type UpdateOrCreateEmployeeCategoryProps = {
     onRefresh: () => void,
     selectedRecord: EmployeeCategoryDTO | null,
     setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
@@ -34,13 +34,13 @@ type UpdateOrCreateEmployeeTypeProps = {
     permission: Permission | null
 }
 
-const UpdateOrCreateEmployeeType = ({
+const UpdateOrCreateEmployeeCategory = ({
                                         onRefresh,
                                         selectedRecord,
                                         setSelectedRecord,
                                         actionType,
                                         permission
-                                    }: UpdateOrCreateEmployeeTypeProps) => {
+                                    }: UpdateOrCreateEmployeeCategoryProps) => {
     const employeeTypeForm = useForm<z.infer<typeof employeeCategoryValidation>>({
         resolver: zodResolver(employeeCategoryValidation),
         defaultValues: {
@@ -54,7 +54,7 @@ const UpdateOrCreateEmployeeType = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/employee-type')
+    const {postData, postLoading, postError} = usePost('/master/employee-category')
     const {updateData, patchError, patchLoading} = usePatch()
     const {handleSubmit, control, setValue} = employeeTypeForm
 
@@ -74,7 +74,7 @@ const UpdateOrCreateEmployeeType = ({
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/employee-type/${id}/status`,
+            `/master/employee-category/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,7 +82,7 @@ const UpdateOrCreateEmployeeType = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate status Pegawai ${selectedRecord?.status_jenis_pegawai} 
+                description: `Berhasil mengupdate kategori Pegawai ${selectedRecord?.status_jenis_pegawai} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
@@ -107,7 +107,7 @@ const UpdateOrCreateEmployeeType = ({
             )
         ) : (
             await updateData(
-                `/master/employee-type/${selectedRecordId}`,
+                `/master/employee-category/${selectedRecordId}`,
                 {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
             )
         )
@@ -163,7 +163,7 @@ const UpdateOrCreateEmployeeType = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Pegawai</FormLabel>
+                                                    <FormLabel>Nama Kategori Pegawai</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -229,4 +229,4 @@ const UpdateOrCreateEmployeeType = ({
     )
 }
 
-export default UpdateOrCreateEmployeeType
+export default UpdateOrCreateEmployeeCategory

@@ -30,6 +30,8 @@ const AvailableTable = (
         setAlertDelete,
         permission
     }: AvailableProps) => {
+
+
     const url: string = '/master/room'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -43,11 +45,11 @@ const AvailableTable = (
         setSearchKeyword(keyword);
     };
 
-
     const debouncedChangeSearch = useCallback(
         debounce(handleChangeSearch, 500),
         []
     );
+
     useEffect(() => {
         if (error) {
             toast({
@@ -81,6 +83,7 @@ const AvailableTable = (
                         <TableHead>Nama Kamar</TableHead>
                         <TableHead>Jenis Kamar</TableHead>
                         <TableHead>Gedung</TableHead>
+                        <TableHead>Jumlah Ranjang</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -91,37 +94,39 @@ const AvailableTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((available: RoomDTO, index: number) => {
+                        data?.map((room: RoomDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{available?.nama_kamar}</TableCell>
+                                        <TableCell className="font-medium">{room?.nama_kamar}</TableCell>
                                         <TableCell
-                                            className="font-medium">{available?.jenis_kamar?.nama_jenis_kamar}</TableCell>
-                                        <TableCell className="font-medium">{available?.gedung?.nama_gedung}</TableCell>
+                                            className="font-medium">{room?.jenis_kamar?.nama_jenis_kamar}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{room?.gedung?.nama_gedung}</TableCell>
+                                        <TableCell className="font-medium">{room?.total_bed || 0}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (
 
                                                     <Switch
-                                                        checked={available.status === 1}
+                                                        checked={room.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(available);
+                                                                selectRecord(room);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ) : (available.status === 1 ? 'Aktif' : 'Non Aktif')
+                                                ) : (room.status === 1 ? 'Aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
                                         {
                                             (permission?.can_update || permission?.can_delete || permission?.can_view) && (
                                                 <TableCell>
                                                     <div className="flex gap-2">
-                                                        <Button>
-                                                            <Link href={`/inpatient/${available?.id || ''}`}>
+                                                        <Button size="sm" asChild>
+                                                            <Link href={`/room/inpatient/${room?.id}?field_name=${room.nama_kamar}`}>
                                                                 Detail
                                                             </Link>
                                                         </Button>
@@ -129,7 +134,7 @@ const AvailableTable = (
                                                             permission.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(available);
+                                                                        selectRecord(room);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
                                                                     size="sm" variant="outline">
@@ -141,7 +146,7 @@ const AvailableTable = (
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(available);
+                                                                        selectRecord(room);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}

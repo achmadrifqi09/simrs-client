@@ -4,9 +4,9 @@ import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
 import {EmployeeCategoryDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import EmployeeTypeTable from "@/app/(root)/master/employee-category/employee-category-table";
-import UpdateOrCreateEmployeeType from "@/app/(root)/master/employee-category/update-or-create";
-import EmployeeTypeDelete from "@/app/(root)/master/employee-category/delete";
+import EmployeeCategoryTable from "@/app/(root)/master/employee-category/employee-category-table";
+import UpdateOrCreateEmployeeCategory from "@/app/(root)/master/employee-category/update-or-create";
+import EmployeeCategoryDelete from "@/app/(root)/master/employee-category/delete";
 import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";
 
@@ -33,21 +33,21 @@ const EmployeeCategory = () => {
             <Heading headingLevel="h3" variant="page-title">Data Master Kategori Pegawai</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateEmployeeType
+                    <UpdateOrCreateEmployeeCategory
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         setSelectedRecord={setSelectedRecord}
                         actionType={actionType}
                         permission={employeeCategoryPermission}
                     />
-                    <EmployeeTypeTable
+                    <EmployeeCategoryTable
                         selectRecord={setSelectedRecord}
                         refreshTrigger={refreshTrigger}
                         setAction={setActionType}
                         setAlertDelete={setShowAlertDelete}
                         permission={employeeCategoryPermission}
                     />
-                    <EmployeeTypeDelete
+                    <EmployeeCategoryDelete
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         action={actionType}

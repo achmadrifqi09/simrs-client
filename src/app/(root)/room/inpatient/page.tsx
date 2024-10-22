@@ -33,7 +33,7 @@ const Room = () => {
     return (
         <>
             <Heading headingLevel="h3" variant="page-title">
-                Data Ketersediaan Kamar & Bed
+                Data Kamar
             </Heading>
             <Section>
                 <div className="space-y-6">

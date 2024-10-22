@@ -25,7 +25,6 @@ const RoomClass = () => {
     useEffect(() => {
         const permission = getPermissions('kelas-kamar');
         if(permission) setRoomClassPermission(permission)
-        console.log(permission)
     }, [])
 
     return (

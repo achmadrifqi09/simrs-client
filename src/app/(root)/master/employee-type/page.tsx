@@ -10,6 +10,7 @@ import EmployeeTypeDelete from "@/app/(root)/master/employee-type/delete";
 import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";
 
+
 const EmployeeType = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
     const [selectedRecord, setSelectedRecord] = useState<EmployeeTypeDTO | null>(null);
@@ -19,8 +20,8 @@ const EmployeeType = () => {
     const {getPermissions} = usePermissionsStore();
 
     useEffect(() => {
-        const permission = getPermissions('jenis-pegawai');
-        if(permission) setEmployeeTypePermission(permission);
+        const permission = getPermissions('jenis-pegawai')
+        if(permission)  setEmployeeTypePermission(permission);
     }, []);
 
     const onRefresh = () => {
@@ -29,7 +30,7 @@ const EmployeeType = () => {
 
     return (
         <>
-            <Heading headingLevel="h3" variant="page-title">Data Master jenis Pegawai</Heading>
+            <Heading headingLevel="h3" variant="page-title">Data Master Jenis Pegawai</Heading>
             <Section>
                 <div className="space-y-6">
                     <UpdateOrCreateEmployeeType

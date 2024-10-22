@@ -1,20 +1,18 @@
 import AES from 'crypto-js/aes';
 import moment from 'moment-timezone';
-import { enc } from 'crypto-js';
+import {enc} from 'crypto-js';
 
-const generateClientKey = () => {
+const generateSignature = () => {
     const secretKey =  process.env.NEXT_PUBLIC_SECRET_KEY
 
     if(secretKey){
-        const signature = AES.encrypt(
+        return AES.encrypt(
             JSON.stringify({
                 client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
                 timestamp: generateCurrentDate(),
             }),
             secretKey
-        ).toString();
-        console.log(signature);
-        return signature
+        ).toString()
     }
     return null;
 }
@@ -25,7 +23,7 @@ const generateCurrentDate = (): Date => {
     return new Date(finalDate);
 };
 
-const encryptCookies = (encrypt: string) => {
+const encryptData = (encrypt: string) => {
     const secretKey =  process.env.NEXT_PUBLIC_SECRET_KEY
     if(secretKey){
         return AES.encrypt(
@@ -37,7 +35,7 @@ const encryptCookies = (encrypt: string) => {
     return null;
 }
 
-const decryptCookies = (encryptedString: string) => {
+const decryptData = (encryptedString: string) => {
     const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY;
 
     if (secretKey) {
@@ -55,4 +53,4 @@ const decryptCookies = (encryptedString: string) => {
     return null;
 }
 
-export {generateClientKey, encryptCookies, decryptCookies}
+export {generateSignature, encryptData, decryptData}

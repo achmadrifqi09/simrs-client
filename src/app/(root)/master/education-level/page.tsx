@@ -22,7 +22,7 @@ const EducationLevel = () => {
     }
 
     useEffect(() => {
-        const permission = getPermissions('status-pendidikan');
+        const permission = getPermissions('tingkat-pendidikan');
         if(permission) setEducationLevelPermission(permission);
     }, []);
     return (

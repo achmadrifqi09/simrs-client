@@ -1,6 +1,9 @@
+"use client"
 import React from "react";
 import {cn} from "@/lib/utils"
 import { cva, VariantProps } from "class-variance-authority"
+import {useSession} from "next-auth/react";
+import {Skeleton} from "@/components/ui/skeleton";
 
 const headingVariant = cva("mt-1 mb-4 ",{
     variants: {
@@ -28,9 +31,22 @@ interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement>, Variant
 }
 
 const Heading = ({ headingLevel = 'h5', children, className, variant }: HeadingProps) => {
+    const {status} = useSession();
     const Headings = ({...props} :React.HTMLAttributes<HTMLHeadingElement> ) => React.createElement(headingLevel, props, children)
     const size = headingLevel
-    return <Headings className={cn(headingVariant({variant, size, className}))}>{children}</Headings>
+    return (
+        <>
+            {
+                status === 'loading' ? (
+                    <div className="h-[32px] mt-1 mb-4">
+                        <Skeleton className="h-6 w-1/2 sm:w-1/3"/>
+                    </div>
+                ): (
+                    <Headings className={cn(headingVariant({variant, size, className}))}>{children}</Headings>
+                )
+            }
+        </>
+    )
 }
 
 export default Heading

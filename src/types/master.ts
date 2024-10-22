@@ -42,6 +42,17 @@ type EmployeeCategoryDTO = {
     status_jenis_pegawai: string;
     status: number;
 }
+type EmployeeTypeRelationDTO = {
+    id_ms_jenis_pegawai_status: string;
+    id_ms_jenis_pegawai: number;
+}
+type EmployeeTypeDTO = {
+    id_ms_jenis_pegawai_status: number;
+    id_ms_jenis_pegawai: EmployeeTypeRelationDTO;
+    nama_jenis_pegawai: string;
+    status_jenis_pegawai: EmployeeCategoryDTO;
+    status: number;
+}
 
 type DoctorSpecialistDTO = {
     id_ms_spesialis: number;
@@ -156,7 +167,6 @@ type RoomTypeDTO = {
     kelas_kamar?: RoomTypeRelationDTO,
     status: number;
 }
-
 type BuildingDTO = {
     id: number;
     nama_gedung: string;
@@ -166,10 +176,15 @@ type BuildingDTO = {
 type BedRelationDTO = {
     id: number;
     nama_kamar: string;
+    lantai: number;
+    jenis_kamar?: RoomRelationDTO;
+    gedung?: RoomRelationDTO;
+    total_bed: number;
+    status: number;
 }
 type BedDTO = {
     id: number;
-    id_ms_kamar: BedRelationDTO;
+    id_ms_kamar?: BedRelationDTO;
     kamar?: BedRelationDTO;
     nama_bed: string;
     keterangan: string;
@@ -194,27 +209,13 @@ type RoomDTO = {
     lantai: number;
     nama_kamar?: string;
     status: number;
+    total_bed: number;
+    room_id: number;
 }
 
-type AvailablesDTO = {
-    pagination: PaginationDTO;
-    results: RoomDTO[];
-}
 
-type EmployeeTypeRelationDTO = {
-    id_ms_jenis_pegawai_status: number;
-    nama_pegawai: string;
-}
-type EmployeeTypeDTO = {
-    id_ms_jenis_pegawai:number;
-    nama_jenis_pegawai: string;
-    nama_jenis_pegawai_status: EmployeeTypeRelationDTO
-    status: number;
-}
-type EmployeeTypePaginationDTO = {
-    pagination: PaginationDTO;
-    results: EmployeeTypeDTO[];
-}
+
+
 export type {
     ReligionDTO,
     BloodTypeDTO,
@@ -245,10 +246,8 @@ export type {
     BedsDTO,
     BedDTO,
     BedRelationDTO,
-    AvailablesDTO,
     RoomRelationDTO,
     RoomDTO,
-    EmployeeTypePaginationDTO,
     EmployeeTypeDTO,
     EmployeeTypeRelationDTO
 };

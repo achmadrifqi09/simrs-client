@@ -21,7 +21,6 @@ const MaritalStatus = () => {
     useEffect(() => {
         const permission = getPermissions('provinsi');
         if(permission) setProvincePermission(permission)
-        console.log(permission)
     }, [])
     const onRefresh = () => {
         setRefreshTrigger(prev => prev + 1);

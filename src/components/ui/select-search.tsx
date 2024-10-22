@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import AsyncSelect, {AsyncProps} from 'react-select/async';
 import axios, {AxiosResponse} from "axios";
 import {useSession} from "next-auth/react";
-import {generateClientKey} from "@/lib/crypto-js/cipher";
+import {generateSignature} from "@/lib/crypto-js/cipher";
 import {components, DropdownIndicatorProps, GroupBase} from 'react-select';
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -59,7 +59,7 @@ const SelectSearch = <T extends Record<string, any>>({
     const fetchOptions = async (inputValue: string): Promise<Option[]> => {
         try {
             const currentHeader: Record<string, string | undefined> = {
-                'client-signature': generateClientKey() ?? '',
+                'client-signature': generateSignature() ?? '',
                 'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                 'Authorization': session?.accessToken ? `Bearer ${session.accessToken}` : undefined
             };
@@ -108,6 +108,8 @@ const SelectSearch = <T extends Record<string, any>>({
             if (defaultValue !== undefined) {
                 const options = await fetchOptions(defaultValue as string);
                 const defaultOption = options.find(option => option.value === defaultValue);
+                console.log(defaultValue)
+                console.log(defaultOption)
                 if (defaultOption) {
                     setSelectedOption(defaultOption);
                     if (onChange) {

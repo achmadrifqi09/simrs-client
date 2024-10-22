@@ -27,7 +27,7 @@ const TopBar = ({onToggleMenu}: TopBarProps) => {
     const handleLogout = () => {
         signOut()
             .then(() => {
-                router.push('/login')
+                router.push('/auth/login')
                 clearMenu()
                 clearClientSideCookies()
                 clearPermissions()

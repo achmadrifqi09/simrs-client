@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const clearSessionAndRedirect = (req: NextRequest) => {
     const response = NextResponse.redirect(
-        new URL('/login', req.url)
+        new URL('/auth/login', req.url)
     );
 
     const cookiePrefixes = ['next-auth.', 'menu_'];

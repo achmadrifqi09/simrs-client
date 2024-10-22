@@ -1,3 +1,4 @@
+
 import z from 'zod'
 
 const religionValidation = z.object({
@@ -180,17 +181,21 @@ const bedValidation = z.object ({
         .string({message: 'Keterangan harus Diisi'})
         .min(2, {message:'Keterangan harus Diisi minimal 2 karakter'})
         .max(50, {message: 'Keterangan harus Diisi maximal 50 karakter'}),
-    status_bed: z.number({message: 'Status bed harus Diisi'}),
+    status_bed: z.string({message: 'Status bed harus Diisi'}),
     status: z.string({message: 'Status bed harus Diisi'}),
 })
 
-const employeeTypeValidation = z.object ({
-    id_ms_jenis_pegawai_status: z.number({message:'Jenis jenis pegawai status harus Diisi'}),
+const availabilityValidation = z.object({
+    status_bed: z.string({message: 'Status bed harus Diisi'}),
+})
+
+const employeeTypeValidation = z.object({
+    id_ms_jenis_pegawai_status: z.number({message:'jenis pegawai status harus Diisi'}),
     nama_jenis_pegawai: z
-        .string({message: 'Nama jenis pegawai harus Diisi'})
-        .min(2,{message: 'Nama Jenis Pegawai Minimal 2 karaker'})
-        .max(50, {message: 'Nama Jenis Pegawai Maximal 50 karakter'}),
-    status:z.string({message: 'Status Harus diisi'}),
+        .string({message: 'nama jenis pegawai harus diisi'})
+        .min(2, {message: 'nama jenis pegawai minimal 2 karakter'})
+        .max(50, {message: 'nama jenis pegawai maximal 2 krakter'}),
+    status: z.string({message: 'Status Kamar harus Diisi'}),
 })
 export {
     religionValidation,
@@ -214,5 +219,6 @@ export {
     buildingValidation,
     roomValidation,
     bedValidation,
-    employeeTypeValidation
+    employeeTypeValidation,
+    availabilityValidation
 }

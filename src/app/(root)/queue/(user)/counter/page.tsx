@@ -1,67 +1,70 @@
-"use client";
-import {useState} from "react";
-import {Button} from "@/components/ui/button";
+"use client"
 import Heading from "@/components/ui/heading";
-import Menu from "@/components/ui/menu";
-import {counterMenus} from "@/const/menu";
-import {CounterMenu} from "@/enums/Menu";
-import Admission from "@/app/(root)/queue/(user)/counter/admission";
-import Pharmacy from "@/app/(root)/queue/(user)/counter/pharmacy";
+import Section from "@/components/ui/section";
+import React, {useEffect, useState} from "react";
+import {Action} from "@/enums/action";
+import {Permission} from "@/types/permission";
+import {usePermissionsStore} from "@/lib/zustand/store";
+import CounterTable from "@/app/(root)/queue/(user)/counter/counter-table";
+import UpdateOrCreateCounter from "@/app/(root)/queue/(user)/counter/update-or-create";
+import DeleteCounter from "@/app/(root)/queue/(user)/counter/delete";
+
+type CounterDTO = {
+    id_ms_loket_antrian: number;
+    nama_loket: string;
+    status: number;
+    keterangan: string | undefined;
+    jenis_loket: number;
+}
+
 
 const Counter = () => {
-    const [counter, setCounter] = useState<CounterMenu>(CounterMenu.ADMISSION);
+    const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+    const [selectedRecord, setSelectedRecord] = useState<CounterDTO | null>(null);
+    const [actionType, setActionType] = useState<Action>(Action.CREATE);
+    const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
+    const [provincePermission, setProvincePermission] = useState<Permission | null>(null);
+    const {getPermissions} = usePermissionsStore();
 
-    const handleMenuCounter = (menu: string) => {
-        if (menu === "ADMISSION") {
-            setCounter(CounterMenu.ADMISSION)
-        } else {
-            setCounter(CounterMenu.PHARMACY)
-        }
+    const onRefresh = () => {
+        setRefreshTrigger(prev => prev + 1);
     }
 
+    useEffect(() => {
+        const permission = getPermissions('master-loket-antrean');
+        if (permission) setProvincePermission(permission)
+    }, [])
+
     return (
-        <div>
-            <div className="flex justify-between items-center mb-6">
-                <Heading headingLevel="h3" variant="page-title">
-                    Loket Antrean
-                </Heading>
-                <Button variant="outline">Kelola Loket</Button>
-            </div>
-
-            <div>
-                <div className="flex flex-col lg:flex-row gap-6">
-                    <div
-                        className="w-full md:w-1/4 sm:min-w-[220px] bg-white h-max border border-graay-200 rounded-lg p-4">
-                        <Heading headingLevel="h5" variant="section-title">
-                            Menu
-                        </Heading>
-                        <div className="space-y-2">
-                            {counterMenus.map((menu, index) => {
-                                return (
-                                    <Menu
-                                        key={index}
-                                        iconName={menu.icon}
-                                        label={menu.label}
-                                        asButton={true}
-                                        active={menu.tag == counter}
-                                        onClick={() => handleMenuCounter(menu.tag ?? "ADMISSION")}
-                                    />
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className="w-full">
-                        {
-                            counter == CounterMenu.ADMISSION ? (
-                                <Admission/>
-                            ) : (<Pharmacy/>)
-                        }
-                    </div>
+        <>
+            <Heading headingLevel="h3" variant="page-title">Master Loket Antrean</Heading>
+            <Section>
+                <div className="space-y-6">
+                    <UpdateOrCreateCounter
+                        onRefresh={onRefresh}
+                        selectedRecord={selectedRecord}
+                        setSelectedRecord={setSelectedRecord}
+                        actionType={actionType}
+                        permission={provincePermission}
+                    />
+                    <CounterTable
+                        selectRecord={setSelectedRecord}
+                        refreshTrigger={refreshTrigger}
+                        setAction={setActionType}
+                        setAlertDelete={setShowAlertDelete}
+                        permission={provincePermission}
+                    />
+                    <DeleteCounter
+                        onRefresh={onRefresh}
+                        selectedRecord={selectedRecord}
+                        action={actionType}
+                        setShowAlert={setShowAlertDelete}
+                        showAlert={showAlertDelete}
+                    />
                 </div>
-            </div>
-        </div>
-    );
-};
+            </Section>
+        </>
+    )
+}
 
-export default Counter;
+export default Counter

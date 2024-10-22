@@ -73,7 +73,6 @@ const UpdateOrCreateSocialStatus = ({
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
-        console.log(id)
         const response = await updateData(
             `/master/social-status/${id}/status`,
             {status: status === 1 ? 0 : 1},
@@ -152,7 +151,7 @@ const UpdateOrCreateSocialStatus = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Keluarga
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Sosial
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
@@ -166,7 +165,7 @@ const UpdateOrCreateSocialStatus = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Keluarga</FormLabel>
+                                                    <FormLabel>Nama Status Sosial</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>

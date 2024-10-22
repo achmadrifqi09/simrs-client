@@ -29,7 +29,7 @@ const DeleteBed = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}:
     )
     const handleDelete = async () => {
         if (action === Action.DELETE) {
-            const result = await deleteData(`/master/room/${selectedRecord?.id}`)
+            const result = await deleteData(`/master/bed/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({

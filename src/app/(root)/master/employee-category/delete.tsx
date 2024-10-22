@@ -29,7 +29,7 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
     )
     const handleDelete = async () => {
         if(action === Action.DELETE){
-            const result = await deleteData(`/master/employee-status/${selectedRecord?.id_ms_jenis_pegawai_status}`)
+            const result = await deleteData(`/master/employee-category/${selectedRecord?.id_ms_jenis_pegawai_status}`)
 
             if (result?.status_code === 200) {
                 toast({

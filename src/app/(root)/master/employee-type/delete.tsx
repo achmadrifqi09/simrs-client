@@ -29,7 +29,7 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
     )
     const handleDelete = async () => {
         if(action === Action.DELETE){
-            const result = await deleteData(`/master/employee-status/${selectedRecord?.id_ms_jenis_pegawai}`)
+            const result = await deleteData(`/master/employee-type/${selectedRecord?.id_ms_jenis_pegawai}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -53,7 +53,7 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data Type Pegawai {selectedRecord?.nama_jenis_pegawai}?
+                            Apakah anda yakin akan menghapus data Jenis Pegawai {selectedRecord?.nama_jenis_pegawai}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

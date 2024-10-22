@@ -27,11 +27,11 @@ const Dashboard = () => {
                         </Button>
                     )
                 }
-                <iframe
-                    src="https://docs.google.com/spreadsheets/d/1qFCuwOybSg_P2YIxzBKdyi1sC49WxIKIJ9b3q7WFYXw/edit?usp=sharing"
-                    className={fullScreen ? fullScreenStyle : 'w-full h-content'}>
+                {/*<iframe*/}
+                {/*    src="https://docs.google.com/spreadsheets/d/1qFCuwOybSg_P2YIxzBKdyi1sC49WxIKIJ9b3q7WFYXw/edit?usp=sharing"*/}
+                {/*    className={fullScreen ? fullScreenStyle : 'w-full h-content'}>*/}
 
-                </iframe>
+                {/*</iframe>*/}
             </Section>
         </>
     )

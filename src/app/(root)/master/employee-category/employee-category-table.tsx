@@ -12,7 +12,7 @@ import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
 
-interface EmployeeStatusProps {
+interface EmployeeCategoryStatusProps {
     refreshTrigger: number;
     selectRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
@@ -21,15 +21,15 @@ interface EmployeeStatusProps {
     permission: Permission | null;
 }
 
-const EmployeeTypeTable = (
+const EmployeeCategoryTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete,
         permission
-    }: EmployeeStatusProps) => {
-    const url: string = '/master/employee-type'
+    }: EmployeeCategoryStatusProps) => {
+    const url: string = '/master/employee-category'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const {data, loading, error, getData} = useGet<EmployeeCategoryDTO[]>({
@@ -88,26 +88,26 @@ const EmployeeTypeTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((employeeType: EmployeeCategoryDTO, index: number) => {
+                        data?.map((employeeCategory: EmployeeCategoryDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell
-                                            className="font-medium">{employeeType.status_jenis_pegawai}</TableCell>
+                                            className="font-medium">{employeeCategory.status_jenis_pegawai}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (
                                                     <Switch
-                                                        checked={employeeType.status === 1}
+                                                        checked={employeeCategory.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(employeeType);
+                                                                selectRecord(employeeCategory);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ) : (employeeType.status === 1 ? 'aktif' : 'Non Aktif')
+                                                ) : (employeeCategory.status === 1 ? 'aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
                                         <TableCell>
@@ -118,7 +118,7 @@ const EmployeeTypeTable = (
                                                             permission?.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeType);
+                                                                        selectRecord(employeeCategory);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
                                                                     size="sm">
@@ -131,7 +131,7 @@ const EmployeeTypeTable = (
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeType);
+                                                                        selectRecord(employeeCategory);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}
@@ -183,4 +183,4 @@ const EmployeeTypeTable = (
     )
 }
 
-export default EmployeeTypeTable
+export default EmployeeCategoryTable

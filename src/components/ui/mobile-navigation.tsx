@@ -114,7 +114,7 @@ const MobileNavigation = () => {
 
                                                     <Menu iconName={menu.icon} href={`${menu.pathname}`}
                                                           label={menu.label}
-                                                          active={pathname === menu.pathname}
+                                                          active={(menu.pathname && menu?.pathname !== '/')? pathname.startsWith(menu.pathname) : pathname === '/'}
                                                           onClick={() => setOpen(!open)}></Menu>
                                                 )}
                                             </React.Fragment>

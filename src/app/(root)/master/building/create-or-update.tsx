@@ -166,7 +166,7 @@ const UpdateOrCreateBuilding = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Keluarga</FormLabel>
+                                                    <FormLabel>Nama Gedung</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>

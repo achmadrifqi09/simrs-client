@@ -11,6 +11,7 @@ import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
 import {Switch} from "@/components/ui/switch";
+import {useParams} from "next/navigation";
 
 interface BedProps {
     refreshTrigger: number;
@@ -19,6 +20,9 @@ interface BedProps {
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
     permission: Permission | null
+}
+type RoomParam = {
+    id: string;
 }
 
 const BedTable = (
@@ -29,11 +33,12 @@ const BedTable = (
         setAlertDelete,
         permission
     }: BedProps) => {
+    const useParam = useParams<RoomParam>()
     const url: string = '/master/bed'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const {data, loading, error, getData} = useGet<BedDTO[]>({
-        url: url,
+        url: `${url}?room_id=${useParam.id}`,
         keyword: searchKeyword,
     })
 
@@ -57,7 +62,6 @@ const BedTable = (
         }
     }, [error])
 
-    console.log(data)
     useEffect(() => {
         if (status === 'authenticated') {
             getData().catch(() => {

@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {signOut, useSession} from "next-auth/react";
-import {generateClientKey} from "@/lib/crypto-js/cipher";
+import {generateSignature} from "@/lib/crypto-js/cipher";
 import axios, {AxiosResponse, isAxiosError} from "axios";
 import {useRouter} from "next/navigation";
 
@@ -15,7 +15,7 @@ const usePatch = <T>() => {
         setPatchError(null)
         try {
             const currentHeader: Record<string, string | null | undefined> = {
-                'client-signature': generateClientKey(),
+                'client-signature': generateSignature(),
                 'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
                 ...headers,
             };
@@ -34,7 +34,7 @@ const usePatch = <T>() => {
         } catch (error: any) {
             if (isAxiosError(error) && error.status === 401) {
                 await signOut()
-                return router.push('/login');
+                return router.push('/auth/login');
             }
             setPatchError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga');
         } finally {

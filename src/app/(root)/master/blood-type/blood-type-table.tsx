@@ -80,7 +80,7 @@ const BloodTypeTable = (
                         <TableHead>Nama Golongan Darah</TableHead>
                         <TableHead>Status</TableHead>
                         {
-                            permission?.can_update || permission?.can_delete && (
+                            (permission?.can_update || permission?.can_delete) && (
                                 <TableHead>Aksi</TableHead>
                             )
                         }
@@ -96,7 +96,7 @@ const BloodTypeTable = (
                                         <TableCell className="font-medium">{bloodType.nama_golongan_darah}</TableCell>
                                         <TableCell>
                                             {
-                                                permission?.can_update || permission?.can_update && (
+                                                (permission?.can_update || permission?.can_update) && (
 
                                                     <Switch
                                                         checked={bloodType.status === 1}
@@ -112,7 +112,7 @@ const BloodTypeTable = (
                                         </TableCell>
                                         <TableCell>
                                             {
-                                                permission?.can_update || permission?.can_delete && (
+                                                (permission?.can_update || permission?.can_delete) && (
                                                     <div className="flex gap-2">
                                                         <Button
                                                             onClick={() => {

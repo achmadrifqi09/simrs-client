@@ -1,9 +1,9 @@
-import {generateClientKey} from '@/lib/crypto-js/cipher';
+import {generateSignature} from '@/lib/crypto-js/cipher';
 import axios, {AxiosResponse} from 'axios';
 
 export const fetcher = async (url: string, accessToken: string) => {
     const currentHeader: Record<string, string | null | undefined> = {
-        'client-signature': generateClientKey(),
+        'client-signature': generateSignature(),
         'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
     };
 

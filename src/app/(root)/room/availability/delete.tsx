@@ -1,4 +1,4 @@
-import type {RoomDTO} from "@/types/master";
+import type {BedDTO} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteRoomTypeProps = {
     onRefresh: () => void,
-    selectedRecord: RoomDTO | null,
+    selectedRecord: BedDTO | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
@@ -29,7 +29,7 @@ const DeleteRoomType = ({onRefresh, selectedRecord, action, showAlert, setShowAl
     )
     const handleDelete = async () => {
         if (action === Action.DELETE) {
-            const result = await deleteData(`/master/room/${selectedRecord?.id}`)
+            const result = await deleteData(`/master/bed/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -53,7 +53,7 @@ const DeleteRoomType = ({onRefresh, selectedRecord, action, showAlert, setShowAl
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data Kamar{selectedRecord?.nama_kamar}?
+                            Apakah anda yakin akan menghapus data Ketersediaan Kamar{selectedRecord?.nama_bed}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

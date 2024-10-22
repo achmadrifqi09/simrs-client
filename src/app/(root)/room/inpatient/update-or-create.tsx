@@ -105,7 +105,6 @@ const UpdateOrCreatedRoom = ({
         setValue('status', roomForm.status.toString())
     }
 
-    console.log(roomForm.getValues())
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;

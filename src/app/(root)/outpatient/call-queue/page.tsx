@@ -6,9 +6,11 @@ const OutpatientCallQueue = () => {
 
     return (
         <>
-            <Heading headingLevel="h3" variant="page-title">Pemeriksaan Pasien Rajal</Heading>
+            <Heading headingLevel="h3" variant="page-title">Panggil Antrean Rawat Jalan</Heading>
             <Section>
-                <p>Content</p>
+                <Heading headingLevel="h4" variant="section-title">
+                    Daftar Poliklinik
+                </Heading>
             </Section>
         </>
     )
