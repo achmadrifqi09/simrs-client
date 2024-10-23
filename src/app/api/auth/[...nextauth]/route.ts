@@ -47,6 +47,7 @@ const authOptions: NextAuthOptions = {
     pages: {
         signIn: '/auth/login',
         signOut: '/auth/logout',
+        error: '/auth/login',
     },
     callbacks: {
         async jwt({token, user}: { token: JWT; user: any }) {

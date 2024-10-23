@@ -1,6 +1,7 @@
 "use client"
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
+import CallQueueTable from "@/app/(root)/outpatient/call-queue/call-queue-table";
 
 const OutpatientCallQueue = () => {
 
@@ -11,6 +12,7 @@ const OutpatientCallQueue = () => {
                 <Heading headingLevel="h4" variant="section-title">
                     Daftar Poliklinik
                 </Heading>
+                <CallQueueTable/>
             </Section>
         </>
     )

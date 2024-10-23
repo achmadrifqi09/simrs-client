@@ -11,11 +11,12 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {signIn} from "next-auth/react";
 import {LuEye, LuEyeOff, LuFolderLock, LuLoader2} from "react-icons/lu";
+import {useSearchParams} from "next/navigation";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+    const searchParam = useSearchParams();
     const credentials = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -27,7 +28,6 @@ const Login = () => {
     const {handleSubmit, control} = credentials
 
     const onSubmit = handleSubmit(async (values) => {
-        setErrorMessage(null);
         setLoadingSubmit(true);
 
         await signIn('credentials', {
@@ -122,7 +122,7 @@ const Login = () => {
                                             )
                                         }}/>
                                 </div>
-                                {errorMessage && (<p className="text-red-700 text-sm">{errorMessage}</p>)}
+                                {searchParam.get('error') && (<p className="text-red-700 text-sm">{searchParam.get('error')}</p>)}
                                 <div className="flex justify-end mt-10">
                                     <Button type="submit" disabled={loadingSubmit}>
                                         {

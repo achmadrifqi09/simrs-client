@@ -2,7 +2,7 @@ import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
 import {Permission} from "@/types/permission";
 import {Menu} from "@/types/menu-type";
-import {decryptData, encryptData} from "@/lib/crypto-js/cipher";
+// import {decryptData, encryptData} from "@/lib/crypto-js/cipher";
 
 interface PermissionsState {
     permissions: Permission[];

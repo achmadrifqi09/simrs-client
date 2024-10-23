@@ -7,7 +7,6 @@ import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
 import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
-import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
 import {Subunit, Subunits, WorkUnit} from "@/types/work-unit";

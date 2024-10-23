@@ -64,6 +64,13 @@ const QueueData = () => {
                             </SolidCard>
                         ))
                     )}
+                    {
+                        counters?.length === 0 && (
+                            <div className="md:col-span-2 lg:col-span-3 2xl:col-span-4 bg-gray-50 p-4 rounded-md">
+                                <p className="text-gray-600">Loket admisi tidak ditemukan</p>
+                            </div>
+                        )
+                    }
                 </div>
             </Section>
         </>
