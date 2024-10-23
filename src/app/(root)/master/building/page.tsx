@@ -2,52 +2,49 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {EmployeeCategoryDTO} from "@/types/master";
+import {BuildingDTO} from "@/types/master";
 import {Action} from "@/enums/action";
-import EmployeeCategoryTable from "@/app/(root)/master/employee-category/employee-category-table";
-import UpdateOrCreateEmployeeCategory from "@/app/(root)/master/employee-category/update-or-create";
-import EmployeeCategoryDelete from "@/app/(root)/master/employee-category/delete";
+import BuildingTable from "@/app/(root)/master/building/building-table";
+import UpdateOrCreateBuilding from "@/app/(root)/master/building/create-or-update";
+import DeleteBuilding from "@/app/(root)/master/building/delete";
 import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";
 
-
-const EmployeeCategory = () => {
+const Building = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<EmployeeCategoryDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<BuildingDTO | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
-    const [employeeCategoryPermission, setEmployeeCategoryPermission] = useState<Permission | null>(null);
+    const [buildingPermission, setBuildingPermission] = useState<Permission | null>(null);
     const {getPermissions} = usePermissionsStore();
-
-    useEffect(() => {
-        const permission = getPermissions('kategori-pegawai')
-        if(permission)  setEmployeeCategoryPermission(permission);
-    }, []);
-
     const onRefresh = () => {
         setRefreshTrigger(prev => prev + 1);
     }
 
+    useEffect(() => {
+        const permission = getPermissions('gedung');
+        if(permission) setBuildingPermission(permission);
+    }, []);
     return (
         <>
-            <Heading headingLevel="h3" variant="page-title">Data Master Kategori Pegawai</Heading>
+            <Heading headingLevel="h3" variant="page-title">Data Master Building</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateEmployeeCategory
+                    <UpdateOrCreateBuilding
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         setSelectedRecord={setSelectedRecord}
                         actionType={actionType}
-                        permission={employeeCategoryPermission}
+                        permission={buildingPermission}
                     />
-                    <EmployeeCategoryTable
+                    <BuildingTable
                         selectRecord={setSelectedRecord}
                         refreshTrigger={refreshTrigger}
                         setAction={setActionType}
                         setAlertDelete={setShowAlertDelete}
-                        permission={employeeCategoryPermission}
+                        permission={buildingPermission}
                     />
-                    <EmployeeCategoryDelete
+                    <DeleteBuilding
                         onRefresh={onRefresh}
                         selectedRecord={selectedRecord}
                         action={actionType}
@@ -60,4 +57,4 @@ const EmployeeCategory = () => {
     )
 }
 
-export default EmployeeCategory
+export default Building

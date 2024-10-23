@@ -1,4 +1,4 @@
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {BedDTO} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -15,21 +15,21 @@ import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
 
-type EmployeeTypeDeleteProps = {
+type DeleteRoomTypeProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeCategoryDTO | null,
+    selectedRecord: BedDTO | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: EmployeeTypeDeleteProps) => {
+const DeleteRoomType = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteRoomTypeProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete(
 
     )
     const handleDelete = async () => {
-        if(action === Action.DELETE){
-            const result = await deleteData(`/master/employee-category/${selectedRecord?.id_ms_jenis_pegawai_status}`)
+        if (action === Action.DELETE) {
+            const result = await deleteData(`/master/bed/${selectedRecord?.id}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -37,7 +37,7 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
                     description: 'Berhasil manghapus data terkait',
                 })
                 onRefresh()
-            }else{
+            } else {
                 toast({
                     title: 'Delete Gagal',
                     description: deleteError?.toString(),
@@ -53,7 +53,7 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data Kategori Pegawai {selectedRecord?.status_jenis_pegawai}?
+                            Apakah anda yakin akan menghapus data Ketersediaan Kamar{selectedRecord?.nama_bed}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -77,4 +77,4 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
     );
 }
 
-export default EmployeeTypeDelete;
+export default DeleteRoomType;

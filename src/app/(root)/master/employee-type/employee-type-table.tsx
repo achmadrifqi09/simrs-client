@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {EmployeeStatusDTO} from "@/types/master";
+import type {EmployeeTypeDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -10,29 +10,29 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
-import {Permission} from "@/types/permission"
+import {Permission} from "@/types/permission";
 
-interface EmployeeStatusProps {
+interface EmployeeTypeStatusProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<EmployeeTypeDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
-    permission: Permission | null
+    permission: Permission | null;
 }
 
-const EmployeeStatusTable = (
+const EmployeeTypeTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete,
         permission
-    }: EmployeeStatusProps) => {
-    const url: string = '/master/employee-status'
+    }: EmployeeTypeStatusProps) => {
+    const url: string = '/master/employee-type'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<EmployeeStatusDTO[]>({
+    const {data, loading, error, getData} = useGet<EmployeeTypeDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -56,7 +56,6 @@ const EmployeeStatusTable = (
             })
         }
     }, [error])
-
     useEffect(() => {
         if (status === 'authenticated') {
             getData().catch(() => {
@@ -77,7 +76,8 @@ const EmployeeStatusTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Status Pegawai</TableHead>
+                        <TableHead>Nama Jenis Pegawai</TableHead>
+                        <TableHead>Kategori Pegawai</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -88,61 +88,67 @@ const EmployeeStatusTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((employeeStatus: EmployeeStatusDTO, index: number) => {
+                        data?.map((employeeType: EmployeeTypeDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell
-                                            className="font-medium">{employeeStatus.nama_status_pegawai}</TableCell>
+                                            className="font-medium">{employeeType.nama_jenis_pegawai}
+                                        </TableCell>
+                                        <TableCell
+                                            className="font-medium">{employeeType.id_ms_jenis_pegawai_status}
+                                        </TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (
                                                     <Switch
-                                                        checked={employeeStatus.status === 1}
+                                                        checked={employeeType.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(employeeStatus);
+                                                                selectRecord(employeeType);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ): (employeeStatus.status === 1 ? 'Aktif' : 'Non Aktif')
+                                                ) : (employeeType.status === 1 ? 'aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
-                                        {
-                                            (permission?.can_update || permission?.can_delete) && (
-                                                <TableCell>
+                                        <TableCell>
+                                            {
+                                                (permission?.can_update || permission?.can_delete) && (
                                                     <div className="flex gap-2">
                                                         {
                                                             permission?.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeStatus);
+                                                                        selectRecord(employeeType);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
                                                                     size="sm">
                                                                     Update
                                                                 </Button>
+
                                                             )
                                                         }
                                                         {
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeStatus);
+                                                                        selectRecord(employeeType);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}
                                                                     size="sm" variant="outline">
                                                                     Hapus
                                                                 </Button>
+
                                                             )
                                                         }
                                                     </div>
-                                                </TableCell>
-                                            )
-                                        }
+                                                )
+                                            }
+                                        </TableCell>
                                     </TableRow>
                                 </React.Fragment>
                             )
@@ -150,7 +156,7 @@ const EmployeeStatusTable = (
                     }
                     {(data && data.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
@@ -181,4 +187,4 @@ const EmployeeStatusTable = (
     )
 }
 
-export default EmployeeStatusTable
+export default EmployeeTypeTable

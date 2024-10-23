@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {EmployeeStatusDTO} from "@/types/master";
+import type {BuildingDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -10,29 +10,29 @@ import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
-import {Permission} from "@/types/permission"
+import {Permission} from "@/types/permission";
 
-interface EmployeeStatusProps {
+interface BuildingTableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<BuildingDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
     permission: Permission | null
 }
 
-const EmployeeStatusTable = (
+const BuildingTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete,
         permission
-    }: EmployeeStatusProps) => {
-    const url: string = '/master/employee-status'
+    }: BuildingTableProps) => {
+    const url: string = '/master/building'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<EmployeeStatusDTO[]>({
+    const {data, loading, error, getData} = useGet<BuildingDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -77,7 +77,7 @@ const EmployeeStatusTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Status Pegawai</TableHead>
+                        <TableHead>Nama Gedung</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -88,26 +88,26 @@ const EmployeeStatusTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((employeeStatus: EmployeeStatusDTO, index: number) => {
+                        data?.map((building: BuildingDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell
-                                            className="font-medium">{employeeStatus.nama_status_pegawai}</TableCell>
+                                        <TableCell className="font-medium">{building.nama_gedung}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (
+
                                                     <Switch
-                                                        checked={employeeStatus.status === 1}
+                                                        checked={building.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(employeeStatus);
+                                                                selectRecord(building);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ): (employeeStatus.status === 1 ? 'Aktif' : 'Non Aktif')
+                                                ) : (building.status === 1 ? 'Aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
                                         {
@@ -115,10 +115,10 @@ const EmployeeStatusTable = (
                                                 <TableCell>
                                                     <div className="flex gap-2">
                                                         {
-                                                            permission?.can_update && (
+                                                            permission.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeStatus);
+                                                                        selectRecord(building);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
                                                                     size="sm">
@@ -130,7 +130,7 @@ const EmployeeStatusTable = (
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeStatus);
+                                                                        selectRecord(building);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}
@@ -158,7 +158,7 @@ const EmployeeStatusTable = (
                             Array.from({length: 4}, (_, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-12 rounded-lg"/>
+                                        <Skeleton className="h-5 w-16 rounded-lg"/>
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
@@ -181,4 +181,4 @@ const EmployeeStatusTable = (
     )
 }
 
-export default EmployeeStatusTable
+export default BuildingTable

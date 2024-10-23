@@ -19,33 +19,35 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {socialStatusValidation} from "@/validation-schema/master";
+import {employeeTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {SocialStatusDTO} from "@/types/master";
+import type {EmployeeCategoryDTO, EmployeeTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
+import SelectSearch from "@/components/ui/select-search";
 
-type UpdateOrCreateSocialStatusProps = {
+type UpdateOrCreateEmployeeTypeProps = {
     onRefresh: () => void,
-    selectedRecord: SocialStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<SocialStatusDTO | null>>
-    actionType: Action,
+    selectedRecord: EmployeeTypeDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeTypeDTO | null>>
+    actionType: Action
     permission: Permission | null
 }
 
-const UpdateOrCreateSocialStatus = ({
+const UpdateOrCreateEmployeeType = ({
                                         onRefresh,
                                         selectedRecord,
                                         setSelectedRecord,
                                         actionType,
                                         permission
-                                    }: UpdateOrCreateSocialStatusProps) => {
-    const religionForm = useForm<z.infer<typeof socialStatusValidation>>({
-        resolver: zodResolver(socialStatusValidation),
+                                    }: UpdateOrCreateEmployeeTypeProps) => {
+    const employeeTypeForm = useForm<z.infer<typeof employeeTypeValidation>>({
+        resolver: zodResolver(employeeTypeValidation),
         defaultValues: {
-            nama_status_sosial: "",
-            status: "1"
+            nama_jenis_pegawai: "",
+            status: "1",
+            id_ms_jenis_pegawai_status: 0
         }
     })
 
@@ -54,9 +56,9 @@ const UpdateOrCreateSocialStatus = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/social-status')
+    const {postData, postLoading, postError} = usePost('/master/employee-type')
     const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = religionForm
+    const {handleSubmit, control, setValue} = employeeTypeForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -66,15 +68,16 @@ const UpdateOrCreateSocialStatus = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_status_sosial', "")
+        setValue('nama_jenis_pegawai', "")
         setValue('status', '1')
+        setValue('id_ms_jenis_pegawai_status', 0)
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/social-status/${id}/status`,
+            `/master/employee-type/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,18 +85,19 @@ const UpdateOrCreateSocialStatus = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate Status Sosial  ${selectedRecord?.nama_status_sosial} 
+                description: `Berhasil mengupdate Jenis Pegawai ${selectedRecord?.nama_jenis_pegawai} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateSocialStatus = (religionForm: SocialStatusDTO) => {
+    const onUpdateEmployeeType = (employeeTypeForm: EmployeeTypeDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(religionForm.id)
-        setValue('nama_status_sosial', religionForm.nama_status_sosial)
-        setValue('status', religionForm.status.toString())
+        setSelectedRecordId(Number(employeeTypeForm.id_ms_jenis_pegawai))
+        setValue('nama_jenis_pegawai', employeeTypeForm.nama_jenis_pegawai.toString())
+        setValue('status', employeeTypeForm.status.toString())
+        setValue('id_ms_jenis_pegawai_status', employeeTypeForm.id_ms_jenis_pegawai_status)
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -103,14 +107,20 @@ const UpdateOrCreateSocialStatus = ({
 
         const response = submitMode === 'POST' ? (
             await postData(
-                {   status: Number(values.status),
-                    nama_status_sosial: values.nama_status_sosial
+                {
+                    status: Number(values.status),
+                    nama_jenis_pegawai: values.nama_jenis_pegawai,
+                    id_ms_jenis_pegawai_status: values.id_ms_jenis_pegawai_status
                 },
             )
         ) : (
             await updateData(
-                `/master/social-status/${selectedRecordId}`,
-                {status: Number(values.status), nama_status_sosial: values.nama_status_sosial},
+                `/master/employee-type/${selectedRecordId}`,
+                {
+                    status: Number(values.status),
+                    nama_jenis_pegawai: values.nama_jenis_pegawai,
+                    id_ms_jenis_pegawai_status: values.id_ms_jenis_pegawai_status
+                },
             )
         )
 
@@ -119,11 +129,12 @@ const UpdateOrCreateSocialStatus = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} Status Sosial ${response.data.nama_status_sosial}`,
+                    : 'memperbarui data '} Jenis Pegawai ${response.data.nama_jenis_pegawai}`,
             })
-            religionForm.reset({
-                nama_status_sosial: "",
-                status: "1"
+            employeeTypeForm.reset({
+                nama_jenis_pegawai: "",
+                status: "1",
+                id_ms_jenis_pegawai_status: 0
             })
             onRefresh();
         }
@@ -131,9 +142,9 @@ const UpdateOrCreateSocialStatus = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateSocialStatus(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateEmployeeType(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id, selectedRecord.status)
+                updateStatus(Number(selectedRecord.id_ms_jenis_pegawai), selectedRecord.status)
             }
         }
     }, [selectedRecord])
@@ -151,21 +162,45 @@ const UpdateOrCreateSocialStatus = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Sosial
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Nama Jenis Pegawai
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...religionForm}>
+                        <Form {...employeeTypeForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_status_sosial"
+                                        name="id_ms_jenis_pegawai_status"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Sosial</FormLabel>
+                                                    <FormLabel>Pilih Kategori Pegawai</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<EmployeeCategoryDTO>
+                                                            url="/master/employee-category?status=1"
+                                                            labelName="status_jenis_pegawai"
+                                                            valueName="id_ms_jenis_pegawai_status"
+                                                            placeholder="Pilih kamar..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={field.value || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}
+                                    />
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="nama_jenis_pegawai"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Nama Jenis Pegawai</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -231,4 +266,4 @@ const UpdateOrCreateSocialStatus = ({
     )
 }
 
-export default UpdateOrCreateSocialStatus
+export default UpdateOrCreateEmployeeType

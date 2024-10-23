@@ -2,45 +2,48 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {EmployeeStatusDTO} from "@/types/master";
+import type {RoomDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
-import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
-import {Permission} from "@/types/permission"
+import {Permission} from "@/types/permission";
+import {Switch} from "@/components/ui/switch";
+import Link from "next/link";
 
-interface EmployeeStatusProps {
+interface AvailableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<RoomDTO | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
     permission: Permission | null
 }
 
-const EmployeeStatusTable = (
+const AvailableTable = (
     {
         refreshTrigger,
         selectRecord,
         setAction,
         setAlertDelete,
         permission
-    }: EmployeeStatusProps) => {
-    const url: string = '/master/employee-status'
+    }: AvailableProps) => {
+
+
+    const url: string = '/master/room'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<EmployeeStatusDTO[]>({
+    const {data, loading, error, getData} = useGet<RoomDTO[]>({
         url: url,
         keyword: searchKeyword,
     })
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const keyword = e.target.value;
+        const keyword: string = e.target.value;
         setSearchKeyword(keyword);
-    }
+    };
 
     const debouncedChangeSearch = useCallback(
         debounce(handleChangeSearch, 500),
@@ -57,6 +60,7 @@ const EmployeeStatusTable = (
         }
     }, [error])
 
+
     useEffect(() => {
         if (status === 'authenticated') {
             getData().catch(() => {
@@ -67,8 +71,7 @@ const EmployeeStatusTable = (
                 })
             });
         }
-    }, [refreshTrigger, getData, status]);
-
+    }, [refreshTrigger, getData, status])
     return (
         <>
             <Input type="search" className="w-full md:w-1/3" placeholder="Cari data ..."
@@ -77,7 +80,10 @@ const EmployeeStatusTable = (
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Status Pegawai</TableHead>
+                        <TableHead>Nama Kamar</TableHead>
+                        <TableHead>Jenis Kamar</TableHead>
+                        <TableHead>Gedung</TableHead>
+                        <TableHead>Jumlah Ranjang</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -88,40 +94,50 @@ const EmployeeStatusTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((employeeStatus: EmployeeStatusDTO, index: number) => {
+                        data?.map((room: RoomDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
+                                        <TableCell className="font-medium">{room?.nama_kamar}</TableCell>
                                         <TableCell
-                                            className="font-medium">{employeeStatus.nama_status_pegawai}</TableCell>
+                                            className="font-medium">{room?.jenis_kamar?.nama_jenis_kamar}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{room?.gedung?.nama_gedung}</TableCell>
+                                        <TableCell className="font-medium">{room?.total_bed || 0}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (
+
                                                     <Switch
-                                                        checked={employeeStatus.status === 1}
+                                                        checked={room.status === 1}
                                                         onCheckedChange={
                                                             () => {
-                                                                selectRecord(employeeStatus);
+                                                                selectRecord(room);
                                                                 setAction(Action.UPDATE_STATUS)
                                                             }
                                                         }
                                                     />
-                                                ): (employeeStatus.status === 1 ? 'Aktif' : 'Non Aktif')
+                                                ) : (room.status === 1 ? 'Aktif' : 'Non Aktif')
                                             }
                                         </TableCell>
                                         {
-                                            (permission?.can_update || permission?.can_delete) && (
+                                            (permission?.can_update || permission?.can_delete || permission?.can_view) && (
                                                 <TableCell>
                                                     <div className="flex gap-2">
+                                                        <Button size="sm" asChild>
+                                                            <Link href={`/room/inpatient/${room?.id}?field_name=${room.nama_kamar}`}>
+                                                                Detail
+                                                            </Link>
+                                                        </Button>
                                                         {
-                                                            permission?.can_update && (
+                                                            permission.can_update && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeStatus);
+                                                                        selectRecord(room);
                                                                         setAction(Action.UPDATE_FIELDS)
                                                                     }}
-                                                                    size="sm">
+                                                                    size="sm" variant="outline">
                                                                     Update
                                                                 </Button>
                                                             )
@@ -130,7 +146,7 @@ const EmployeeStatusTable = (
                                                             permission?.can_delete && (
                                                                 <Button
                                                                     onClick={() => {
-                                                                        selectRecord(employeeStatus);
+                                                                        selectRecord(room);
                                                                         setAction(Action.DELETE)
                                                                         setAlertDelete(true)
                                                                     }}
@@ -148,31 +164,35 @@ const EmployeeStatusTable = (
                             )
                         })
                     }
-                    {(data && data.length === 0 && !loading) && (
+                    {(data && data?.length === 0 && !loading) && (
                         <TableRow>
                             <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
-                        loading || status === 'loading' && (
-                            Array.from({length: 4}, (_, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-8 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
-                                </TableRow>
+                        loading || status == 'loading' && (
+                            Array.from({length: 4}, (_, index: number) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-16 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        {
+                                            (permission?.can_update || permission?.can_delete) && (
+                                                <TableCell className="text-center flex gap-4">
+                                                    <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                    <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                </TableCell>
+                                            )
+                                        }
+                                    </TableRow>
+                                )
                             ))
-                        )
                     }
                 </TableBody>
             </Table>
@@ -181,4 +201,4 @@ const EmployeeStatusTable = (
     )
 }
 
-export default EmployeeStatusTable
+export default AvailableTable

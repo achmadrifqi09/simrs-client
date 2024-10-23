@@ -105,7 +105,7 @@ const villageValidation = z.object({
         .max(6, {message: 'Kode kecamatan harus 6 digit'}),
 })
 
-const employeeTypeValidation = z.object({
+const employeeCategoryValidation = z.object({
     status_jenis_pegawai: z
         .string({message: 'ID Jenis Pegawai harus diisi'})
         .min(2, {message: 'ID Jenis Pegawai minimal 2'})
@@ -132,26 +132,71 @@ const socialStatusValidation = z.object({
 })
 
 const roomClassValidation = z.object({
-    nama_kelas_kamar:z
+    nama_kelas_kamar: z
         .string({message: 'Nama kelas Kamar harus Diisi'})
-        .min(2,{message:'Nama Kelas Kamar Minimal 2 Karakter'})
-        .max(10,{message: 'Nama Kelas Kamar Maximal 10 Karakter'}),
+        .min(2, {message: 'Nama Kelas Kamar Minimal 2 Karakter'})
+        .max(10, {message: 'Nama Kelas Kamar Maximal 10 Karakter'}),
     status: z.string({message: 'Status Kamar harus Diisi'}),
-    kode_bpjs_kamar:z.string({message: 'Kode bpjs_kamar harus Diisi'})
-        .min(4,{ message: 'kode BPJS harus diisi minimal 4 karakter'})
+    kode_bpjs_kamar: z.string({message: 'Kode bpjs_kamar harus Diisi'})
+        .min(4, {message: 'kode BPJS harus diisi minimal 4 karakter'})
         .max(10, {message: 'Kode BPJS Maximal 10 Karakter'}),
 })
 
 const roomTypeValidation = z.object({
     nama_jenis_kamar: z
-        .string({ message: 'Nama jenis_kamar harus Diisi' })
-        .min(2, { message: 'Nama jenis_kamar minimal 2 karakter' })
-        .max(50, { message: 'Nama jenis_kamar maximal 50 karakter' }),
-    status: z.string({ message: 'Status Kamar harus Diisi' }),
+        .string({message: 'Nama jenis_kamar harus Diisi'})
+        .min(2, {message: 'Nama jenis_kamar minimal 2 karakter'})
+        .max(50, {message: 'Nama jenis_kamar maximal 50 karakter'}),
+    status: z.string({message: 'Status Kamar harus Diisi'}),
     id_kelas_kamar: z
-        .number({ message: 'kelas kamar harus Diisi' }),
+        .number({message: 'kelas kamar harus Diisi'}),
 });
 
+const buildingValidation = z.object({
+    nama_gedung: z
+        .string({message: 'Nama gedung harus Diisi'})
+        .min(4, {message: 'Nama Gedung Minimal 4 Karakter'})
+        .max(50, {message: 'Nama Gedung Minimal 50 Karakter'}),
+    status: z
+        .string({message: 'Status Gedung Harus Diisi'}),
+})
+
+const roomValidation = z.object({
+    id_ms_kamar_jenis: z.number({message:'Jenis Kamar Harus Diisi'}),
+    nama_kamar: z.string({message: 'Nama kamar harus Diisi'})
+        .min(2, {message:'Nama Kamar Minimal  2 Karakter'})
+        .max(50, {message: 'Nama kamar Maximal 50 Karakter'}),
+    id_gedung: z.number({message: 'Nama gedung harus Diisi'}),
+    lantai: z.preprocess((val) => Number(val), z.number({message: 'Lantai harus Diisi'})),
+    status: z.string({message: 'Status Harus Diisi'}),
+})
+
+const bedValidation = z.object ({
+    id_ms_kamar: z.number({message:'Jenis Kamar Harus Diisi'}),
+    nama_bed: z
+        .string({message: 'Nama bed harus Diisi'})
+        .min(2, {message:'Nama bed harus Diisi minimal 2 karakter'})
+        .max(50, {message: 'Nama bed harus Diisi maximal 50 karakter'}),
+    keterangan: z
+        .string({message: 'Keterangan harus Diisi'})
+        .min(2, {message:'Keterangan harus Diisi minimal 2 karakter'})
+        .max(50, {message: 'Keterangan harus Diisi maximal 50 karakter'}),
+    status_bed: z.string({message: 'Status bed harus Diisi'}),
+    status: z.string({message: 'Status bed harus Diisi'}),
+})
+
+const availabilityValidation = z.object({
+    status_bed: z.string({message: 'Status bed harus Diisi'}),
+})
+
+const employeeTypeValidation = z.object({
+    id_ms_jenis_pegawai_status: z.number({message:'jenis pegawai status harus Diisi'}),
+    nama_jenis_pegawai: z
+        .string({message: 'nama jenis pegawai harus diisi'})
+        .min(2, {message: 'nama jenis pegawai minimal 2 karakter'})
+        .max(50, {message: 'nama jenis pegawai maximal 2 krakter'}),
+    status: z.string({message: 'Status Kamar harus Diisi'}),
+})
 export {
     religionValidation,
     bloodTypeValidation,
@@ -165,10 +210,15 @@ export {
     regencyValidation,
     districtValidation,
     villageValidation,
-    employeeTypeValidation,
+    employeeCategoryValidation,
     educationLeveValidation,
     familyStatusValidation,
     socialStatusValidation,
     roomClassValidation,
-    roomTypeValidation
+    roomTypeValidation,
+    buildingValidation,
+    roomValidation,
+    bedValidation,
+    employeeTypeValidation,
+    availabilityValidation
 }

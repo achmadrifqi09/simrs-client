@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import FormError from "@/components/ui/form-error";
 import {Button} from "@/components/ui/button";
 import {Loader2} from "lucide-react";
@@ -19,44 +18,48 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {socialStatusValidation} from "@/validation-schema/master";
+import {roomValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {SocialStatusDTO} from "@/types/master";
+import type {BuildingDTO, RoomDTO, RoomTypeDTO} from "@/types/master";
 import {Action} from "@/enums/action";
+import SelectSearch from "@/components/ui/select-search";
 import {Permission} from "@/types/permission";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
-type UpdateOrCreateSocialStatusProps = {
+type UpdateOrCreatedRoomProps = {
     onRefresh: () => void,
-    selectedRecord: SocialStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<SocialStatusDTO | null>>
+    selectedRecord: RoomDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomDTO | null>>
     actionType: Action,
     permission: Permission | null
 }
 
-const UpdateOrCreateSocialStatus = ({
-                                        onRefresh,
-                                        selectedRecord,
-                                        setSelectedRecord,
-                                        actionType,
-                                        permission
-                                    }: UpdateOrCreateSocialStatusProps) => {
-    const religionForm = useForm<z.infer<typeof socialStatusValidation>>({
-        resolver: zodResolver(socialStatusValidation),
+const UpdateOrCreatedRoom = ({
+                                 onRefresh,
+                                 selectedRecord,
+                                 setSelectedRecord,
+                                 actionType,
+                                 permission
+                             }: UpdateOrCreatedRoomProps) => {
+    const roomForm = useForm<z.infer<typeof roomValidation>>({
+        resolver: zodResolver(roomValidation),
         defaultValues: {
-            nama_status_sosial: "",
+            nama_kamar: "",
+            id_ms_kamar_jenis: 0,
+            lantai: 0,
+            id_gedung: 0,
             status: "1"
         }
     })
-
     const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/social-status')
-    const {updateData, patchError, patchLoading} = usePatch()
-    const {handleSubmit, control, setValue} = religionForm
+    const {postData, postLoading, postError, setPostError} = usePost('/master/room')
+    const {updateData, patchError, patchLoading, setPatchError} = usePatch()
+    const {handleSubmit, control, setValue} = roomForm
 
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
 
@@ -66,15 +69,18 @@ const UpdateOrCreateSocialStatus = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_status_sosial', "")
-        setValue('status', '1')
+        roomForm.setValue('nama_kamar', "")
+        roomForm.setValue('id_ms_kamar_jenis', 0)
+        roomForm.setValue('lantai', 0)
+        roomForm.setValue('id_gedung', 0)
+        roomForm.setValue('status', "1")
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
         const response = await updateData(
-            `/master/social-status/${id}/status`,
+            `/master/room/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,35 +88,47 @@ const UpdateOrCreateSocialStatus = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate Status Sosial  ${selectedRecord?.nama_status_sosial} 
+                description: `Berhasil mengupdate Status Kamar  ${selectedRecord?.nama_kamar} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateSocialStatus = (religionForm: SocialStatusDTO) => {
+    const onUpdateOrCreatedRoom = (roomForm: RoomDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(religionForm.id)
-        setValue('nama_status_sosial', religionForm.nama_status_sosial)
-        setValue('status', religionForm.status.toString())
+        setSelectedRecordId(roomForm.id)
+        setValue('nama_kamar', roomForm.nama_kamar || '')
+        setValue('id_ms_kamar_jenis', roomForm.jenis_kamar?.id || 0)
+        setValue('lantai', roomForm.lantai)
+        setValue('id_gedung', roomForm.gedung?.id || 0)
+        setValue('status', roomForm.status.toString())
     }
 
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;
         }
-
         const response = submitMode === 'POST' ? (
             await postData(
-                {   status: Number(values.status),
-                    nama_status_sosial: values.nama_status_sosial
+                {
+                    status: Number(values.status),
+                    id_ms_kamar_jenis: Number(values.id_ms_kamar_jenis.toString()),
+                    nama_kamar: values.nama_kamar,
+                    id_gedung: values.id_gedung,
+                    lantai: values.lantai
                 },
             )
         ) : (
             await updateData(
-                `/master/social-status/${selectedRecordId}`,
-                {status: Number(values.status), nama_status_sosial: values.nama_status_sosial},
+                `/master/room/${selectedRecordId}`,
+                {
+                    status: Number(values.status),
+                    id_ms_kamar_jenis: Number(values.id_ms_kamar_jenis.toString()),
+                    nama_kamar: values.nama_kamar,
+                    id_gedung: values.id_gedung,
+                    lantai: values.lantai
+                },
             )
         )
 
@@ -119,24 +137,30 @@ const UpdateOrCreateSocialStatus = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} Status Sosial ${response.data.nama_status_sosial}`,
+                    : 'memperbarui data '} kasur ${response.data.nama_kamar}`,
             })
-            religionForm.reset({
-                nama_status_sosial: "",
+            roomForm.reset({
+                nama_kamar: "",
+                id_ms_kamar_jenis: 0,
                 status: "1"
             })
             onRefresh();
         }
     });
-
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateSocialStatus(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoom(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
                 updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
+
+    useEffect(() => {
+        setPostError(null)
+        setPatchError(null)
+        roomForm.clearErrors()
+    }, [showDialog]);
 
     return (
         <div>
@@ -144,30 +168,93 @@ const UpdateOrCreateSocialStatus = ({
                 <DialogTrigger asChild>
                     {
                         permission?.can_create && (
-                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                            <Button className="mb-4"
+                                    onClick={handleOpenDialog}>Tambah</Button>
                         )
                     }
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Sosial
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data kamar
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Form {...religionForm}>
+                        <Form {...roomForm}>
                             <form onSubmit={onSubmit}>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_status_sosial"
+                                        name="id_gedung"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Sosial</FormLabel>
+                                                    <FormLabel>Pilih Gedung</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<BuildingDTO>
+                                                            url="/master/building?status=1"
+                                                            labelName="nama_gedung"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kelas kamar untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_kamar_jenis"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Jenis kamar</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<RoomTypeDTO>
+                                                            url="/master/room-type?status=1"
+                                                            labelName="nama_jenis_kamar"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kelas kamar untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="nama_kamar"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Nama Kamar</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="lantai"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Lantai</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="number" {...field}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -205,6 +292,7 @@ const UpdateOrCreateSocialStatus = ({
                                             )
                                         }}/>
                                 </div>
+
                                 <FormError
                                     errors={postError || patchError}
                                 />
@@ -231,4 +319,4 @@ const UpdateOrCreateSocialStatus = ({
     )
 }
 
-export default UpdateOrCreateSocialStatus
+export default UpdateOrCreatedRoom

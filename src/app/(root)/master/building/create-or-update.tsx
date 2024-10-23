@@ -19,32 +19,32 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {socialStatusValidation} from "@/validation-schema/master";
+import {buildingValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {SocialStatusDTO} from "@/types/master";
+import type {BuildingDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
-type UpdateOrCreateSocialStatusProps = {
+type UpdateOrCreateBuildingProps = {
     onRefresh: () => void,
-    selectedRecord: SocialStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<SocialStatusDTO | null>>
+    selectedRecord: BuildingDTO | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<BuildingDTO | null>>
     actionType: Action,
     permission: Permission | null
 }
 
-const UpdateOrCreateSocialStatus = ({
+const UpdateOrCreateBuilding = ({
                                         onRefresh,
                                         selectedRecord,
                                         setSelectedRecord,
                                         actionType,
                                         permission
-                                    }: UpdateOrCreateSocialStatusProps) => {
-    const religionForm = useForm<z.infer<typeof socialStatusValidation>>({
-        resolver: zodResolver(socialStatusValidation),
+                                    }: UpdateOrCreateBuildingProps) => {
+    const religionForm = useForm<z.infer<typeof buildingValidation>>({
+        resolver: zodResolver(buildingValidation),
         defaultValues: {
-            nama_status_sosial: "",
+            nama_gedung: "",
             status: "1"
         }
     })
@@ -54,7 +54,7 @@ const UpdateOrCreateSocialStatus = ({
 
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
-    const {postData, postLoading, postError} = usePost('/master/social-status')
+    const {postData, postLoading, postError} = usePost('/master/building')
     const {updateData, patchError, patchLoading} = usePatch()
     const {handleSubmit, control, setValue} = religionForm
 
@@ -66,15 +66,16 @@ const UpdateOrCreateSocialStatus = ({
     }
 
     const handleCloseDialog = () => {
-        setValue('nama_status_sosial', "")
+        setValue('nama_gedung', "")
         setValue('status', '1')
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
+        console.log(id)
         const response = await updateData(
-            `/master/social-status/${id}/status`,
+            `/master/building/${id}/status`,
             {status: status === 1 ? 0 : 1},
         )
 
@@ -82,17 +83,17 @@ const UpdateOrCreateSocialStatus = ({
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate Status Sosial  ${selectedRecord?.nama_status_sosial} 
+                description: `Berhasil mengupdate Status Sosial  ${selectedRecord?.nama_gedung} 
                 menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
             })
         }
     }
 
-    const onUpdateSocialStatus = (religionForm: SocialStatusDTO) => {
+    const onUpdateBuilding = (religionForm: BuildingDTO) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(religionForm.id)
-        setValue('nama_status_sosial', religionForm.nama_status_sosial)
+        setValue('nama_gedung', religionForm.nama_gedung)
         setValue('status', religionForm.status.toString())
     }
 
@@ -104,13 +105,13 @@ const UpdateOrCreateSocialStatus = ({
         const response = submitMode === 'POST' ? (
             await postData(
                 {   status: Number(values.status),
-                    nama_status_sosial: values.nama_status_sosial
+                    nama_gedung: values.nama_gedung
                 },
             )
         ) : (
             await updateData(
-                `/master/social-status/${selectedRecordId}`,
-                {status: Number(values.status), nama_status_sosial: values.nama_status_sosial},
+                `/master/building/${selectedRecordId}`,
+                {status: Number(values.status), nama_gedung: values.nama_gedung},
             )
         )
 
@@ -119,10 +120,10 @@ const UpdateOrCreateSocialStatus = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} Status Sosial ${response.data.nama_status_sosial}`,
+                    : 'memperbarui data '} Gedung ${response.data.nama_gedung}`,
             })
             religionForm.reset({
-                nama_status_sosial: "",
+                nama_gedung: "",
                 status: "1"
             })
             onRefresh();
@@ -131,7 +132,7 @@ const UpdateOrCreateSocialStatus = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateSocialStatus(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateBuilding(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
                 updateStatus(selectedRecord.id, selectedRecord.status)
             }
@@ -151,7 +152,7 @@ const UpdateOrCreateSocialStatus = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Status Sosial
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Gedung
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
@@ -161,11 +162,11 @@ const UpdateOrCreateSocialStatus = ({
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="nama_status_sosial"
+                                        name="nama_gedung"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Status Sosial</FormLabel>
+                                                    <FormLabel>Nama Gedung</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -231,4 +232,4 @@ const UpdateOrCreateSocialStatus = ({
     )
 }
 
-export default UpdateOrCreateSocialStatus
+export default UpdateOrCreateBuilding

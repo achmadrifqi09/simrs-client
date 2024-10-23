@@ -1,4 +1,4 @@
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {EmployeeTypeDTO} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type EmployeeTypeDeleteProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeCategoryDTO | null,
+    selectedRecord: EmployeeTypeDTO | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
@@ -29,7 +29,7 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
     )
     const handleDelete = async () => {
         if(action === Action.DELETE){
-            const result = await deleteData(`/master/employee-category/${selectedRecord?.id_ms_jenis_pegawai_status}`)
+            const result = await deleteData(`/master/employee-type/${selectedRecord?.id_ms_jenis_pegawai}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -53,7 +53,7 @@ const EmployeeTypeDelete = ({onRefresh, selectedRecord, action, showAlert, setSh
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data Kategori Pegawai {selectedRecord?.status_jenis_pegawai}?
+                            Apakah anda yakin akan menghapus data Jenis Pegawai {selectedRecord?.nama_jenis_pegawai}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
