@@ -10,9 +10,8 @@ import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
-import {WorkUnit} from "@/types/work-unit";
+import {WorkUnit, WorkUnits} from "@/types/work-unit";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {useParams} from "next/navigation";
 
 interface WorkUnitTableProps {
     refreshTrigger: number;
@@ -20,10 +19,10 @@ interface WorkUnitTableProps {
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
-    permission: Permission | null
-}
-type WorkUnitParams = {
-    id: string;
+    permission: Permission | null,
+    fieldId: number,
+    action: Action;
+    setShowSubunit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const WorkUnitTable = (
@@ -32,14 +31,16 @@ const WorkUnitTable = (
         selectRecord,
         setAction,
         setAlertDelete,
-        permission
+        permission,
+        fieldId,
+        action,
+        setShowSubunit
     }: WorkUnitTableProps) => {
-    const param = useParams<WorkUnitParams>()
     const [serviceType, setServiceType] = useState<string>("0")
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<WorkUnit[]>({
-        url: `/work-unit?is_parent_unit=1&field_id=${param.id}`,
+    const {data, loading, error, getData} = useGet<WorkUnits>({
+        url: `/work-unit?is_parent_unit=1&field_id=${fieldId}&service_type=${serviceType}`,
         keyword: searchKeyword,
     })
 
@@ -75,9 +76,6 @@ const WorkUnitTable = (
         }
     }, [refreshTrigger, getData, status]);
 
-    const getRowLength = () => {
-       return 4 + (permission?.can_update ? 2 : 0) + ((permission?.can_update && (serviceType === '1' || serviceType === '3')) ? 1 : 0)
-    }
     return (
         <>
             <div className="flex flex-col md:flex-row gap-3 md:gap-6 justify-between items-center">
@@ -92,14 +90,8 @@ const WorkUnitTable = (
                             <SelectItem value="0">
                                 Unit Kerja
                             </SelectItem>
-                            <SelectItem value="1">
-                                Poliklinik
-                            </SelectItem>
                             <SelectItem value="2">
                                 Penunjang
-                            </SelectItem>
-                            <SelectItem value="3">
-                                IGD
                             </SelectItem>
                         </SelectGroup>
                     </SelectContent>
@@ -117,60 +109,80 @@ const WorkUnitTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((workUnit: WorkUnit, index: number) => {
-                            return (
-                                <React.Fragment key={index}>
-                                    <TableRow>
-                                        <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{workUnit.nama_unit_kerja}</TableCell>
-                                        <TableCell className="font-medium">
-                                            {workUnit.jenis_pelayanan === 0 && ('Unit Kerja')}
-                                            {workUnit.jenis_pelayanan === 1 && ('Poliklinik')}
-                                            {workUnit.jenis_pelayanan === 2 && ('Penunjang')}
-                                            {workUnit.jenis_pelayanan === 3 && ('IGD')}
-                                        </TableCell>
-                                        <TableCell>
-                                            {
-                                                (permission?.can_update || permission?.can_update) ? (
-                                                    <Switch
-                                                        checked={workUnit.status === 1}
-                                                        onCheckedChange={
-                                                            () => {
-                                                                selectRecord(workUnit);
-                                                                setAction(Action.UPDATE_STATUS)
+                        loading && action !== Action.UPDATE_STATUS ? (
+                            Array.from({length: 2}, (_, index) => (
+                                <TableRow key={index}>
+                                    <TableCell className="text-center">
+                                        <Skeleton className="h-5 w-16 rounded-lg"/>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                    </TableCell>
+
+                                    <TableCell className="text-center flex gap-4">
+                                        <Skeleton className="h-10 w-16 rounded-lg"/>
+                                        <Skeleton className="h-10 w-16 rounded-lg"/>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            data?.results?.map((workUnit: WorkUnit, index: number) => {
+                                return (
+                                    <React.Fragment key={index}>
+                                        <TableRow>
+                                            <TableCell className="font-medium">{index + 1}</TableCell>
+                                            <TableCell className="font-medium">{workUnit.nama_unit_kerja}</TableCell>
+                                            <TableCell className="font-medium">
+                                                {workUnit.jenis_pelayanan === 0 && ('Unit Kerja')}
+                                                {workUnit.jenis_pelayanan === 1 && ('Poliklinik')}
+                                                {workUnit.jenis_pelayanan === 2 && ('Penunjang')}
+                                                {workUnit.jenis_pelayanan === 3 && ('IGD')}
+                                            </TableCell>
+                                            <TableCell>
+                                                {
+                                                    (permission?.can_update || permission?.can_update) ? (
+                                                        <Switch
+                                                            checked={workUnit.status === 1}
+                                                            onCheckedChange={
+                                                                () => {
+                                                                    selectRecord(workUnit);
+                                                                    setAction(Action.UPDATE_STATUS)
+                                                                }
                                                             }
-                                                        }
-                                                    />
-                                                ) : (workUnit.status === 1 ? 'Aktif' : 'Non Aktif')
-                                            }
-                                        </TableCell>
-                                        {
-                                            (permission?.can_update && (serviceType === '1' || serviceType === '3')) && (
-                                                <TableHead>
-                                                    <Switch
-                                                        checked={workUnit.status === 1}
-                                                        onCheckedChange={
-                                                            () => {
-                                                                selectRecord(workUnit);
-                                                                setAction(Action.UPDATE_STATUS)
-                                                            }
-                                                        }
-                                                    />
-                                                </TableHead>
-                                            )
-                                        }
-                                        <TableCell>
-                                            {
-                                                (permission?.can_update || permission?.can_delete) && (
-                                                    <div className="flex gap-2">
-                                                        <Button
-                                                            onClick={() => {
-                                                                selectRecord(workUnit);
-                                                                setAction(Action.UPDATE_FIELDS)
-                                                            }}
-                                                            size="sm">
-                                                            Update
-                                                        </Button>
+                                                        />
+                                                    ) : (workUnit.status === 1 ? 'Aktif' : 'Non Aktif')
+                                                }
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="default"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            setShowSubunit(true)
+                                                            selectRecord(workUnit);
+                                                            setAction(Action.VIEW)
+                                                        }}
+                                                    >
+                                                        Subunit
+                                                    </Button>
+                                                    {
+                                                        (permission?.can_update) && (
+                                                            <Button
+                                                                variant="outline"
+                                                                onClick={() => {
+                                                                    selectRecord(workUnit);
+                                                                    setAction(Action.UPDATE_FIELDS)
+                                                                }}
+                                                                size="sm">
+                                                                Update
+                                                            </Button>
+                                                        )
+                                                    }
+                                                    {(permission?.can_delete) && (
                                                         <Button
                                                             onClick={() => {
                                                                 selectRecord(workUnit);
@@ -180,44 +192,20 @@ const WorkUnitTable = (
                                                             size="sm" variant="outline">
                                                             Hapus
                                                         </Button>
-                                                    </div>
-                                                )
-                                            }
-                                        </TableCell>
-                                    </TableRow>
-                                </React.Fragment>
-                            )
-                        })
+                                                    )}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    </React.Fragment>
+                                )
+                            })
+                        )
                     }
-                    {(data && data.length === 0 && !loading) && (
+                    {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
                             <TableCell colSpan={5} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
-                    {
-                        loading && (
-                            Array.from({length: 2}, (_, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-8 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <Skeleton className="h-8 w-12 rounded-lg"/>
-                                    </TableCell>
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )
-                    }
                 </TableBody>
             </Table>
 

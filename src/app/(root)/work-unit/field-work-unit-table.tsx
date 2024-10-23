@@ -72,9 +72,6 @@ const FieldOfWorkUnitTable = (
         }
     }, [refreshTrigger, getData, status]);
 
-    const getRowLength = () => {
-        return 2 + (permission?.can_update ? 2 : 0)
-    }
     return (
         <>
             <div className="py-2 sticky top-0 bg-white w-full z-10">

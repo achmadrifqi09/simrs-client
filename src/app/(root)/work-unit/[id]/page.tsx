@@ -1,7 +1,7 @@
 "use client"
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
-import React, {useEffect, useState} from "react";
+import React, {lazy, useEffect, useState} from "react";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";
@@ -9,10 +9,18 @@ import {WorkUnit as WorkUnitType} from "@/types/work-unit";
 import {Button} from "@/components/ui/button";
 import WorkUnitTable from "@/app/(root)/work-unit/[id]/work-unit-table";
 import UpdateOrCreateWorkUnit from "@/app/(root)/work-unit/[id]/update-or-create";
-import {useSearchParams} from "next/navigation";
+import {useParams, useSearchParams} from "next/navigation";
 import Link from "next/link";
+import DeleteWorkUnit from "@/app/(root)/work-unit/[id]/delete";
+
+const SubunitDrawer = lazy(() => import("@/app/(root)/work-unit/[id]/subunit-components/drawer"));
+
+type WorkUnitParams = {
+    id: string;
+}
 
 const WorkUnit = () => {
+    const param = useParams<WorkUnitParams>()
     const searchParams = useSearchParams()
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
     const [selectedRecord, setSelectedRecord] = useState<WorkUnitType | null>(null);
@@ -20,7 +28,8 @@ const WorkUnit = () => {
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [workUnitPermission, setWorkUnitPermission] = useState<Permission | null>(null);
     const {getPermissions} = usePermissionsStore();
-    const [showFieldOfWorkUnit, setShowFieldOfWorkUnit] = useState<boolean>(false);
+    const [showSubunit, setShowSubunit] = useState<boolean>(false);
+
     useEffect(() => {
         const permission = getPermissions('unit-kerja');
         if (permission) setWorkUnitPermission(permission)
@@ -48,6 +57,7 @@ const WorkUnit = () => {
                             setSelectedRecord={setSelectedRecord}
                             actionType={actionType}
                             permission={workUnitPermission}
+                            fieldId={Number(param.id)}
                         />
                     </div>
                     <WorkUnitTable
@@ -56,22 +66,28 @@ const WorkUnit = () => {
                         setAction={setActionType}
                         setAlertDelete={setShowAlertDelete}
                         permission={workUnitPermission}
-                        // action={actionType}
+                        fieldId={Number(param.id)}
+                        action={actionType}
+                        setShowSubunit={setShowSubunit}
                     />
-                    {/*<BloodTypeDelete*/}
-                    {/*    onRefresh={onRefresh}*/}
-                    {/*    selectedRecord={selectedRecord}*/}
-                    {/*    action={actionType}*/}
-                    {/*    setShowAlert={setShowAlertDelete}*/}
-                    {/*    showAlert={showAlertDelete}*/}
-                    {/*/>*/}
+                    <DeleteWorkUnit
+                        onRefresh={onRefresh}
+                        selectedRecord={selectedRecord}
+                        action={actionType}
+                        setShowAlert={setShowAlertDelete}
+                        showAlert={showAlertDelete}
+                    />
                 </div>
             </Section>
-            {/*<FieldOfWorkUnit*/}
-            {/*    show={showFieldOfWorkUnit}*/}
-            {/*    setShow={setShowFieldOfWorkUnit}*/}
-            {/*    permission={workUnitPermission}*/}
-            {/*/>*/}
+
+            <SubunitDrawer
+                drawerOpen={showSubunit}
+                setDrawerOpen={setShowSubunit}
+                permission={workUnitPermission}
+                selectRecord={selectedRecord}
+                fieldId={Number(param.id)}
+            />
+
         </>
     )
 }

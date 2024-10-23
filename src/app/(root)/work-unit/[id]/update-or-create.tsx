@@ -23,17 +23,16 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
-import {workUnitValidation} from "@/validation-schema/work-unit";
-import {WorkUnit} from "@/types/work-unit";
-import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs"
-import SelectSearch from "@/components/ui/select-search";
+import {parentUnitValidation} from "@/validation-schema/work-unit";
+import {ParentUnit, WorkUnit} from "@/types/work-unit";
 
 type UpdateOrCreateWorkUnitProps = {
-    onRefresh: () => void,
-    selectedRecord: WorkUnit | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<WorkUnit | null>>
-    actionType: Action,
-    permission: Permission | null
+    onRefresh: () => void;
+    selectedRecord: WorkUnit | null;
+    setSelectedRecord: React.Dispatch<React.SetStateAction<WorkUnit | null>>;
+    actionType: Action;
+    permission: Permission | null;
+    fieldId: number;
 }
 
 const UpdateOrCreateWorkUnit = ({
@@ -41,17 +40,15 @@ const UpdateOrCreateWorkUnit = ({
                                     selectedRecord,
                                     setSelectedRecord,
                                     actionType,
-                                    permission
+                                    permission,
+                                    fieldId
                                 }: UpdateOrCreateWorkUnitProps) => {
-    const workUnitForm = useForm<z.infer<typeof workUnitValidation>>({
-        resolver: zodResolver(workUnitValidation),
+    const workUnitForm = useForm<z.infer<typeof parentUnitValidation>>({
+        resolver: zodResolver(parentUnitValidation),
         defaultValues: {
             nama_unit_kerja: "",
             jenis_pelayanan: "0",
-            kode_instalasi_bpjs: null,
-            status_antrian: "0",
             status: "1",
-            id_unit_induk: null,
         }
     })
 
@@ -93,16 +90,13 @@ const UpdateOrCreateWorkUnit = ({
         }
     }
 
-    const onUpdateBloodType = (workUnit: WorkUnit) => {
+    const onUpdateWorkUnit = (workUnit: WorkUnit) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
-        setSelectedRecordId(workUnit.id_unit_kerja)
+        setSelectedRecordId(workUnit.id)
 
         setValue('nama_unit_kerja', workUnit.nama_unit_kerja)
         setValue('jenis_pelayanan', workUnit.jenis_pelayanan.toString())
-        setValue('kode_instalasi_bpjs', workUnit.kode_instalasi_bpjs || '')
-        setValue('status_antrian', workUnit.status_antrian.toString())
-        setValue('id_unit_induk', workUnit.id_unit_induk)
         setValue('status', workUnit.status.toString())
     }
 
@@ -110,15 +104,15 @@ const UpdateOrCreateWorkUnit = ({
         if (!session?.accessToken) {
             return;
         }
-        const submitData: WorkUnit = {
+        const submitData: ParentUnit = {
             nama_unit_kerja: values.nama_unit_kerja,
             status: Number(values.status),
-            status_antrian: Number(values.status_antrian),
+            status_antrian: 0,
+            id_bidang: fieldId,
+            is_parent_unit: 1,
             jenis_pelayanan: Number(values.jenis_pelayanan),
         }
 
-        if(values.id_unit_induk) submitData.id_unit_induk = values.id_unit_induk
-        if(values.kode_instalasi_bpjs) submitData.kode_instalasi_bpjs = values.kode_instalasi_bpjs
         const response = submitMode === 'POST' ? (
             await postData(submitData)
         ) : (
@@ -133,7 +127,7 @@ const UpdateOrCreateWorkUnit = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} unit kerja ${response.data.nama_golongan_darah}`,
+                    : 'memperbarui data '} unit kerja ${response.data.nama_unit_kerja}`,
             })
             workUnitForm.reset();
             onRefresh();
@@ -142,9 +136,9 @@ const UpdateOrCreateWorkUnit = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateBloodType(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateWorkUnit(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id_unit_kerja, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status)
             }
         }
     }, [selectedRecord])
@@ -154,7 +148,7 @@ const UpdateOrCreateWorkUnit = ({
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
                 <DialogTrigger asChild>
                     {
-                        (permission?.can_create) && (
+                        permission?.can_create && (
 
                             <Button className="mb-4" onClick={handleOpenDialog}>Tambah Unit Kerja</Button>
                         )
@@ -170,37 +164,6 @@ const UpdateOrCreateWorkUnit = ({
                     <div>
                         <Form {...workUnitForm}>
                             <form onSubmit={onSubmit}>
-                                <Tabs defaultValue="unit" className="w-full">
-                                    <TabsList className="grid w-full grid-cols-2">
-                                        <TabsTrigger value="unit">Unit Induk</TabsTrigger>
-                                        <TabsTrigger value="subunit">Subunit</TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="subunit">
-                                        <div className="my-4">
-                                            <FormField
-                                                control={control}
-                                                name="id_unit_induk"
-                                                render={({field}) => {
-                                                    return (
-                                                        <FormItem>
-                                                            <FormLabel>Unit Induk</FormLabel>
-                                                            <FormControl>
-                                                                <SelectSearch<WorkUnit>
-                                                                    url="/work-unit"
-                                                                    labelName="nama_unit_kerja"
-                                                                    valueName="id_unit_kerja"
-                                                                    placeholder="Masukkan nama unit induk..."
-                                                                    onChange={field.onChange}
-                                                                    defaultValue={field.value || undefined}
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage/>
-                                                        </FormItem>
-                                                    )
-                                                }}/>
-                                        </div>
-                                    </TabsContent>
-                                </Tabs>
                                 <div className="my-4">
                                     <FormField
                                         control={control}
@@ -257,22 +220,6 @@ const UpdateOrCreateWorkUnit = ({
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="kode_instalasi_bpjs"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Kode Instalasi BPJS</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="text" {...field} value={field.value || ''}/>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
                                         name="status"
                                         render={({field}) => {
                                             return (
@@ -301,40 +248,6 @@ const UpdateOrCreateWorkUnit = ({
                                             )
                                         }}/>
                                 </div>
-
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="status_antrian"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Status Antrean</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={field.onChange}
-                                                                defaultValue={field.value}>
-                                                            <SelectTrigger>
-                                                                <SelectValue
-                                                                    placeholder="Pilih status antrean"/>
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectItem value="1">
-                                                                        Aktif
-                                                                    </SelectItem>
-                                                                    <SelectItem value="0">
-                                                                        Non Aktif
-                                                                    </SelectItem>
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-
                                 <FormError
                                     errors={postError || patchError}
                                 />
@@ -352,6 +265,7 @@ const UpdateOrCreateWorkUnit = ({
                                         }
                                     </Button>
                                 </div>
+
                             </form>
                         </Form>
                     </div>

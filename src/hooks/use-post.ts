@@ -8,9 +8,10 @@ const usePost = <T>(url: string) => {
     const router = useRouter();
     const [postLoading, setPostLoading] = useState<boolean>(false);
     const [postError, setPostError] = useState<string | object | [] | null>(null);
-    const {data: session} = useSession();
+    const {data: session, status} = useSession();
 
     const postData = async (body: T, headers?: object) => {
+        if(status === 'unauthenticated') await signOut();
         setPostLoading(true);
         setPostError(null)
         try {

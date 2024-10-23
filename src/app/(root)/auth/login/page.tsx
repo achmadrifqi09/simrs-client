@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import Heading from "@/components/ui/heading";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Footer from "@/components/ui/footer";

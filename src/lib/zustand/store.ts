@@ -30,22 +30,7 @@ export const usePermissionsStore = create<PermissionsState>()(
         }),
         {
             name: 'user_permissions',
-            storage: createJSONStorage(() => ({
-                getItem: (name: string): string | null => {
-                    const value = sessionStorage.getItem(name);
-                    if (!value) return null;
-                    return decryptData(value);
-                },
-                setItem: (name: string, value: any): void => {
-                    const encryptedValue = encryptData(value);
-                    if (encryptedValue) {
-                        sessionStorage.setItem(name, encryptedValue);
-                    }
-                },
-                removeItem: (name: string): void => {
-                    sessionStorage.removeItem(name);
-                },
-            })),
+            storage: createJSONStorage(() => sessionStorage),
         },
     ),
 );

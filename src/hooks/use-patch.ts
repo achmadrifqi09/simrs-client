@@ -8,9 +8,10 @@ const usePatch = <T>() => {
     const router = useRouter();
     const [patchLoading, setPatchLoading] = useState<boolean>(false);
     const [patchError, setPatchError] = useState<string | object | [] | null>(null);
-    const {data: session} = useSession();
+    const {data: session, status} = useSession();
 
     const updateData = async (url: string, body: T, headers?: object) => {
+        if(status === 'unauthenticated') await signOut();
         setPatchLoading(true);
         setPatchError(null)
         try {

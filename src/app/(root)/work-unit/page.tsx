@@ -15,12 +15,12 @@ const WorkUnit = () => {
     const [selectedRecord, setSelectedRecord] = useState<FieldOfWorkUnit | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
-    const [workUnitPermission, setProvincePermission] = useState<Permission | null>(null);
+    const [workUnitPermission, setWorkUnitPermission] = useState<Permission | null>(null);
     const {getPermissions} = usePermissionsStore();
 
     useEffect(() => {
         const permission = getPermissions('unit-kerja');
-        if (permission) setProvincePermission(permission)
+        if (permission) setWorkUnitPermission(permission)
     }, [])
 
     const onRefresh = () => {
