@@ -27,7 +27,6 @@ const Room = () => {
         if (permission) {
             setRoomPermission(permission);
         }
-        console.log(permission);
     }, []);
 
     return (

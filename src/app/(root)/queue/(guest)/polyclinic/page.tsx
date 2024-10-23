@@ -67,8 +67,8 @@ const QueuePolyclinic = () => {
                     ) : (
                         data?.map((polyclinic: WorkUnit) => (
                             <SolidCard
-                                key={polyclinic.id_unit_kerja}
-                                href={`/queue/polyclinic/${polyclinic.id_unit_kerja}`}
+                                key={polyclinic.id}
+                                href={`/queue/polyclinic/${polyclinic.id}`}
                             >
                                 <p className="font-medium">{polyclinic.nama_unit_kerja}</p>
                             </SolidCard>

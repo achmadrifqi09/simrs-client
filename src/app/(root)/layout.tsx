@@ -1,5 +1,5 @@
 'use client';
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, {ReactNode, Suspense, useEffect, useState} from 'react';
 import TopBar from '@/components/ui/top-bar';
 import {Navigation} from '@/components/ui/navigation';
 import Footer from '@/components/ui/footer';
@@ -84,10 +84,10 @@ const PanelLayout = ({children}: { children: ReactNode }) => {
 
     if (checkingPath || status === 'unauthenticated') {
         return (
-            <>
+            <Suspense>
                 <ProgressBar height="5px" color="#F1A7AC" options={{showSpinner: false}} shallowRouting/>
                 {children}
-            </>
+            </Suspense>
         );
     }
 
