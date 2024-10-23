@@ -20,12 +20,13 @@ const useGet = <T>({url, headers, keyword, cursor, take}: GetProps) => {
     const {data: session, status} = useSession();
 
     const getData = useCallback(async () => {
+        if(status === 'unauthenticated') await signOut();
         if (status === 'authenticated') {
             setLoading(true);
             let endpoint = keyword ? `${url}${url.includes('?') ? '&' : '?'}keyword=${keyword}` : url;
 
             if (cursor !== null && take) {
-                endpoint = endpoint + `${keyword ? '&' : '?cursor='}${cursor}&take=${take}`;
+                endpoint =  `${endpoint}${url.includes('?') ? '&' : '?'}cursor=${cursor}&take=${take}`;
             }
             try {
                 const currentHeader: Record<string, string | null | undefined> = {

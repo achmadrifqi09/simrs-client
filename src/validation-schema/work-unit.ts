@@ -1,6 +1,21 @@
 import z from 'zod';
 
-const workUnitValidation = z.object({
+const parentUnitValidation = z.object({
+    nama_unit_kerja: z
+        .string({ message: 'Nama unit kerja harus diisi' })
+        .min(4, { message: 'Nama unit kerja minimal 4 karakter' })
+        .max(100, { message: 'Nama unit kerja maksimal 100 karakter' }),
+    jenis_pelayanan: z
+        .string({ message: 'Jenis pelayanan harus di isi' })
+        .min(0, { message: 'Jenis pelayanan harus di isi' })
+        .max(3, { message: 'Jenis pelayanan tidak valid' }),
+    status: z
+        .string({ message: 'Status unit kerja harus diisi' })
+        .min(0, { message: 'Status unit kerja isi' })
+        .max(1, { message: 'Status unit kerja tidak valid' }),
+})
+
+const subunitValidation = z.object({
     nama_unit_kerja: z
         .string({ message: 'Nama unit kerja harus diisi' })
         .min(4, { message: 'Nama unit kerja minimal 4 karakter' })
@@ -18,7 +33,6 @@ const workUnitValidation = z.object({
         .string({ message: 'Status unit kerja harus diisi' })
         .min(0, { message: 'Status unit kerja isi' })
         .max(1, { message: 'Status unit kerja tidak valid' }),
-    id_unit_induk: z.number().nullish(),
 });
 
 const fieldOfWorkUnitValidation = z.object({
@@ -32,4 +46,4 @@ const fieldOfWorkUnitValidation = z.object({
         .max(1, { message: 'Status bidang unit kerja tidak valid' }),
 })
 
-export { workUnitValidation, fieldOfWorkUnitValidation };
+export { subunitValidation, fieldOfWorkUnitValidation, parentUnitValidation };

@@ -8,9 +8,10 @@ const useDelete = () => {
     const router = useRouter();
     const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
     const [deleteError, setDeleteError] = useState<string | object | [] | null>(null);
-    const {data: session} = useSession();
+    const {data: session, status} = useSession();
 
     const deleteData = async (url: string, headers?: object) => {
+        if(status === 'unauthenticated') await signOut();
         setDeleteLoading(true);
         try {
             const currentHeader: Record<string, string | null | undefined> = {

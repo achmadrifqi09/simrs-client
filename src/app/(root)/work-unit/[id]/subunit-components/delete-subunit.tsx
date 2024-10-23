@@ -1,5 +1,5 @@
-import React from "react";
-import {Action} from "@/enums/action";
+import {useDelete} from "@/hooks/use-delete";
+import {toast} from "@/hooks/use-toast";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,39 +8,34 @@ import {
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogTitle,
+    AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {toast} from "@/hooks/use-toast";
-import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
-import {WorkUnit} from "@/types/work-unit";
+import React from "react";
+import {Subunit} from "@/types/work-unit";
 
-type DeleteWorkUnitProps = {
-    onRefresh: () => void,
-    selectedRecord: WorkUnit | null,
-    action: Action,
+type DeleteSubunitProps = {
+    selectedRecord: Subunit | null,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
+    onRefresh: () => void
 }
 
-const DeleteWorkUnit = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteWorkUnitProps) => {
+const DeleteSubunit = ({selectedRecord, showAlert, setShowAlert, onRefresh}: DeleteSubunitProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete()
     const handleDelete = async () => {
-        if (action === Action.DELETE) {
-            const result = await deleteData(`/work-unit/${selectedRecord?.id}`)
-
-            if (result?.status_code === 200) {
-                toast({
-                    title: 'Delete Berhasil',
-                    description: 'Berhasil manghapus data terkait',
-                })
-                onRefresh()
-            } else {
-                toast({
-                    title: 'Delete Gagal',
-                    description: deleteError?.toString(),
-                })
-            }
+        const result = await deleteData(`/work-unit/${selectedRecord?.id}`)
+        if (result?.status_code === 200) {
+            toast({
+                title: 'Delete Berhasil',
+                description: 'Berhasil manghapus data terkait',
+            })
+            onRefresh()
+        } else {
+            toast({
+                title: 'Delete Gagal',
+                description: deleteError?.toString(),
+            })
         }
     }
 
@@ -72,7 +67,7 @@ const DeleteWorkUnit = ({onRefresh, selectedRecord, action, showAlert, setShowAl
                 </AlertDialogContent>
             </AlertDialog>
         </>
-    );
+    )
 }
 
-export default DeleteWorkUnit;
+export default DeleteSubunit
