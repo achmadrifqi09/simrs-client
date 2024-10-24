@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {RoomDTO} from "@/types/master";
 import {Action} from "@/enums/action";
 import UpdateOrCreateRoom from "@/app/(root)/room/inpatient/update-or-create";
-import RoomTable from "@/app/(root)/room/inpatient/bed-table";
+import RoomTable from "@/app/(root)/room/inpatient/room-table";
 import RoomDelete from "@/app/(root)/room/inpatient/delete";
 import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";

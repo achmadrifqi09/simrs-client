@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {BedDTO} from "@/types/master";
+import type {BedDTO, BedsDTO} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -12,6 +12,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
 import {Switch} from "@/components/ui/switch";
 import {useParams} from "next/navigation";
+import CursorPagination from "@/components/ui/cursor-pagination";
 
 interface BedProps {
     refreshTrigger: number;
@@ -21,6 +22,7 @@ interface BedProps {
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
     permission: Permission | null
 }
+
 type RoomParam = {
     id: string;
 }
@@ -36,10 +38,14 @@ const BedTable = (
     const useParam = useParams<RoomParam>()
     const url: string = '/master/bed'
     const {status} = useSession();
+    const [cursor, setCursor] = useState<number>(0);
+    const [takeData, setTakeData] = useState<number>(10);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<BedDTO[]>({
+    const {data, loading, error, getData} = useGet<BedsDTO>({
         url: `${url}?room_id=${useParam.id}`,
         keyword: searchKeyword,
+        take: takeData,
+        cursor: cursor
     })
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,11 +53,31 @@ const BedTable = (
         setSearchKeyword(keyword);
     };
 
+    const handleChangeDataPerPage = (value: number) => {
+        setTakeData(value);
+        setCursor(0);
+    };
+
+    const handleNextPage = () => {
+        if (data?.pagination?.current_cursor !== undefined) {
+            setCursor(data.pagination.current_cursor + takeData);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        const newCursor = Math.max(0, cursor - takeData);
+        setCursor(newCursor);
+    };
 
     const debouncedChangeSearch = useCallback(
         debounce(handleChangeSearch, 500),
         []
     );
+
+    useEffect(() => {
+        setCursor(data?.pagination?.current_cursor || 0)
+    }, [data]);
+
     useEffect(() => {
         if (error) {
             toast({
@@ -94,8 +120,37 @@ const BedTable = (
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {
-                        data?.map((bed: BedDTO, index: number) => {
+                    {loading || status == 'loading' ? (
+                        Array.from({length: 4}, (_, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="text-center">
+                                    <Skeleton className="h-5 w-16 rounded-lg"/>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <Skeleton className="h-5 w-1/2 rounded-lg"/>
+                                </TableCell>
+                                {(permission?.can_update || permission?.can_delete) && (
+                                    <TableCell className="text-center flex gap-4">
+                                        <Skeleton className="h-10 w-16 rounded-lg"/>
+                                        <Skeleton className="h-10 w-16 rounded-lg"/>
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        ))
+                    ) : (
+                        data?.results?.map((bed: BedDTO, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
@@ -158,8 +213,9 @@ const BedTable = (
                                 </React.Fragment>
                             )
                         })
+                    )
                     }
-                    {(data && data?.length === 0 && !loading) && (
+                    {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
                             <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
@@ -191,7 +247,26 @@ const BedTable = (
                     }
                 </TableBody>
             </Table>
-
+            {
+                loading || status === 'loading' ? (
+                    <div className="flex justify-between items-center">
+                        <Skeleton className="h-10 w-[128px] rounded-lg"/>
+                        <div className="flex gap-4">
+                            <Skeleton className="h-10 w-10 rounded-lg"/>
+                            <Skeleton className="h-10 w-10 rounded-lg"/>
+                        </div>
+                    </div>
+                ) : (
+                    <CursorPagination
+                        currentCursor={data?.pagination?.current_cursor || 0}
+                        take={takeData}
+                        onNextPage={handleNextPage}
+                        onPreviousPage={handlePreviousPage}
+                        onItemsPerPageChange={handleChangeDataPerPage}
+                        hasMore={(data?.results?.length || 0) >= takeData}
+                    />
+                )
+            }
         </>
     )
 }

@@ -28,7 +28,7 @@ const Availability = () => {
 
     return (
         <>
-            <Heading headingLevel="h3" variant="page-title">Data Ketersediaan kamar (PAGINATION)</Heading>
+            <Heading headingLevel="h3" variant="page-title">Data Ketersediaan kamar</Heading>
             <Section>
                 <div className="space-y-6">
                     <UpdateOrCreateAvailability
