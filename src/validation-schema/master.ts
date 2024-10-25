@@ -135,11 +135,11 @@ const roomClassValidation = z.object({
     nama_kelas_kamar: z
         .string({message: 'Nama kelas Kamar harus Diisi'})
         .min(2, {message: 'Nama Kelas Kamar Minimal 2 Karakter'})
-        .max(10, {message: 'Nama Kelas Kamar Maximal 10 Karakter'}),
+        .max(50, {message: 'Nama Kelas Kamar Maximal 10 Karakter'}),
     status: z.string({message: 'Status Kamar harus Diisi'}),
     kode_bpjs_kamar: z.string({message: 'Kode bpjs_kamar harus Diisi'})
         .min(4, {message: 'kode BPJS harus diisi minimal 4 karakter'})
-        .max(10, {message: 'Kode BPJS Maximal 10 Karakter'}),
+        .max(50, {message: 'Kode BPJS Maximal 10 Karakter'}),
 })
 
 const roomTypeValidation = z.object({

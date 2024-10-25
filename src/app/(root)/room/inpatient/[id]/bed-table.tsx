@@ -21,6 +21,7 @@ interface BedProps {
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
     permission: Permission | null
+    action: Action
 }
 
 type RoomParam = {
@@ -33,7 +34,8 @@ const BedTable = (
         selectRecord,
         setAction,
         setAlertDelete,
-        permission
+        permission,
+        action
     }: BedProps) => {
     const useParam = useParams<RoomParam>()
     const url: string = '/master/bed'
@@ -120,7 +122,8 @@ const BedTable = (
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {loading || status == 'loading' ? (
+                    {
+                        ((loading || status == 'loading') && action !== Action.UPDATE_STATUS) ? (
                         Array.from({length: 4}, (_, index) => (
                             <TableRow key={index}>
                                 <TableCell className="text-center">
@@ -248,7 +251,7 @@ const BedTable = (
                 </TableBody>
             </Table>
             {
-                loading || status === 'loading' ? (
+                ((loading || status === 'loading') && action !== Action.UPDATE_STATUS) ? (
                     <div className="flex justify-between items-center">
                         <Skeleton className="h-10 w-[128px] rounded-lg"/>
                         <div className="flex gap-4">

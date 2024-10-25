@@ -55,6 +55,7 @@ const Bed = () => {
                         setAction={setActionType}
                         setAlertDelete={setShowAlertDelete}
                         permission={roomClassPermission}
+                        action={actionType}
                     />
                     <BedDelete
                         onRefresh={onRefresh}

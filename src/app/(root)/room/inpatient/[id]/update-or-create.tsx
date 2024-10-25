@@ -64,22 +64,30 @@ const UpdateOrCreatedRoom = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateOrCreatedRoom(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) {
+                onUpdateOrCreatedRoom(selectedRecord);
+            }
             if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id, selectedRecord.status)
+                updateStatus(selectedRecord.id, selectedRecord.status);
             }
         }
+    }, [selectedRecord, actionType]);
 
+    useEffect(() => {
         if (showDialog !== undefined) {
             setPostError(null);
             setPatchError(null);
             bedForm.clearErrors();
         }
+    }, [showDialog]);
 
+
+    useEffect(() => {
         if (id_params) {
             bedForm.setValue('id_ms_kamar', Number(id_params));
         }
-    }, [selectedRecord, showDialog, id_params, actionType]);
+    }, [id_params]);
+
 
     const handleOpenDialog = () => {
         if (id_params) {
