@@ -3,7 +3,7 @@ import Image from "next/image";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Footer from "@/components/ui/footer";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {loginSchema} from "@/validation-schema/auth";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
@@ -17,6 +17,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
     const searchParam = useSearchParams();
+    const errorParam = searchParam.get('error')
     const credentials = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -122,7 +123,7 @@ const Login = () => {
                                             )
                                         }}/>
                                 </div>
-                                {searchParam.get('error') && (<p className="text-red-700 text-sm">{searchParam.get('error')}</p>)}
+                                {errorParam && (<p className="text-red-700 text-sm">{errorParam}</p>)}
                                 <div className="flex justify-end mt-10">
                                     <Button type="submit" disabled={loadingSubmit}>
                                         {

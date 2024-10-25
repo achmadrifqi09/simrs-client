@@ -162,7 +162,7 @@ const UpdateOrCreateCounter = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Negara
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Loket
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>

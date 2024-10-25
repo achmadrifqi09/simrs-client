@@ -50,7 +50,7 @@ export default function withAuth(
         }
 
         const cookieMenus = req.cookies.get('menu_paths')?.value
-        if (cookieMenus != null) {
+        if (cookieMenus) {
             const menus: string[] = JSON.parse(decompressFromBase64(cookieMenus) || '[]');
             if (cookieMenus) {
                 if (Array.isArray(menus)) {
