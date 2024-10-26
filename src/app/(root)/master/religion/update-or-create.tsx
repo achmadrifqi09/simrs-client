@@ -22,14 +22,14 @@ import {z} from "zod";
 import {religionValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {ReligionDTO} from "@/types/master";
+import type {Religion} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateReligionProps = {
     onRefresh: () => void,
-    selectedRecord: ReligionDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<ReligionDTO | null>>
+    selectedRecord: Religion | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Religion | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateReligion = ({
         }
     }
 
-    const onUpdateReligion = (religionForm: ReligionDTO) => {
+    const onUpdateReligion = (religionForm: Religion) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(religionForm.id_ms_agama)

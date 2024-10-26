@@ -1,4 +1,4 @@
-import type {FamilyStatusDTO} from "@/types/master";
+import type {FamilyStatus} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteFamilyStatusProps = {
     onRefresh: () => void,
-    selectedRecord: FamilyStatusDTO | null,
+    selectedRecord: FamilyStatus | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

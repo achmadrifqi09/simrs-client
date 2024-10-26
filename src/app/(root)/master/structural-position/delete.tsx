@@ -1,4 +1,4 @@
-import type {StructuralPositionDTO} from "@/types/master";
+import type {StructuralPosition} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteStructuralPositionProps = {
     onRefresh: () => void,
-    selectedRecord: StructuralPositionDTO | null,
+    selectedRecord: StructuralPosition | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

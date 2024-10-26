@@ -22,14 +22,14 @@ import {z} from "zod";
 import {educationLeveValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {EducationDTO} from "@/types/master";
+import type {Education} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateFamilyStatusProps = {
     onRefresh: () => void,
-    selectedRecord: EducationDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<EducationDTO | null>>
+    selectedRecord: Education | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Education | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateFamilyStatus = ({
         }
     }
 
-    const onUpdateFamilyStatus = (religionForm: EducationDTO) => {
+    const onUpdateFamilyStatus = (religionForm: Education) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(religionForm.id_ms_tingkat_pendidikan)

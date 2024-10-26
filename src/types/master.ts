@@ -1,211 +1,212 @@
-type ReligionDTO = {
+type Religion = {
     id_ms_agama?: number;
     nama_agama: string;
     status: number;
 };
 
-type BloodTypeDTO = {
+type BloodType = {
     id_ms_golongan_darah?: number;
     nama_golongan_darah: string;
     status: number;
 };
 
-type StructuralPositionDTO = {
+type StructuralPosition = {
     id_ms_jabatan?: number;
     nama_jabatan: string;
     status: number;
 };
 
-type MaritalStatusDTO = {
+type MaritalStatus = {
     id_ms_status_kawin?: number;
     nama_status_kawin: string;
     status: number;
 };
-type CountryDTO = {
+
+type Country = {
     id: number;
     nama: string;
     status: number;
 };
 
-type EmployeeStatusDTO = {
+type EmployeeStatus = {
     id_ms_status_pegawai: number;
     nama_status_pegawai: string;
     status: number;
 }
-type RankOrClassDTO = {
+type RankOrClass = {
     id_ms_pangkat: number;
     nama_pangkat: string;
     status: number;
 }
-type EmployeeCategoryDTO = {
+type EmployeeCategory = {
     id_ms_jenis_pegawai_status: number;
     status_jenis_pegawai: string;
     status: number;
 }
-type EmployeeTypeRelationDTO = {
+type EmployeeTypeRelation = {
     id_ms_jenis_pegawai_status: string;
     id_ms_jenis_pegawai: number;
 }
-type EmployeeTypeDTO = {
+type EmployeeType = {
     id_ms_jenis_pegawai_status: number;
-    id_ms_jenis_pegawai: EmployeeTypeRelationDTO;
+    id_ms_jenis_pegawai: EmployeeTypeRelation;
     nama_jenis_pegawai: string;
-    status_jenis_pegawai: EmployeeCategoryDTO;
+    status_jenis_pegawai: EmployeeCategory;
     status: number;
 }
 
-type DoctorSpecialistDTO = {
+type DoctorSpecialist = {
     id_ms_spesialis: number;
     nama_spesialis: string;
     status: number;
 }
 
 
-type ProvinceRelationDTO = {
+type ProvinceRelation = {
     nama: string
 }
 
-type PaginationDTO = {
+type Pagination = {
     current_cursor: number;
     take: number
 }
 
-type ProvinceDTO = {
+type Province = {
     id: number;
     nama: string;
     id_negara: number;
-    ms_negara?: ProvinceRelationDTO
+    ms_negara?: ProvinceRelation
 }
 
-type ProvincesDTO = {
-    pagination: PaginationDTO
-    results: ProvinceDTO[]
+type Provinces = {
+    pagination: Pagination
+    results: Province[]
 }
 
-type RegencyRelationDTO = {
+type RegencyRelation = {
     id: number;
     nama: string;
 }
 
-type RegencyDTO = {
+type Regency = {
     id: string;
     id_provinsi: string;
     nama: string;
-    ms_provinsi?: RegencyRelationDTO;
+    ms_provinsi?: RegencyRelation;
 }
 
-type RegenciesDTO = {
-    pagination: PaginationDTO,
-    results: RegencyDTO[];
+type Regencies = {
+    pagination: Pagination,
+    results: Regency[];
 }
 
-type DistrictRelationDTO = {
+type DistrictRelation = {
     id: number;
     nama: string;
 }
-type DistrictDTO = {
+type District = {
     id: string;
     id_kabkot: string;
     nama: string;
-    ms_kabkot?: DistrictRelationDTO
+    ms_kabkot?: DistrictRelation
 }
 
-type DistrictsDTO = {
-    pagination: PaginationDTO;
-    results: DistrictDTO[];
+type Districts = {
+    pagination: Pagination;
+    results: District[];
 }
 
-type VillageRelationDTO = {
+type VillageRelation = {
     id: number;
     nama: string;
 }
-type VillageDTO = {
+type Village = {
     id: string;
     id_kecamatan: string;
     nama: string;
-    ms_kecamatan?: VillageRelationDTO
+    ms_kecamatan?: VillageRelation
 }
-type VillagesDTO = {
-    pagination: PaginationDTO;
-    results: VillageDTO[];
+type Villages = {
+    pagination: Pagination;
+    results: Village[];
 }
 
-type EducationDTO = {
+type Education = {
     id_ms_tingkat_pendidikan: number;
     nama_tingkat_pendidikan: string;
     status: number;
 }
 
-type FamilyStatusDTO = {
+type FamilyStatus = {
     id: number;
     nama_status_keluarga: string;
     status: number;
 }
 
-type SocialStatusDTO = {
+type SocialStatus = {
     id: number;
     nama_status_sosial: string;
     status: number;
 }
 
-type RoomClassDTO = {
+type RoomClass = {
     id: number;
     nama_kelas_kamar: string;
     kode_bpjs_kamar: string;
     status: number;
 }
 
-type RoomTypeRelationDTO = {
+type RoomTypeRelation = {
     id: number;
     nama_kelas_kamar: string;
 }
-type RoomTypeDTO = {
+type RoomType = {
     id: number;
     id_kamar_kelas: number;
     nama_jenis_kamar: string;
-    id_kelas_kamar?: RoomTypeRelationDTO;
-    kelas_kamar?: RoomTypeRelationDTO,
+    id_kelas_kamar?: RoomTypeRelation;
+    kelas_kamar?: RoomTypeRelation,
     status: number;
 }
-type BuildingDTO = {
+type Building = {
     id: number;
     nama_gedung: string;
     status: number;
 }
 
-type BedRelationDTO = {
+type BedRelation = {
     id: number;
     nama_kamar: string;
     lantai: number;
-    jenis_kamar?: RoomRelationDTO;
-    gedung?: RoomRelationDTO;
+    jenis_kamar?: RoomRelation;
+    gedung?: RoomRelation;
     total_bed: number;
     status: number;
 }
-type BedDTO = {
+type Bed = {
     id: number;
-    id_ms_kamar?: BedRelationDTO;
-    kamar?: BedRelationDTO;
+    id_ms_kamar?: BedRelation;
+    kamar?: BedRelation;
     nama_bed: string;
     keterangan: string;
     status_bed: number;
     status: number;
 }
-type BedsDTO = {
-    pagination: PaginationDTO;
-    results: BedDTO[];
+type Beds = {
+    pagination: Pagination;
+    results: Bed[];
 }
 
-type RoomRelationDTO = {
+type RoomRelation = {
     id: number;
     nama_jenis_kamar: string;
     nama_gedung: string;
 }
-type RoomDTO = {
+type Room = {
     id: number;
-    jenis_kamar?: RoomRelationDTO;
-    nama_jenis_kamar?: RoomRelationDTO,
-    gedung?: RoomRelationDTO;
+    jenis_kamar?: RoomRelation;
+    nama_jenis_kamar?: RoomRelation,
+    gedung?: RoomRelation;
     lantai: number;
     nama_kamar?: string;
     status: number;
@@ -217,37 +218,37 @@ type RoomDTO = {
 
 
 export type {
-    ReligionDTO,
-    BloodTypeDTO,
-    StructuralPositionDTO,
-    MaritalStatusDTO,
-    CountryDTO,
-    EmployeeStatusDTO,
-    RankOrClassDTO,
-    DoctorSpecialistDTO,
-    ProvincesDTO,
-    ProvinceDTO,
-    RegencyDTO,
-    RegenciesDTO,
-    DistrictsDTO,
-    DistrictRelationDTO,
-    DistrictDTO,
-    VillagesDTO,
-    VillageDTO,
-    VillageRelationDTO,
-    EmployeeCategoryDTO,
-    EducationDTO,
-    FamilyStatusDTO,
-    SocialStatusDTO,
-    RoomClassDTO,
-    RoomTypeDTO,
-    RoomTypeRelationDTO,
-    BuildingDTO,
-    BedsDTO,
-    BedDTO,
-    BedRelationDTO,
-    RoomRelationDTO,
-    RoomDTO,
-    EmployeeTypeDTO,
-    EmployeeTypeRelationDTO
+    Religion,
+    BloodType,
+    StructuralPosition,
+    MaritalStatus,
+    Country,
+    EmployeeStatus,
+    RankOrClass,
+    DoctorSpecialist,
+    Provinces,
+    Province,
+    Regency,
+    Regencies,
+    Districts,
+    DistrictRelation,
+    District,
+    Villages,
+    Village,
+    VillageRelation,
+    EmployeeCategory,
+    Education,
+    FamilyStatus,
+    SocialStatus,
+    RoomClass,
+    RoomType,
+    RoomTypeRelation,
+    Building,
+    Beds,
+    Bed,
+    BedRelation,
+    RoomRelation,
+    Room,
+    EmployeeType,
+    EmployeeTypeRelation
 };

@@ -1,4 +1,4 @@
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {EmployeeCategory} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type EmployeeTypeDeleteProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeCategoryDTO | null,
+    selectedRecord: EmployeeCategory | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

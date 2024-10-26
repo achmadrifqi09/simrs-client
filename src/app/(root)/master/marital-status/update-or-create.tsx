@@ -22,14 +22,14 @@ import {z} from "zod";
 import {maritalStatusValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {MaritalStatusDTO} from "@/types/master";
+import type {MaritalStatus} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateMaritalStatusProps = {
     onRefresh: () => void,
-    selectedRecord: MaritalStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<MaritalStatusDTO | null>>
+    selectedRecord: MaritalStatus | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<MaritalStatus | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateMaritalStatus = ({
         }
     }
 
-    const onUpdateMaritalStatus = (maritalStatusForm: MaritalStatusDTO) => {
+    const onUpdateMaritalStatus = (maritalStatusForm: MaritalStatus) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(maritalStatusForm.id_ms_status_kawin)

@@ -22,14 +22,14 @@ import {z} from "zod";
 import {familyStatusValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {FamilyStatusDTO} from "@/types/master";
+import type {FamilyStatus} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateFamilyStatusProps = {
     onRefresh: () => void,
-    selectedRecord: FamilyStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<FamilyStatusDTO | null>>
+    selectedRecord: FamilyStatus | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<FamilyStatus | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateFamilyStatus = ({
         }
     }
 
-    const onUpdateFamilyStatus = (religionForm: FamilyStatusDTO) => {
+    const onUpdateFamilyStatus = (religionForm: FamilyStatus) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(religionForm.id)

@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {BedDTO, BedsDTO} from "@/types/master";
+import type {Bed, Beds} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -16,7 +16,7 @@ import CursorPagination from "@/components/ui/cursor-pagination";
 
 interface BedProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<BedDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<Bed | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
@@ -43,7 +43,7 @@ const BedTable = (
     const [cursor, setCursor] = useState<number>(0);
     const [takeData, setTakeData] = useState<number>(10);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<BedsDTO>({
+    const {data, loading, error, getData} = useGet<Beds>({
         url: `${url}?room_id=${useParam.id}`,
         keyword: searchKeyword,
         take: takeData,
@@ -153,7 +153,7 @@ const BedTable = (
                             </TableRow>
                         ))
                     ) : (
-                        data?.results?.map((bed: BedDTO, index: number) => {
+                        data?.results?.map((bed: Bed, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
@@ -220,12 +220,12 @@ const BedTable = (
                     }
                     {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 7 : 6} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
                         loading || status == 'loading' && (
-                            Array.from({length: 4}, (_, index: number) => (
+                            Array.from({length: (permission?.can_update || permission?.can_delete) ? 7 : 6}, (_, index: number) => (
                                     <TableRow key={index}>
                                         <TableCell className="text-center">
                                             <Skeleton className="h-5 w-16 rounded-lg"/>

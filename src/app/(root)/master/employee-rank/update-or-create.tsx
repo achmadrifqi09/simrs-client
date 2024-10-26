@@ -22,14 +22,14 @@ import {z} from "zod";
 import {rankOrClassValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {RankOrClassDTO} from "@/types/master";
+import type {RankOrClass} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type RankOrClassProps = {
     onRefresh: () => void,
-    selectedRecord: RankOrClassDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RankOrClassDTO | null>>
+    selectedRecord: RankOrClass | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RankOrClass | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateCountry = ({
         }
     }
 
-    const onUpdateRankOrClass = (rankOrClassForm: RankOrClassDTO) => {
+    const onUpdateRankOrClass = (rankOrClassForm: RankOrClass) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(rankOrClassForm.id_ms_pangkat)

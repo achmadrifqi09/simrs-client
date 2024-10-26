@@ -21,7 +21,7 @@ import {z} from "zod";
 import {bedValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {BedDTO} from "@/types/master";
+import type {Bed} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -29,8 +29,8 @@ import {useRouter} from "next/navigation";
 
 type UpdateOrCreatedRoomProps = {
     onRefresh: () => void,
-    selectedRecord: BedDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<BedDTO | null>>
+    selectedRecord: Bed | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Bed | null>>
     actionType: Action,
     permission: Permission | null,
     id_params: string
@@ -125,7 +125,7 @@ const UpdateOrCreatedRoom = ({
         }
     }
 
-    const onUpdateOrCreatedRoom = (bedForm: BedDTO) => {
+    const onUpdateOrCreatedRoom = (bedForm: Bed) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(bedForm.id)

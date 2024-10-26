@@ -1,4 +1,4 @@
-import type {VillageDTO} from "@/types/master";
+import type {Village} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteVillageProps = {
     onRefresh: () => void,
-    selectedRecord: VillageDTO | null,
+    selectedRecord: Village | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

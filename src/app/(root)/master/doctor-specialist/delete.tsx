@@ -1,4 +1,4 @@
-import type {DoctorSpecialistDTO} from "@/types/master";
+import type {DoctorSpecialist} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DoctotSpecialistProps = {
     onRefresh: () => void,
-    selectedRecord: DoctorSpecialistDTO | null,
+    selectedRecord: DoctorSpecialist | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

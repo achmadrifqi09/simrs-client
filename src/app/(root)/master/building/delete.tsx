@@ -1,4 +1,4 @@
-import type {BuildingDTO} from "@/types/master";
+import type {Building} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteBuildingProps = {
     onRefresh: () => void,
-    selectedRecord: BuildingDTO | null,
+    selectedRecord: Building | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

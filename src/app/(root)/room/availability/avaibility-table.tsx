@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {BedDTO, BedsDTO} from "@/types/master";
+import type {Bed, Beds} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -14,7 +14,7 @@ import CursorPagination from "@/components/ui/cursor-pagination";
 
 interface AvailableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<BedDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<Bed | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     permission: Permission | null
@@ -32,7 +32,7 @@ const AvailableTable = (
     const [cursor, setCursor] = useState<number>(0);
     const [takeData, setTakeData] = useState<number>(10);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<BedsDTO>({
+    const {data, loading, error, getData} = useGet<Beds>({
         url: url,
         keyword: searchKeyword,
         take: takeData,
@@ -142,7 +142,7 @@ const AvailableTable = (
                         ))
                     ) : (
                         <>
-                            {data?.results?.map((available: BedDTO, index: number) => (
+                            {data?.results?.map((available: Bed, index: number) => (
                                 <TableRow key={available.id || index}>
                                     <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
                                     <TableCell className="font-medium">{available?.nama_bed}</TableCell>
@@ -182,7 +182,7 @@ const AvailableTable = (
                             ))}
                             {(data && data?.results?.length === 0 && !loading) && (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="text-center">Data tidak ditemukan</TableCell>
+                                    <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 7 : 6} className="text-center">Data tidak ditemukan</TableCell>
                                 </TableRow>
                             )}
                         </>

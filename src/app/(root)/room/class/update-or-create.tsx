@@ -22,14 +22,14 @@ import {z} from "zod";
 import {roomClassValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {RoomClassDTO} from "@/types/master";
+import type {RoomClass} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type RankOrClassProps = {
     onRefresh: () => void,
-    selectedRecord: RoomClassDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomClassDTO | null>>
+    selectedRecord: RoomClass | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomClass | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -90,7 +90,7 @@ const UpdateOrCreateCountry = ({
         }
     }
 
-    const onUpdateRankOrClass = (roomClassForm: RoomClassDTO) => {
+    const onUpdateRankOrClass = (roomClassForm: RoomClass) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(roomClassForm.id)

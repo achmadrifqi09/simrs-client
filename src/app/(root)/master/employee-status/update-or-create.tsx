@@ -22,14 +22,14 @@ import {z} from "zod";
 import {employeeStatusValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {EmployeeStatusDTO} from "@/types/master";
+import type {EmployeeStatus} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateEmployeeStatusProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeStatusDTO | null>>
+    selectedRecord: EmployeeStatus | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeStatus | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateEmplyeeStatus = ({
         }
     }
 
-    const onUpdateEmployeeStatus = (employeeStatusForm: EmployeeStatusDTO) => {
+    const onUpdateEmployeeStatus = (employeeStatusForm: EmployeeStatus) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(employeeStatusForm.id_ms_status_pegawai)

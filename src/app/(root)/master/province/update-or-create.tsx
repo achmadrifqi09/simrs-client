@@ -21,15 +21,15 @@ import {z} from "zod";
 import {provinceValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {CountryDTO, ProvinceDTO} from "@/types/master";
+import type {Country, Province} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateProvinceProps = {
     onRefresh: () => void,
-    selectedRecord: ProvinceDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<ProvinceDTO | null>>
+    selectedRecord: Province | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Province | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -74,7 +74,7 @@ const UpdateOrCreateProvince = ({
     }
 
 
-    const onUpdateOrCreateProvince = (provinceForm: ProvinceDTO) => {
+    const onUpdateOrCreateProvince = (provinceForm: Province) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(provinceForm.id)
@@ -165,7 +165,7 @@ const UpdateOrCreateProvince = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Negara</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<CountryDTO>
+                                                        <SelectSearch<Country>
                                                             url="/master/country?status=1"
                                                             labelName="nama"
                                                             valueName="id"

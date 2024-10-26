@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {ReligionDTO} from "@/types/master";
+import {Religion} from "@/types/master";
 import {Action} from "@/enums/action";
 import ReligionTable from "@/app/(root)/master/religion/religion-table";
 import UpdateOrCreateReligion from "@/app/(root)/master/religion/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const Religion = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<ReligionDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<Religion | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [religionPermission, setReligionPermission] = useState<Permission | null>(null);
@@ -23,34 +23,46 @@ const Religion = () => {
 
     useEffect(() => {
         const permission = getPermissions('agama');
-        if(permission) setReligionPermission(permission);
+        if (permission) setReligionPermission(permission);
     }, []);
     return (
         <>
             <Heading headingLevel="h3" variant="page-title">Data Master Agama</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateReligion
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        setSelectedRecord={setSelectedRecord}
-                        actionType={actionType}
-                        permission={religionPermission}
-                    />
-                    <ReligionTable
-                        selectRecord={setSelectedRecord}
-                        refreshTrigger={refreshTrigger}
-                        setAction={setActionType}
-                        setAlertDelete={setShowAlertDelete}
-                        permission={religionPermission}
-                    />
-                    <DeleteReligion
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        action={actionType}
-                        setShowAlert={setShowAlertDelete}
-                        showAlert={showAlertDelete}
-                    />
+                    {
+                        religionPermission?.can_create && (
+                            <UpdateOrCreateReligion
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                setSelectedRecord={setSelectedRecord}
+                                actionType={actionType}
+                                permission={religionPermission}
+                            />
+                        )
+                    }
+                    {
+                        religionPermission?.can_view && (
+                            <ReligionTable
+                                selectRecord={setSelectedRecord}
+                                refreshTrigger={refreshTrigger}
+                                setAction={setActionType}
+                                setAlertDelete={setShowAlertDelete}
+                                permission={religionPermission}
+                            />
+                        )
+                    }
+                    {
+                        religionPermission?.can_delete && (
+                            <DeleteReligion
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                action={actionType}
+                                setShowAlert={setShowAlertDelete}
+                                showAlert={showAlertDelete}
+                            />
+                        )
+                    }
                 </div>
             </Section>
         </>

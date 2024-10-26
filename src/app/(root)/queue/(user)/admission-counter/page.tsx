@@ -7,23 +7,10 @@ import {io, Socket} from "socket.io-client";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useSession} from "next-auth/react";
 import {toast} from "@/hooks/use-toast";
-
-type User = {
-    client_id?: string;
-    user_id: number;
-    user_name: string;
-};
-
-type CounterDTO = {
-    id_ms_loket_antrian: number;
-    nama_loket: string;
-    jenis_loket: number;
-    is_used?: boolean;
-    user?: User;
-}
+import {CallingCounter} from "@/types/counter";
 
 const QueueData = () => {
-    const [counters, setCounters] = useState<CounterDTO[]>([]);
+    const [counters, setCounters] = useState<CallingCounter[]>([]);
     const COUNTER_TYPE = 1;
     const [loading, setLoading] = useState<boolean>(false);
     const [isEmpty, setIsEmpty] = useState<boolean>(false)
@@ -87,7 +74,7 @@ const QueueData = () => {
                             <Skeleton className="h-[72px] w-full rounded-xl" key={index}/>
                         ))
                     ) : (
-                        counters.map((counter: CounterDTO) => (
+                        counters.map((counter: CallingCounter) => (
                             <SolidCard
                                 type={counter?.is_used ? 'button' : 'url'}
                                 disabled={counter?.is_used}

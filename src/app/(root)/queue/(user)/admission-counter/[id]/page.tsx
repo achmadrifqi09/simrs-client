@@ -9,16 +9,10 @@ import useGet from "@/hooks/use-get";
 import {TicketX} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import {toast} from "@/hooks/use-toast";
+import {CounterDto} from "@/dto/counter";
 
 type CallAdmissionQueueParam = {
     id: string
-}
-
-type CounterDTO = {
-    id_ms_loket_antrian: number;
-    nama_loket: string;
-    jenis_loket: number;
 }
 
 const CallAdmissionQueue = () => {
@@ -26,7 +20,7 @@ const CallAdmissionQueue = () => {
     const {data: session, status} = useSession();
     const [error, setError] = useState<string>()
     const [socket, setSocket] = useState<Socket | null>(null);
-    const {data: counter} = useGet<CounterDTO>({
+    const {data: counter} = useGet<CounterDto>({
         url: `/master/counter/${param.id}`,
     })
     const COUNTER_TYPE = 1;

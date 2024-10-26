@@ -22,14 +22,14 @@ import {z} from "zod";
 import {buildingValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {BuildingDTO} from "@/types/master";
+import type {Building} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateBuildingProps = {
     onRefresh: () => void,
-    selectedRecord: BuildingDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<BuildingDTO | null>>
+    selectedRecord: Building | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Building | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -89,7 +89,7 @@ const UpdateOrCreateBuilding = ({
         }
     }
 
-    const onUpdateBuilding = (religionForm: BuildingDTO) => {
+    const onUpdateBuilding = (religionForm: Building) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(religionForm.id)

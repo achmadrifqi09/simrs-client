@@ -22,15 +22,15 @@ import {z} from "zod";
 import {employeeTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {EmployeeCategoryDTO, EmployeeTypeDTO} from "@/types/master";
+import type {EmployeeCategory, EmployeeType} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 import SelectSearch from "@/components/ui/select-search";
 
 type UpdateOrCreateEmployeeTypeProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeTypeDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeTypeDTO | null>>
+    selectedRecord: EmployeeType | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeType | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -91,7 +91,7 @@ const UpdateOrCreateEmployeeType = ({
         }
     }
 
-    const onUpdateEmployeeType = (employeeTypeForm: EmployeeTypeDTO) => {
+    const onUpdateEmployeeType = (employeeTypeForm: EmployeeType) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(Number(employeeTypeForm.id_ms_jenis_pegawai))
@@ -178,7 +178,7 @@ const UpdateOrCreateEmployeeType = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Kategori Pegawai</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<EmployeeCategoryDTO>
+                                                        <SelectSearch<EmployeeCategory>
                                                             url="/master/employee-category?status=1"
                                                             labelName="status_jenis_pegawai"
                                                             valueName="id_ms_jenis_pegawai_status"

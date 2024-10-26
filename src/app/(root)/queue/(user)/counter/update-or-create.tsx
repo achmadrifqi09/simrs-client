@@ -25,21 +25,14 @@ import {Action} from "@/enums/action";
 import {counterValidation} from "@/validation-schema/counter";
 import {Permission} from "@/types/permission";
 import {Textarea} from "@/components/ui/textarea";
+import {Counter} from "@/types/counter";
 
-type CounterDTO = {
-    id_ms_loket_antrian: number;
-    nama_loket: string;
-    status: number;
-    keterangan: string | undefined;
-    jenis_loket: number;
-}
-
-type UpdateOrCreateCounterProps = {
-    onRefresh: () => void,
-    selectedRecord: CounterDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<CounterDTO | null>>
-    actionType: Action,
-    permission: Permission | null
+interface UpdateOrCreateCounterProps {
+    onRefresh: () => void;
+    selectedRecord: Counter | null;
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Counter | null>>;
+    actionType: Action;
+    permission: Permission | null;
 }
 
 const UpdateOrCreateCounter = ({
@@ -96,7 +89,7 @@ const UpdateOrCreateCounter = ({
         }
     }
 
-    const onUpdateCounter = (counterForm: CounterDTO) => {
+    const onUpdateCounter = (counterForm: Counter) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(counterForm.id_ms_loket_antrian)

@@ -1,4 +1,4 @@
-import type {BloodTypeDTO} from "@/types/master";
+import type {BloodType} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type BloodTypeDeleteProps = {
     onRefresh: () => void,
-    selectedRecord: BloodTypeDTO | null,
+    selectedRecord: BloodType | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

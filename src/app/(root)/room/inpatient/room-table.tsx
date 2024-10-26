@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {RoomDTO} from "@/types/master";
+import type {Room} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -15,7 +15,7 @@ import Link from "next/link";
 
 interface AvailableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<RoomDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<Room | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
@@ -35,7 +35,7 @@ const AvailableTable = (
     const url: string = '/master/room'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<RoomDTO[]>({
+    const {data, loading, error, getData} = useGet<Room[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -94,7 +94,7 @@ const AvailableTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((room: RoomDTO, index: number) => {
+                        data?.map((room: Room, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
@@ -166,7 +166,7 @@ const AvailableTable = (
                     }
                     {(data && data?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 4 : 3} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
