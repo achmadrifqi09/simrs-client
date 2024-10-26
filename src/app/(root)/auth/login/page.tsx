@@ -3,7 +3,7 @@ import Image from "next/image";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Footer from "@/components/ui/footer";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {loginSchema} from "@/validation-schema/auth";
 import {useForm} from "react-hook-form";
 import {z} from "zod";

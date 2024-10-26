@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import Heading from "@/components/ui/heading";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import Clock from '@/components/ui/clock'

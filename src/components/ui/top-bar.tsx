@@ -10,6 +10,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {LuAlignLeft, LuChevronDown, LuLogOut} from "react-icons/lu";
 import {clearClientSideCookies} from "@/utils/cookies-cleaner";
 import {useMenuStore, usePermissionsStore} from "@/lib/zustand/store";
+import {User} from "lucide-react";
 
 
 type TopBarProps = {
@@ -98,6 +99,10 @@ const TopBar = ({onToggleMenu}: TopBarProps) => {
                             </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56 mr-3.5 mt-4">
+                            <DropdownMenuItem onClick={handleLogout}>
+                                <User className="mr-2 h-4 w-4"/>
+                                <span>Profil</span>
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={handleLogout}>
                                 <LuLogOut className="mr-2 h-4 w-4"/>
                                 <span>Log out</span>
