@@ -1,5 +1,5 @@
 "use client"
-import { useSearchParams} from "next/navigation";
+import {useSearchParams} from "next/navigation";
 import Section from "@/components/ui/section";
 import Heading from "@/components/ui/heading";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
@@ -26,7 +26,7 @@ const PolyclinicCounterDetail = () => {
                             <Skeleton className="w-1/4 h-10"/>
                         </div>
                     ) : (
-                        <div className="flex justify-between items-center">
+                        <div className="flex md:justify-between items-start md:items-center gap-4 flex-col md:flex-row">
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -37,10 +37,21 @@ const PolyclinicCounterDetail = () => {
                                 </Link>
                             </Button>
                             <TabsList>
-                                <TabsTrigger value="queue" className="leading-relaxed">Antrean</TabsTrigger>
-                                <TabsTrigger value="inspection" className="leading-relaxed">Pemeriksaan</TabsTrigger>
-                                <TabsTrigger value="queue-completed" className="leading-relaxed">Antrean
-                                    Selesai</TabsTrigger>
+                                <TabsTrigger
+                                    value="queue"
+                                    className="leading-relaxed hover:cursor-pointer">
+                                    Antrean
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="inspection"
+                                    className="leading-relaxed hover:cursor-pointer">
+                                    Pemeriksaan
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="queue-completed"
+                                    className="leading-relaxed hover:cursor-pointer">
+                                    Antrean Selesai
+                                </TabsTrigger>
                             </TabsList>
 
                         </div>
@@ -85,7 +96,8 @@ const PolyclinicCounterDetail = () => {
                                 status === 'loading' ? (
                                     <Skeleton className="w-1/3 h-4"/>
                                 ) : (
-                                    <p className="text-gray-500 leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                                    <p className="text-gray-500 leading-relaxed">Lorem ipsum dolor sit amet, consectetur
+                                        adipisicing elit.</p>
                                 )
                             }
                         </div>

@@ -90,7 +90,7 @@ const FieldOfWorkUnitTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        loading && action !== Action.UPDATE_STATUS ? (
+                        (loading && action !== Action.UPDATE_STATUS) ? (
                             Array.from({length: 4}, (_, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="text-center">
