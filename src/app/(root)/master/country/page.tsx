@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {Country} from "@/types/master";
+import {Country as CountryType} from "@/types/master";
 import {Action} from "@/enums/action";
 import CountryTable from "@/app/(root)/master/country/country-table";
 import UpdateOrCreateCountry from "@/app/(root)/master/country/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const Country = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<Country | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<CountryType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [countryPermission, setCountryPermission] = useState<Permission | null>(null);

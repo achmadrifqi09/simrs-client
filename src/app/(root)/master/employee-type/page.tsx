@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {EmployeeType} from "@/types/master";
+import {EmployeeType as EmployeeTypeProps} from "@/types/master";
 import {Action} from "@/enums/action";
 import EmployeeTypeTable from "@/app/(root)/master/employee-type/employee-type-table";
 import UpdateOrCreateEmployeeType from "@/app/(root)/master/employee-type/update-or-create";
@@ -13,7 +13,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const EmployeeType = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<EmployeeType | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<EmployeeTypeProps | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [employeeTypePermission, setEmployeeTypePermission] = useState<Permission | null>(null);

@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {EmployeeStatus} from "@/types/master";
+import {EmployeeStatus as EmployeeStatusType} from "@/types/master";
 import {Action} from "@/enums/action";
 import EmployeeStatusTable from "@/app/(root)/master/employee-status/employee-status-table";
 import UpdateOrCreateEmployeeStatus from "@/app/(root)/master/employee-status/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const EmployeeStatus = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<EmployeeStatus | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<EmployeeStatusType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [employeeStatusPermission, setEmployeeStatusPermission] = useState<Permission | null>(null);

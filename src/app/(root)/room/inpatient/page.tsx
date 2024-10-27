@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {Room} from "@/types/master";
+import {Room as RoomType} from "@/types/master";
 import {Action} from "@/enums/action";
 import UpdateOrCreateRoom from "@/app/(root)/room/inpatient/update-or-create";
 import RoomTable from "@/app/(root)/room/inpatient/room-table";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const Room = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRoomRecord, setSelectedRoomRecord] = useState<Room | null>(null);
+    const [selectedRoomRecord, setSelectedRoomRecord] = useState<RoomType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [roomPermission, setRoomPermission] = useState<Permission | null>(null);

@@ -9,7 +9,7 @@ import useGet from "@/hooks/use-get";
 import {TicketX} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import {CounterDto} from "@/dto/counter";
+import {Counter} from "@/types/counter";
 
 type CallAdmissionQueueParam = {
     id: string
@@ -20,7 +20,7 @@ const CallAdmissionQueue = () => {
     const {data: session, status} = useSession();
     const [error, setError] = useState<string>()
     const [socket, setSocket] = useState<Socket | null>(null);
-    const {data: counter} = useGet<CounterDto>({
+    const {data: counter} = useGet<Counter>({
         url: `/master/counter/${param.id}`,
     })
     const COUNTER_TYPE = 1;

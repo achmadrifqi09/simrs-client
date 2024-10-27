@@ -3,7 +3,7 @@ import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
 import UpdateOrCreateBloodType from "@/app/(root)/master/blood-type/update-or-create";
-import {BloodType} from "@/types/master";
+import {BloodType as BloodTypeProps} from "@/types/master";
 import BloodTypeTable from "@/app/(root)/master/blood-type/blood-type-table";
 import {Action} from "@/enums/action";
 import BloodTypeDelete from "@/app/(root)/master/blood-type/delete";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const BloodType = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<BloodType | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<BloodTypeProps | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [bloodTypePermission, setProvincePermission] = useState<Permission | null>(null);
@@ -20,7 +20,7 @@ const BloodType = () => {
 
     useEffect(() => {
         const permission = getPermissions('golongan-darah');
-        if(permission) setProvincePermission(permission)
+        if (permission) setProvincePermission(permission)
     }, [])
 
     const onRefresh = () => {

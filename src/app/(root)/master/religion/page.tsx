@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {Religion} from "@/types/master";
+import {Religion as ReligionType} from "@/types/master";
 import {Action} from "@/enums/action";
 import ReligionTable from "@/app/(root)/master/religion/religion-table";
 import UpdateOrCreateReligion from "@/app/(root)/master/religion/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const Religion = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<Religion | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<ReligionType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [religionPermission, setReligionPermission] = useState<Permission | null>(null);

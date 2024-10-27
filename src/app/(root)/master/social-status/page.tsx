@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {SocialStatus} from "@/types/master";
+import {SocialStatus as SocialStatusType} from "@/types/master";
 import {Action} from "@/enums/action";
 import SocialStatusTable from "@/app/(root)/master/social-status/social-status-table";
 import UpdateOrCreateSocialStatus from "@/app/(root)/master/social-status/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const SocialStatus = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<SocialStatus | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<SocialStatusType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [socialStatusPermission, setSocialStatusPermission] = useState<Permission | null>(null);

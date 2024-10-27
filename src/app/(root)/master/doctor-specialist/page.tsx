@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {DoctorSpecialist} from "@/types/master";
+import {DoctorSpecialist as DoctorSpecialistType} from "@/types/master";
 import {Action} from "@/enums/action";
 import DoctorSpecialistTable from "@/app/(root)/master/doctor-specialist/doctor-specialist-table";
 import UpdateOrCreateDoctorSpecialist from "@/app/(root)/master/doctor-specialist/update-or-delete";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const DoctorSpecialist = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<DoctorSpecialist | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<DoctorSpecialistType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [doctorSpecialistPermission, setDoctorSpecialistPermission] = useState<Permission | null>(null);

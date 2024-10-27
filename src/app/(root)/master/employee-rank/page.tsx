@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {RankOrClass} from "@/types/master";
+import {RankOrClass as RankOrClassType} from "@/types/master";
 import {Action} from "@/enums/action";
 import EmployeeRankTable from "@/app/(root)/master/employee-rank/employee-rank-table";
 import UpdateOrCreateRankOrClass from "@/app/(root)/master/employee-rank/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const RankOrClass = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<RankOrClass | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<RankOrClassType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [rankOrClassPermission, setRankOrClassPermission] = useState<Permission | null>(null);

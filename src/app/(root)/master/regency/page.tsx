@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {Regency} from "@/types/master";
+import {Regency as RegencyType} from "@/types/master";
 import {Action} from "@/enums/action";
 import UpdateOrCreateRegency from "@/app/(root)/master/regency/update-or-create-regency";
 import RegencyTable from "@/app/(root)/master/regency/regency-table";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const Regency = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<Regency | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<RegencyType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [regencyPermission, setRegenecyPermission] = useState<Permission | null>(null)

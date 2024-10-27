@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {District} from "@/types/master";
+import {District as DistrictType} from "@/types/master";
 import {Action} from "@/enums/action";
 import UpdateOrCreateDistrict from "@/app/(root)/master/district/update-or-create";
 import DistrictTable from "@/app/(root)/master/district/district-table";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const District = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<District | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<DistrictType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [districtPermission, setDistrictPermission] = useState<Permission | null>(null);

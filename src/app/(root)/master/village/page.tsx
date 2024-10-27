@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {Village} from "@/types/master";
+import {Village as VillageType} from "@/types/master";
 import {Action} from "@/enums/action";
 import UpdateOrCreateVillage from "@/app/(root)/master/village/update-or-create";
 import VillageTable from "@/app/(root)/master/village/village-table";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const Village = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<Village | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<VillageType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [villagePermission, setVillagePermission] = useState<Permission | null>(null);
@@ -20,7 +20,7 @@ const Village = () => {
 
     useEffect(() => {
         const permission = getPermissions('kelurahan-desa');
-        if(permission) setVillagePermission(permission);
+        if (permission) setVillagePermission(permission);
     }, []);
 
     const onRefresh = () => {

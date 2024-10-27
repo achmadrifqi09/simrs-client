@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {Bed} from "@/types/master";
+import {Bed as BedType} from "@/types/master";
 import {Action} from "@/enums/action";
 import UpdateOrCreateBed from "@/app/(root)/room/inpatient/[id]/update-or-create";
 import BedTable from "@/app/(root)/room/inpatient/[id]/bed-table";
@@ -22,7 +22,7 @@ const Bed = () => {
 
 
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<Bed | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<BedType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [roomClassPermission, setBedPermission] = useState<Permission | null>(null);

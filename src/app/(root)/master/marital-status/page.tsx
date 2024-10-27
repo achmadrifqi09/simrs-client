@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {MaritalStatus} from "@/types/master";
+import {MaritalStatus as MaritalStatusType} from "@/types/master";
 import {Action} from "@/enums/action";
 import UpdateOrCreateMaritalStatus from "@/app/(root)/master/marital-status/update-or-create";
 import MaritalStatusTable from "@/app/(root)/master/marital-status/marital-status-table";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const MaritalStatus = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<MaritalStatus | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<MaritalStatusType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [maritalStatusPermission, setProvincePermission] = useState<Permission | null>(null);

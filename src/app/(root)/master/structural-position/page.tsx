@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {type StructuralPosition} from "@/types/master";
+import {StructuralPosition as StructuralPositionType} from "@/types/master";
 import {Action} from "@/enums/action";
 import StructuralPositionTable from "@/app/(root)/master/structural-position/structural-position-table";
 import UpdateOrCreateStructuralPosition from "@/app/(root)/master/structural-position/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const StructuralPosition = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<StructuralPosition | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<StructuralPositionType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [structuralPositionPermission, setStructuralPositionPermission] = useState<Permission | null>(null);
