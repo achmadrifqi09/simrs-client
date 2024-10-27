@@ -9,7 +9,7 @@ import type { Viewport } from 'next';
 
 const inter: NextFont = Inter({subsets: ['latin'], display: 'swap'});
 export const viewport: Viewport = {
-    themeColor: 'black',
+    themeColor: '#E02D2B',
     maximumScale: 1,
     initialScale: 1,
     width: 'device-width',

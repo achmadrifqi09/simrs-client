@@ -57,7 +57,7 @@ const TopBar = ({onToggleMenu}: TopBarProps) => {
                 <Image src="/images/logo-rs-white.png" alt="Logo RSU UMM" width={48} height={48}/>
                 <div>
                     <h4 className="font-semibold text-white leading-5 hidden md:block select-none">
-                        <span className="font-normal">SIMRS</span>
+                        <span className="font-normal">SIM RSU</span>
                         {" "}Universitas<br/>Muhammadiyah Malang</h4>
                 </div>
             </div>

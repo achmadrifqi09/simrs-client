@@ -83,7 +83,7 @@ const MobileNavigation = () => {
                                    height={48}/>
                             <div>
                                 <p className="text-base text-[#054571]">
-                                    <span className="text-primary">SIMRS</span> Universitas<br/>
+                                    <span className="text-primary">SIM RSU</span> Universitas<br/>
                                     Muhammadiyah Malang
                                 </p>
                             </div>
