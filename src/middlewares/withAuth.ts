@@ -12,7 +12,11 @@ export default function withAuth(
 ) {
     return async (req: NextRequestWithAuth, next: NextFetchEvent) => {
         const pathname: string = req.nextUrl.pathname
-        if (pathname === '/not-found' || pathname.includes('manifest') || pathname.includes('icons')) {
+        if (pathname === '/not-found'
+            || pathname.includes('manifest')
+            || pathname.includes('icons')
+            || pathname.includes('screenshot')
+        ) {
             return middleware(req, next);
         }
 
