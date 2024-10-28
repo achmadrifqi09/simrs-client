@@ -16,6 +16,8 @@ export default function withAuth(
             || pathname.includes('manifest')
             || pathname.includes('icons')
             || pathname.includes('screenshot')
+            || pathname.includes('sw.js')
+            || pathname.includes('workbox')
         ) {
             return middleware(req, next);
         }
