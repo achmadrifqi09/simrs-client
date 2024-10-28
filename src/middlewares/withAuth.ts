@@ -12,13 +12,17 @@ export default function withAuth(
 ) {
     return async (req: NextRequestWithAuth, next: NextFetchEvent) => {
         const pathname: string = req.nextUrl.pathname
-        if (pathname === '/not-found'
-            || pathname.includes('manifest')
-            || pathname.includes('icons')
-            || pathname.includes('screenshot')
+
+        if (pathname.includes('/manifest')
+            || pathname.includes('/icons')
+            || pathname.includes('/screenshot')
             || pathname.includes('sw.js')
-            || pathname.includes('workbox')
+            || pathname.includes('/workbox')
         ) {
+            return middleware(req, next);
+        }
+
+        if (pathname === '/not-found') {
             return middleware(req, next);
         }
 
@@ -27,7 +31,7 @@ export default function withAuth(
 
         const session: JWT | null = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
 
-        if(session && pathname.startsWith('/auth/login')) {
+        if (session && pathname.startsWith('/auth/login')) {
             return NextResponse.redirect(new URL('/', req.url));
         }
 
