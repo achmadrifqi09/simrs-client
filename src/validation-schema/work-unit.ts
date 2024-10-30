@@ -13,6 +13,9 @@ const parentUnitValidation = z.object({
         .string({ message: 'Status unit kerja harus diisi' })
         .min(0, { message: 'Status unit kerja isi' })
         .max(1, { message: 'Status unit kerja tidak valid' }),
+    kode_instalasi_bpjs: z.string().nullish(),
+    status_antrian: z
+        .string({ message: 'Status antrean harus di isi' }),
 })
 
 const subunitValidation = z.object({

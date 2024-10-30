@@ -159,7 +159,7 @@ const UpdateOrCreateFieldWorkUnit = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama bidang</FormLabel>
+                                                    <FormLabel>Nama bidang*</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -175,7 +175,7 @@ const UpdateOrCreateFieldWorkUnit = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Status</FormLabel>
+                                                    <FormLabel>Status*</FormLabel>
                                                     <FormControl>
                                                         <Select onValueChange={field.onChange}
                                                                 defaultValue={field.value}>

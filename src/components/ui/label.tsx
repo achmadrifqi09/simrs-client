@@ -19,7 +19,17 @@ const Label = React.forwardRef<
         ref={ref}
         className={cn(labelVariants(), className)}
         {...props}
-    />
+    >
+
+        {
+            props.children?.toString().includes('*') ? (
+                <>
+                    {props?.children?.toString().replace(/\*/g, ' ')}
+                    <span className="text-red-600">*</span>
+                </>
+            ) : (props?.children)
+        }
+    </LabelPrimitive.Root>
 ))
 Label.displayName = LabelPrimitive.Root.displayName
 

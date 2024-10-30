@@ -21,6 +21,7 @@ type ParentUnit = {
     is_parent_unit: number;
     status_antrian: number;
     id_bidang: number;
+    kode_instalasi_bpjs: string | null | undefined;
 }
 
 type Subunit = {
