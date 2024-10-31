@@ -12,6 +12,16 @@ export default function withAuth(
 ) {
     return async (req: NextRequestWithAuth, next: NextFetchEvent) => {
         const pathname: string = req.nextUrl.pathname
+
+        if (pathname.includes('/manifest')
+            || pathname.includes('/icons')
+            || pathname.includes('/screenshot')
+            || pathname.includes('sw.js')
+            || pathname.includes('/workbox')
+        ) {
+            return middleware(req, next);
+        }
+
         if (pathname === '/not-found') {
             return middleware(req, next);
         }
@@ -21,7 +31,7 @@ export default function withAuth(
 
         const session: JWT | null = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
 
-        if(session && pathname.startsWith('/auth/login')) {
+        if (session && pathname.startsWith('/auth/login')) {
             return NextResponse.redirect(new URL('/', req.url));
         }
 
@@ -50,7 +60,7 @@ export default function withAuth(
         }
 
         const cookieMenus = req.cookies.get('menu_paths')?.value
-        if (cookieMenus != null) {
+        if (cookieMenus) {
             const menus: string[] = JSON.parse(decompressFromBase64(cookieMenus) || '[]');
             if (cookieMenus) {
                 if (Array.isArray(menus)) {

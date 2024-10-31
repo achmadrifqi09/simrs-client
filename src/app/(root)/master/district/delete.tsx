@@ -1,4 +1,4 @@
-import type {DistrictDTO} from "@/types/master";
+import type {District} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteDistrictProps = {
     onRefresh: () => void,
-    selectedRecord: DistrictDTO | null,
+    selectedRecord: District | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

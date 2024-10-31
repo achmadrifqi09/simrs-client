@@ -22,14 +22,14 @@ import {z} from "zod";
 import {bloodTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {BloodTypeDTO} from "@/types/master";
+import type {BloodType} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateBloodTypeProps = {
     onRefresh: () => void,
-    selectedRecord: BloodTypeDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<BloodTypeDTO | null>>
+    selectedRecord: BloodType | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<BloodType | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateBloodType = ({
         }
     }
 
-    const onUpdateBloodType = (bloodTypeForm: BloodTypeDTO) => {
+    const onUpdateBloodType = (bloodTypeForm: BloodType) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(bloodTypeForm.id_ms_golongan_darah)

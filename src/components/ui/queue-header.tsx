@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import Heading from "@/components/ui/heading";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import Clock from '@/components/ui/clock'
@@ -8,17 +7,17 @@ import Clock from '@/components/ui/clock'
 const QueueHeader = () => {
     const pathName = usePathname();
     return (
-        <header className="row-span-2 relative px-6">
+        <header className="row-span-2 relative px-4 md:px-6">
             <div className="flex justify-center md:justify-between items-center md:gap-6">
                 <div className="hidden md:block">
                     <Image src="/images/logo-rs.png" alt="Logo RSU UMM" width={132} height={132}/>
                 </div>
                 <div className="static md:absolute left-0 right-0">
                     <p className="text-gray-500 text-center">Sistem Antrean</p>
-                    <Heading headingLevel="h2" variant="page-title" className="text-center font-bold mb-2">
+                    <h1 className="text-center font-bold mb-2 text-2xl md:text-3xl text-[#054571]">
                         Rumah Sakit Umum<br/>
                         Universitas Muhammadiyah Malang
-                    </Heading>
+                    </h1>
                     <div className="h-6 min-w-10">
                         <Clock/>
                     </div>

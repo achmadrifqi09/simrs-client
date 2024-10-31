@@ -22,14 +22,14 @@ import {z} from "zod";
 import {socialStatusValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {SocialStatusDTO} from "@/types/master";
+import type {SocialStatus} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateSocialStatusProps = {
     onRefresh: () => void,
-    selectedRecord: SocialStatusDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<SocialStatusDTO | null>>
+    selectedRecord: SocialStatus | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<SocialStatus | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateSocialStatus = ({
         }
     }
 
-    const onUpdateSocialStatus = (religionForm: SocialStatusDTO) => {
+    const onUpdateSocialStatus = (religionForm: SocialStatus) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(religionForm.id)

@@ -22,14 +22,14 @@ import {z} from "zod";
 import {employeeCategoryValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {EmployeeCategory} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateEmployeeCategoryProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeCategoryDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
+    selectedRecord: EmployeeCategory | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<EmployeeCategory | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -90,7 +90,7 @@ const UpdateOrCreateEmployeeCategory = ({
         }
     }
 
-    const onUpdateEmployeeType = (employeeTypeForm: EmployeeCategoryDTO) => {
+    const onUpdateEmployeeType = (employeeTypeForm: EmployeeCategory) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(employeeTypeForm.id_ms_jenis_pegawai_status)

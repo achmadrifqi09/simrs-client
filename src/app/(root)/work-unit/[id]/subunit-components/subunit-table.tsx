@@ -253,34 +253,37 @@ const WorkUnitTable = (
                                                     ) : (subunit.status_antrian === 1 ? 'Aktif' : 'Non Aktif')
                                                 }
                                             </TableCell>
-
-                                            <TableCell>
-                                                <div className="flex gap-2">
-                                                    {
-                                                        (permission?.can_update) && (
-                                                            <Button
-                                                                onClick={() => {
-                                                                    selectRecord(subunit);
-                                                                    setAction(Action.UPDATE_FIELDS)
-                                                                }}
-                                                                size="sm">
-                                                                Update
-                                                            </Button>
-                                                        )
-                                                    }
-                                                    {(permission?.can_delete) && (
-                                                        <Button
-                                                            onClick={() => {
-                                                                selectRecord(subunit);
-                                                                setAction(Action.DELETE)
-                                                                setShowAlert(true)
-                                                            }}
-                                                            size="sm" variant="outline">
-                                                            Hapus
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            </TableCell>
+                                            {
+                                                (permission?.can_update || permission?.can_delete) && (
+                                                    <TableCell>
+                                                        <div className="flex gap-2">
+                                                            {
+                                                                (permission?.can_update) && (
+                                                                    <Button
+                                                                        onClick={() => {
+                                                                            selectRecord(subunit);
+                                                                            setAction(Action.UPDATE_FIELDS)
+                                                                        }}
+                                                                        size="sm">
+                                                                        Update
+                                                                    </Button>
+                                                                )
+                                                            }
+                                                            {(permission?.can_delete) && (
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        selectRecord(subunit);
+                                                                        setAction(Action.DELETE)
+                                                                        setShowAlert(true)
+                                                                    }}
+                                                                    size="sm" variant="outline">
+                                                                    Hapus
+                                                                </Button>
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
+                                                )
+                                            }
                                         </TableRow>
                                     </React.Fragment>
                                 )

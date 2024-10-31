@@ -22,14 +22,14 @@ import {z} from "zod";
 import {structuralPositionValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {StructuralPositionDTO} from "@/types/master";
+import type {StructuralPosition} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission";
 
 type UpdateOrCreateStructuralPositionProps = {
     onRefresh: () => void,
-    selectedRecord: StructuralPositionDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<StructuralPositionDTO | null>>
+    selectedRecord: StructuralPosition | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<StructuralPosition | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateStructuralPosition = ({
         }
     }
 
-    const onUpdateStructuralPosition = (structuralPositionForm: StructuralPositionDTO) => {
+    const onUpdateStructuralPosition = (structuralPositionForm: StructuralPosition) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(structuralPositionForm.id_ms_jabatan)

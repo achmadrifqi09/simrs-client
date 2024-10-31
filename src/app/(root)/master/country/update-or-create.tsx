@@ -22,13 +22,13 @@ import {z} from "zod";
 import {countryValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {CountryDTO} from "@/types/master";
+import type {Country} from "@/types/master";
 import {Action} from "@/enums/action";
 
 type UpdateOrCreateCountryProps = {
     onRefresh: () => void,
-    selectedRecord: CountryDTO | null,
-    setSelectedRecord:React.Dispatch<React.SetStateAction<CountryDTO | null>>
+    selectedRecord: Country | null,
+    setSelectedRecord:React.Dispatch<React.SetStateAction<Country | null>>
     actionType: Action
 }
 
@@ -80,7 +80,7 @@ const UpdateOrCreateCountry = ({onRefresh, selectedRecord, setSelectedRecord, ac
         }
     }
 
-    const onUpdateCountry = (countryForm: CountryDTO) => {
+    const onUpdateCountry = (countryForm: Country) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(countryForm.id)

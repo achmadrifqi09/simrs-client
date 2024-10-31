@@ -32,28 +32,40 @@ const WorkUnit = () => {
             <Heading headingLevel="h3" variant="page-title">Bidang Unit Kerja</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateFieldWorkUnit
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        setSelectedRecord={setSelectedRecord}
-                        actionType={actionType}
-                        permission={workUnitPermission}
-                    />
-                    <FieldOfWorkUnitTable
-                        selectRecord={setSelectedRecord}
-                        refreshTrigger={refreshTrigger}
-                        setAction={setActionType}
-                        setAlertDelete={setShowAlertDelete}
-                        permission={workUnitPermission}
-                        action={actionType}
-                    />
-                    <DeleteFieldOfWorkUnit
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        action={actionType}
-                        setShowAlert={setShowAlertDelete}
-                        showAlert={showAlertDelete}
-                    />
+                    {
+                        workUnitPermission?.can_create && (
+                            <UpdateOrCreateFieldWorkUnit
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                setSelectedRecord={setSelectedRecord}
+                                actionType={actionType}
+                                permission={workUnitPermission}
+                            />
+                        )
+                    }
+                    {
+                        workUnitPermission?.can_view && (
+                            <FieldOfWorkUnitTable
+                                selectRecord={setSelectedRecord}
+                                refreshTrigger={refreshTrigger}
+                                setAction={setActionType}
+                                setAlertDelete={setShowAlertDelete}
+                                permission={workUnitPermission}
+                                action={actionType}
+                            />
+                        )
+                    }
+                    {
+                        workUnitPermission?.can_delete && (
+                            <DeleteFieldOfWorkUnit
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                action={actionType}
+                                setShowAlert={setShowAlertDelete}
+                                showAlert={showAlertDelete}
+                            />
+                        )
+                    }
                 </div>
             </Section>
         </>

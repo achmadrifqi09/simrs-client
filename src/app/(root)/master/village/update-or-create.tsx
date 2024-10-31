@@ -21,14 +21,14 @@ import {z} from "zod";
 import {villageValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {VillageDTO, DistrictDTO} from "@/types/master";
+import type {Village, District} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 
 type UpdateOrCreateVillageProps = {
     onRefresh: () => void,
-    selectedRecord: VillageDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<VillageDTO | null>>
+    selectedRecord: Village | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Village | null>>
     actionType: Action
 }
 
@@ -71,7 +71,7 @@ const UpdateOrCreateVillage = ({
         setSelectedRecord(null)
     }
 
-    const onUpdateOrCreateVillage = (villageForm: VillageDTO) => {
+    const onUpdateOrCreateVillage = (villageForm: Village) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(villageForm.id.toString())
@@ -156,7 +156,7 @@ const UpdateOrCreateVillage = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Kecamatan</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<DistrictDTO>
+                                                        <SelectSearch<District>
                                                             url="/master/district"
                                                             labelName="nama"
                                                             valueName="id"

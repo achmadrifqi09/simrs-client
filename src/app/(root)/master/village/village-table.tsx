@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {VillageDTO, VillagesDTO} from "@/types/master";
+import type {Village, Villages} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -10,13 +10,15 @@ import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import CursorPagination from "@/components/ui/cursor-pagination";
+import {Permission} from "@/types/permission";
 
 interface DistrictProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<VillageDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<Village | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+    permission: Permission | null
 }
 
 const VillageTable = (
@@ -24,14 +26,15 @@ const VillageTable = (
         refreshTrigger,
         selectRecord,
         setAction,
-        setAlertDelete
+        setAlertDelete,
+        permission
     }: DistrictProps) => {
     const url: string = '/master/village'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [cursor, setCursor] = useState<number>(0);
     const [takeData, setTakeData] = useState<number>(10);
-    const {data, loading, error, getData} = useGet<VillagesDTO>({
+    const {data, loading, error, getData} = useGet<Villages>({
         url: url,
         keyword: searchKeyword,
         take: takeData,
@@ -100,13 +103,18 @@ const VillageTable = (
                         <TableHead>No</TableHead>
                         <TableHead>Nama Desa</TableHead>
                         <TableHead>Kecamatan</TableHead>
-                        <TableHead>Aksi</TableHead>
+                        {
+                            (permission?.can_delete || permission?.can_delete) && (
+                                <TableHead>Aksi</TableHead>
+                            )
+                        }
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 4 : 3}
+                                       className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
@@ -122,42 +130,58 @@ const VillageTable = (
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
                                     </TableCell>
-
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
+                                    {
+                                        (permission?.can_update || permission?.can_delete) && (
+                                            <TableCell className="text-center flex gap-4">
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                            </TableCell>
+                                        )
+                                    }
                                 </TableRow>
                             ))
                         ) : (
-                            data?.results?.map((village: VillageDTO, index: number) => {
+                            data?.results?.map((village: Village, index: number) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <TableRow>
                                             <TableCell className="font-medium">{cursor + (index + 1)}</TableCell>
                                             <TableCell className="font-medium">{village.nama}</TableCell>
-                                            <TableCell className="font-medium">{village.ms_kecamatan?.nama || '-'}</TableCell>
-                                            <TableCell>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        onClick={() => {
-                                                            selectRecord(village);
-                                                            setAction(Action.UPDATE_FIELDS)
-                                                        }}
-                                                        size="sm">
-                                                        Update
-                                                    </Button>
-                                                    <Button
-                                                        onClick={() => {
-                                                            selectRecord(village);
-                                                            setAction(Action.DELETE)
-                                                            setAlertDelete(true)
-                                                        }}
-                                                        size="sm" variant="outline">
-                                                        Hapus
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
+                                            <TableCell
+                                                className="font-medium">{village.ms_kecamatan?.nama || '-'}</TableCell>
+                                            {
+                                                (permission?.can_update || permission?.can_delete) && (
+                                                    <TableCell>
+                                                        <div className="flex gap-2">
+                                                            {
+                                                                permission.can_update && (
+                                                                    <Button
+                                                                        onClick={() => {
+                                                                            selectRecord(village);
+                                                                            setAction(Action.UPDATE_FIELDS)
+                                                                        }}
+                                                                        size="sm">
+                                                                        Update
+                                                                    </Button>
+                                                                )
+                                                            }
+                                                            {
+                                                                permission.can_delete && (
+                                                                    <Button
+                                                                        onClick={() => {
+                                                                            selectRecord(village);
+                                                                            setAction(Action.DELETE)
+                                                                            setAlertDelete(true)
+                                                                        }}
+                                                                        size="sm" variant="outline">
+                                                                        Hapus
+                                                                    </Button>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </TableCell>
+                                                )
+                                            }
                                         </TableRow>
                                     </React.Fragment>
                                 )

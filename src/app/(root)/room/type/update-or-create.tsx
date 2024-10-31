@@ -21,7 +21,7 @@ import {z} from "zod";
 import {roomTypeValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {RoomClassDTO, RoomTypeDTO} from "@/types/master";
+import type {RoomClass, RoomType} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 import {Permission} from "@/types/permission";
@@ -29,8 +29,8 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 
 type UpdateOrCreatedRoomTypeProps = {
     onRefresh: () => void,
-    selectedRecord: RoomTypeDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomTypeDTO | null>>
+    selectedRecord: RoomType | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomType | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -90,7 +90,7 @@ const UpdateOrCreatedRoomType = ({
         }
     }
 
-    const onUpdateOrCreatedRoomType = (roomTypeForm: RoomTypeDTO) => {
+    const onUpdateOrCreatedRoomType = (roomTypeForm: RoomType) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(roomTypeForm.id)
@@ -182,7 +182,7 @@ const UpdateOrCreatedRoomType = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Kelas kamar</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<RoomClassDTO>
+                                                        <SelectSearch<RoomClass>
                                                             url="/master/room-class?status=1"
                                                             labelName="nama_kelas_kamar"
                                                             valueName="id"

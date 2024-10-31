@@ -21,14 +21,14 @@ import {z} from "zod";
 import {districtValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {DistrictDTO, RegencyDTO} from "@/types/master";
+import type {District, Regency} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 
 type UpdateOrCreateDistrictProps = {
     onRefresh: () => void,
-    selectedRecord: DistrictDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<DistrictDTO | null>>
+    selectedRecord: District | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<District | null>>
     actionType: Action
 }
 
@@ -71,7 +71,7 @@ const UpdateOrCreateDistrict = ({
         setSelectedRecord(null)
     }
 
-    const onUpdateOrCreateDistrict = (districtForm: DistrictDTO) => {
+    const onUpdateOrCreateDistrict = (districtForm: District) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(districtForm.id.toString())
@@ -156,7 +156,7 @@ const UpdateOrCreateDistrict = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Kabupaten / Kota</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<RegencyDTO>
+                                                        <SelectSearch<Regency>
                                                             url="/master/regency"
                                                             labelName="nama"
                                                             valueName="id"

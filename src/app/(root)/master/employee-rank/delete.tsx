@@ -1,4 +1,4 @@
-import type {RankOrClassDTO} from "@/types/master";
+import type {RankOrClass} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type RankOrClassDeleteProps = {
     onRefresh: () => void,
-    selectedRecord: RankOrClassDTO | null,
+    selectedRecord: RankOrClass | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

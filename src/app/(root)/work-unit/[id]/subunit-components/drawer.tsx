@@ -21,7 +21,6 @@ import DeleteSubunit from "@/app/(root)/work-unit/[id]/subunit-components/delete
 type SubunitDrawerProps = {
     drawerOpen: boolean;
     setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    permission: Permission | null;
     selectRecord: WorkUnit | null,
     fieldId: number
 }
@@ -47,6 +46,7 @@ const SubunitDrawer = ({drawerOpen, setDrawerOpen, selectRecord: workUnit, field
     const onRefresh = () => {
         setRefreshTrigger(prev => prev + 1);
     }
+
     return (
         <Drawer open={drawerOpen} onOpenChange={handleCloseDrawer}>
             <DrawerContent>
@@ -84,37 +84,43 @@ const SubunitDrawer = ({drawerOpen, setDrawerOpen, selectRecord: workUnit, field
                                             || subunitAction === Action.UPDATE_STATUS
                                             || subunitAction === Action.UPDATE_QUEUE_STATUS
                                         ) && (
-                                            <Button onClick={() => setSubunitAction(Action.CREATE)} size="sm">
-                                                Tambah Subunit
-                                            </Button>
+                                           workUnitPermission?.can_create && (
+                                               <Button onClick={() => setSubunitAction(Action.CREATE)} size="sm">
+                                                   Tambah Subunit
+                                               </Button>
+                                           )
                                         )
                                     }
 
                                 </div>
                                 <div className="h-[76dvh] md:h-[68dvh] overflow-y-auto px-2">
-                                    {(subunitAction !== Action.CREATE && subunitAction !== Action.UPDATE_FIELDS) && (
-                                        <SubunitTable
-                                            action={subunitAction}
-                                            fieldId={fieldId} parentUnit={workUnit}
-                                            permission={workUnitPermission}
-                                            selectRecord={setSelectedRecord}
-                                            setAction={setSubunitAction}
-                                            selectedRecord={selectedRecord}
-                                            setShowAlert={setSubunitDeleteAlert}
-                                            refreshTrigger={refreshTrigger}
-                                        />
+                                    {((subunitAction !== Action.CREATE && subunitAction !== Action.UPDATE_FIELDS)) && (
+                                        workUnitPermission?.can_view && (
+                                            <SubunitTable
+                                                action={subunitAction}
+                                                fieldId={fieldId} parentUnit={workUnit}
+                                                permission={workUnitPermission}
+                                                selectRecord={setSelectedRecord}
+                                                setAction={setSubunitAction}
+                                                selectedRecord={selectedRecord}
+                                                setShowAlert={setSubunitDeleteAlert}
+                                                refreshTrigger={refreshTrigger}
+                                            />
+                                        )
                                     )}
                                     {(subunitAction === Action.CREATE || subunitAction === Action.UPDATE_FIELDS) && (
-                                        <SubunitUpdateOrCreate
-                                            parentUnit={workUnit}
-                                            action={subunitAction}
-                                            fieldId={fieldId}
-                                            setAction={setSubunitAction}
-                                            selectedRecord={selectedRecord}
-                                        />
+                                        workUnitPermission?.can_create && (
+                                            <SubunitUpdateOrCreate
+                                                parentUnit={workUnit}
+                                                action={subunitAction}
+                                                fieldId={fieldId}
+                                                setAction={setSubunitAction}
+                                                selectedRecord={selectedRecord}
+                                            />
+                                        )
                                     )}
                                     {
-                                        subunitAction === Action.DELETE && (
+                                        (subunitAction === Action.DELETE && workUnitPermission?.can_delete) && (
                                             <DeleteSubunit
                                                 selectedRecord={selectedRecord}
                                                 showAlert={subunitDeleteAlert}

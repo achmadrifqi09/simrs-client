@@ -21,14 +21,14 @@ import {z} from "zod";
 import {regencyValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {ProvinceDTO, RegencyDTO} from "@/types/master";
+import type {Province, Regency} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 
 type UpdateOrCreateRegencyProps = {
     onRefresh: () => void,
-    selectedRecord: RegencyDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RegencyDTO | null>>
+    selectedRecord: Regency | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Regency | null>>
     actionType: Action
 }
 
@@ -71,7 +71,7 @@ const UpdateOrCreateRegency = ({
         setSelectedRecord(null)
     }
 
-    const onUpdateOrCreateRegency = (regencyForm: RegencyDTO) => {
+    const onUpdateOrCreateRegency = (regencyForm: Regency) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(regencyForm.id.toString())
@@ -156,7 +156,7 @@ const UpdateOrCreateRegency = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Provinsi</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<ProvinceDTO>
+                                                        <SelectSearch<Province>
                                                             url="/master/province"
                                                             labelName="nama"
                                                             valueName="id"

@@ -49,6 +49,8 @@ const UpdateOrCreateWorkUnit = ({
             nama_unit_kerja: "",
             jenis_pelayanan: "0",
             status: "1",
+            kode_instalasi_bpjs: "",
+            status_antrian: "0"
         }
     })
 
@@ -107,10 +109,11 @@ const UpdateOrCreateWorkUnit = ({
         const submitData: ParentUnit = {
             nama_unit_kerja: values.nama_unit_kerja,
             status: Number(values.status),
-            status_antrian: 0,
+            status_antrian: Number(values.status_antrian) || 0,
             id_bidang: fieldId,
             is_parent_unit: 1,
             jenis_pelayanan: Number(values.jenis_pelayanan),
+            kode_instalasi_bpjs: values.kode_instalasi_bpjs || "",
         }
 
         const response = submitMode === 'POST' ? (
@@ -149,7 +152,6 @@ const UpdateOrCreateWorkUnit = ({
                 <DialogTrigger asChild>
                     {
                         permission?.can_create && (
-
                             <Button className="mb-4" onClick={handleOpenDialog}>Tambah Unit Kerja</Button>
                         )
                     }
@@ -171,7 +173,7 @@ const UpdateOrCreateWorkUnit = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Nama Unit</FormLabel>
+                                                    <FormLabel>Nama Unit*</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
                                                     </FormControl>
@@ -187,7 +189,7 @@ const UpdateOrCreateWorkUnit = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Jenis Layanan</FormLabel>
+                                                    <FormLabel>Jenis Layanan*</FormLabel>
                                                     <FormControl>
                                                         <Select onValueChange={field.onChange}
                                                                 defaultValue={field.value}>
@@ -220,11 +222,56 @@ const UpdateOrCreateWorkUnit = ({
                                 <div className="my-4">
                                     <FormField
                                         control={control}
+                                        name="kode_instalasi_bpjs"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Kode instalasi BPJS</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="text" {...field} value={field?.value || ''}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 my-4 gap-4 md:gap-6">
+                                    <FormField
+                                        control={control}
+                                        name="status_antrian"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Status Antrean*</FormLabel>
+                                                    <FormControl>
+                                                        <Select onValueChange={field.onChange}
+                                                                defaultValue={field.value}>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Pilih status antrean"/>
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectGroup>
+                                                                    <SelectItem value="1">
+                                                                        Aktif
+                                                                    </SelectItem>
+                                                                    <SelectItem value="0">
+                                                                        Non Aktif
+                                                                    </SelectItem>
+                                                                </SelectGroup>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                    <FormField
+                                        control={control}
                                         name="status"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Status</FormLabel>
+                                                    <FormLabel>Status*</FormLabel>
                                                     <FormControl>
                                                         <Select onValueChange={field.onChange}
                                                                 defaultValue={field.value}>

@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {EmployeeCategoryDTO} from "@/types/master";
+import type {EmployeeCategory} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -14,7 +14,7 @@ import {Permission} from "@/types/permission";
 
 interface EmployeeCategoryStatusProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<EmployeeCategoryDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<EmployeeCategory | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
@@ -32,7 +32,7 @@ const EmployeeCategoryTable = (
     const url: string = '/master/employee-category'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<EmployeeCategoryDTO[]>({
+    const {data, loading, error, getData} = useGet<EmployeeCategory[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -89,7 +89,7 @@ const EmployeeCategoryTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((employeeCategory: EmployeeCategoryDTO, index: number) => {
+                        data?.map((employeeCategory: EmployeeCategory, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
@@ -155,7 +155,7 @@ const EmployeeCategoryTable = (
                     }
                     {(data && data.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 4 : 3} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {
@@ -171,10 +171,14 @@ const EmployeeCategoryTable = (
                                     <TableCell className="text-center">
                                         <Skeleton className="h-8 w-12 rounded-lg"/>
                                     </TableCell>
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
+                                    {
+                                        (permission?.can_update || permission?.can_delete) && (
+                                            <TableCell className="text-center flex gap-4">
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                            </TableCell>
+                                        )
+                                    }
                                 </TableRow>
                             ))
                         )

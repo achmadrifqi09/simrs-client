@@ -1,4 +1,4 @@
-import type {EducationDTO} from "@/types/master";
+import type {Education} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteEducationLevelProps = {
     onRefresh: () => void,
-    selectedRecord: EducationDTO | null,
+    selectedRecord: Education | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

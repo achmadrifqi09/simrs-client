@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {EmployeeStatusDTO} from "@/types/master";
+import {EmployeeStatus as EmployeeStatusType} from "@/types/master";
 import {Action} from "@/enums/action";
 import EmployeeStatusTable from "@/app/(root)/master/employee-status/employee-status-table";
 import UpdateOrCreateEmployeeStatus from "@/app/(root)/master/employee-status/update-or-create";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const EmployeeStatus = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<EmployeeStatusDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<EmployeeStatusType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [employeeStatusPermission, setEmployeeStatusPermission] = useState<Permission | null>(null);
@@ -32,27 +32,39 @@ const EmployeeStatus = () => {
             <Heading headingLevel="h3" variant="page-title">Data Master Status Pegawai</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateEmployeeStatus
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        setSelectedRecord={setSelectedRecord}
-                        actionType={actionType}
-                        permission={employeeStatusPermission}
-                    />
-                    <EmployeeStatusTable
-                        selectRecord={setSelectedRecord}
-                        refreshTrigger={refreshTrigger}
-                        setAction={setActionType}
-                        setAlertDelete={setShowAlertDelete}
-                        permission={employeeStatusPermission}
-                    />
-                    <EmployeeStatusDelete
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        action={actionType}
-                        setShowAlert={setShowAlertDelete}
-                        showAlert={showAlertDelete}
-                    />
+                    {
+                        employeeStatusPermission?.can_create && (
+                            <UpdateOrCreateEmployeeStatus
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                setSelectedRecord={setSelectedRecord}
+                                actionType={actionType}
+                                permission={employeeStatusPermission}
+                            />
+                        )
+                    }
+                    {
+                        employeeStatusPermission?.can_view && (
+                            <EmployeeStatusTable
+                                selectRecord={setSelectedRecord}
+                                refreshTrigger={refreshTrigger}
+                                setAction={setActionType}
+                                setAlertDelete={setShowAlertDelete}
+                                permission={employeeStatusPermission}
+                            />
+                        )
+                    }
+                    {
+                        employeeStatusPermission?.can_delete && (
+                            <EmployeeStatusDelete
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                action={actionType}
+                                setShowAlert={setShowAlertDelete}
+                                showAlert={showAlertDelete}
+                            />
+                        )
+                    }
                 </div>
             </Section>
         </>

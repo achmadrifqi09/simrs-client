@@ -1,4 +1,4 @@
-import type {EmployeeStatusDTO} from "@/types/master";
+import type {EmployeeStatus} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type EmployeeStatusDeleteProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeStatusDTO | null,
+    selectedRecord: EmployeeStatus | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

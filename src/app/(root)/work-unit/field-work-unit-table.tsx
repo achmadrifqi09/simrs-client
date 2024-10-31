@@ -90,7 +90,7 @@ const FieldOfWorkUnitTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        loading && action !== Action.UPDATE_STATUS ? (
+                        (loading && action !== Action.UPDATE_STATUS) ? (
                             Array.from({length: 4}, (_, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="text-center">
@@ -102,11 +102,14 @@ const FieldOfWorkUnitTable = (
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
                                     </TableCell>
-
-                                    <TableCell className="text-center flex gap-4">
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                        <Skeleton className="h-10 w-16 rounded-lg"/>
-                                    </TableCell>
+                                    {
+                                        (permission?.can_update || permission?.can_delete) && (
+                                            <TableCell className="text-center flex gap-4">
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                                <Skeleton className="h-10 w-16 rounded-lg"/>
+                                            </TableCell>
+                                        )
+                                    }
                                 </TableRow>
                             ))
                         ) : (

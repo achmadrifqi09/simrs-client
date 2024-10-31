@@ -97,9 +97,6 @@ const SubunitUpdateOrCreate = ({
     useEffect(() => {
         if (selectedRecord) {
             if (action === Action.UPDATE_FIELDS) return onUpdateSubunit(selectedRecord);
-            // if (action === Action.UPDATE_STATUS || action === Action.UPDATE_QUEUE_STATUS) {
-            //     updateStatus(Number(selectedRecord.id))
-            // }
         }
     }, [selectedRecord])
     return (
@@ -113,7 +110,7 @@ const SubunitUpdateOrCreate = ({
                             render={({field}) => {
                                 return (
                                     <FormItem>
-                                        <FormLabel>Nama Unit</FormLabel>
+                                        <FormLabel>Nama Unit*</FormLabel>
                                         <FormControl>
                                             <Input type="text" {...field}/>
                                         </FormControl>
@@ -127,7 +124,7 @@ const SubunitUpdateOrCreate = ({
                             render={({field}) => {
                                 return (
                                     <FormItem>
-                                        <FormLabel>Jenis Layanan</FormLabel>
+                                        <FormLabel>Jenis Layanan*</FormLabel>
                                         <FormControl>
                                             <Select onValueChange={field.onChange}
                                                     defaultValue={field.value}>
@@ -164,7 +161,7 @@ const SubunitUpdateOrCreate = ({
                             render={({field}) => {
                                 return (
                                     <FormItem>
-                                        <FormLabel>Status</FormLabel>
+                                        <FormLabel>Status Antrean*</FormLabel>
                                         <FormControl>
                                             <Select onValueChange={field.onChange}
                                                     defaultValue={field.value}>
@@ -193,7 +190,7 @@ const SubunitUpdateOrCreate = ({
                             render={({field}) => {
                                 return (
                                     <FormItem>
-                                        <FormLabel>Status</FormLabel>
+                                        <FormLabel>Status*</FormLabel>
                                         <FormControl>
                                             <Select onValueChange={field.onChange}
                                                     defaultValue={field.value}>

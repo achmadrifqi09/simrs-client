@@ -1,4 +1,4 @@
-import type {RoomDTO} from "@/types/master";
+import type {Room} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteRoomTypeProps = {
     onRefresh: () => void,
-    selectedRecord: RoomDTO | null,
+    selectedRecord: Room | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

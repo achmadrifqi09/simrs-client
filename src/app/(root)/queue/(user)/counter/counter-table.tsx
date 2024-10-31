@@ -11,18 +11,11 @@ import {Switch} from "@/components/ui/switch";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import debounce from "debounce";
 import {Input} from "@/components/ui/input";
-
-type CounterDTO = {
-    id_ms_loket_antrian: number;
-    nama_loket: string;
-    status: number;
-    keterangan: string | undefined;
-    jenis_loket: number;
-}
+import {Counter} from "@/types/counter";
 
 interface CounterProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<CounterDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<Counter | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
@@ -41,7 +34,7 @@ const CounterTable = (
     const {status} = useSession();
     const [counterType, setCounterType] = useState<string>("1")
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<CounterDTO[]>({
+    const {data, loading, error, getData} = useGet<Counter[]>({
         url: `${url}?type=${counterType}`,
         keyword: searchKeyword
     })
@@ -116,7 +109,7 @@ const CounterTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((counter: CounterDTO, index: number) => {
+                        data?.map((counter: Counter, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>

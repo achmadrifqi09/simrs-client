@@ -6,7 +6,7 @@ import Link from "next/link";
 import {Submenu} from '@/types/menu-type'
 import Icon from "@/components/ui/icon";
 import {usePathname} from "next/navigation";
-import {  LuChevronDown} from "react-icons/lu";
+import {LuChevronDown, LuChevronRight} from "react-icons/lu";
 
 interface CollapseMenuButtonProps {
     iconName: string,
@@ -44,7 +44,7 @@ const CollapseMenu = ({iconName, label, submenus, active, onToggle, id, open, cl
                         {open ? (
                             <LuChevronDown className="w-5 h-5"/>
                         ) : (
-                            <LuChevronDown className="w-5 h-5"/>
+                            <LuChevronRight className="w-5 h-5"/>
                         )}
                     </button>
                 </CollapsibleTrigger>

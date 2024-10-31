@@ -21,7 +21,7 @@ import {z} from "zod";
 import {roomValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {BuildingDTO, RoomDTO, RoomTypeDTO} from "@/types/master";
+import type {Building, Room, RoomType} from "@/types/master";
 import {Action} from "@/enums/action";
 import SelectSearch from "@/components/ui/select-search";
 import {Permission} from "@/types/permission";
@@ -29,8 +29,8 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 
 type UpdateOrCreatedRoomProps = {
     onRefresh: () => void,
-    selectedRecord: RoomDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<RoomDTO | null>>
+    selectedRecord: Room | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<Room | null>>
     actionType: Action,
     permission: Permission | null
 }
@@ -94,7 +94,7 @@ const UpdateOrCreatedRoom = ({
         }
     }
 
-    const onUpdateOrCreatedRoom = (roomForm: RoomDTO) => {
+    const onUpdateOrCreatedRoom = (roomForm: Room) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(roomForm.id)
@@ -192,7 +192,7 @@ const UpdateOrCreatedRoom = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Gedung</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<BuildingDTO>
+                                                        <SelectSearch<Building>
                                                             url="/master/building?status=1"
                                                             labelName="nama_gedung"
                                                             valueName="id"
@@ -215,7 +215,7 @@ const UpdateOrCreatedRoom = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Jenis kamar</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<RoomTypeDTO>
+                                                        <SelectSearch<RoomType>
                                                             url="/master/room-type?status=1"
                                                             labelName="nama_jenis_kamar"
                                                             valueName="id"

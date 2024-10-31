@@ -1,4 +1,4 @@
-import type {ReligionDTO} from "@/types/master";
+import type {Religion} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteReligionProps = {
     onRefresh: () => void,
-    selectedRecord: ReligionDTO | null,
+    selectedRecord: Religion | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

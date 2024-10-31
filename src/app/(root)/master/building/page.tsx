@@ -2,7 +2,7 @@
 import Heading from "@/components/ui/heading";
 import Section from "@/components/ui/section";
 import React, {useEffect, useState} from "react";
-import {BuildingDTO} from "@/types/master";
+import {Building as BuildingType} from "@/types/master";
 import {Action} from "@/enums/action";
 import BuildingTable from "@/app/(root)/master/building/building-table";
 import UpdateOrCreateBuilding from "@/app/(root)/master/building/create-or-update";
@@ -12,7 +12,7 @@ import {usePermissionsStore} from "@/lib/zustand/store";
 
 const Building = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
-    const [selectedRecord, setSelectedRecord] = useState<BuildingDTO | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<BuildingType | null>(null);
     const [actionType, setActionType] = useState<Action>(Action.CREATE);
     const [showAlertDelete, setShowAlertDelete] = useState<boolean>(false);
     const [buildingPermission, setBuildingPermission] = useState<Permission | null>(null);
@@ -23,34 +23,46 @@ const Building = () => {
 
     useEffect(() => {
         const permission = getPermissions('gedung');
-        if(permission) setBuildingPermission(permission);
+        if (permission) setBuildingPermission(permission);
     }, []);
     return (
         <>
             <Heading headingLevel="h3" variant="page-title">Data Master Building</Heading>
             <Section>
                 <div className="space-y-6">
-                    <UpdateOrCreateBuilding
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        setSelectedRecord={setSelectedRecord}
-                        actionType={actionType}
-                        permission={buildingPermission}
-                    />
-                    <BuildingTable
-                        selectRecord={setSelectedRecord}
-                        refreshTrigger={refreshTrigger}
-                        setAction={setActionType}
-                        setAlertDelete={setShowAlertDelete}
-                        permission={buildingPermission}
-                    />
-                    <DeleteBuilding
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        action={actionType}
-                        setShowAlert={setShowAlertDelete}
-                        showAlert={showAlertDelete}
-                    />
+                    {
+                        buildingPermission?.can_create && (
+                            <UpdateOrCreateBuilding
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                setSelectedRecord={setSelectedRecord}
+                                actionType={actionType}
+                                permission={buildingPermission}
+                            />
+                        )
+                    }
+                    {
+                        buildingPermission?.can_view && (
+                            <BuildingTable
+                                selectRecord={setSelectedRecord}
+                                refreshTrigger={refreshTrigger}
+                                setAction={setActionType}
+                                setAlertDelete={setShowAlertDelete}
+                                permission={buildingPermission}
+                            />
+                        )
+                    }
+                    {
+                        buildingPermission?.can_delete && (
+                            <DeleteBuilding
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                action={actionType}
+                                setShowAlert={setShowAlertDelete}
+                                showAlert={showAlertDelete}
+                            />
+                        )
+                    }
                 </div>
             </Section>
         </>

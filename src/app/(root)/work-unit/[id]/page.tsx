@@ -51,42 +51,56 @@ const WorkUnit = () => {
                                 Kembali
                             </Link>
                         </Button>
-                        <UpdateOrCreateWorkUnit
-                            onRefresh={onRefresh}
-                            selectedRecord={selectedRecord}
-                            setSelectedRecord={setSelectedRecord}
-                            actionType={actionType}
-                            permission={workUnitPermission}
-                            fieldId={Number(param.id)}
-                        />
+                        {
+                            workUnitPermission?.can_create && (
+                                <UpdateOrCreateWorkUnit
+                                    onRefresh={onRefresh}
+                                    selectedRecord={selectedRecord}
+                                    setSelectedRecord={setSelectedRecord}
+                                    actionType={actionType}
+                                    permission={workUnitPermission}
+                                    fieldId={Number(param.id)}
+                                />
+                            )
+                        }
                     </div>
-                    <WorkUnitTable
-                        selectRecord={setSelectedRecord}
-                        refreshTrigger={refreshTrigger}
-                        setAction={setActionType}
-                        setAlertDelete={setShowAlertDelete}
-                        permission={workUnitPermission}
-                        fieldId={Number(param.id)}
-                        action={actionType}
-                        setShowSubunit={setShowSubunit}
-                    />
-                    <DeleteWorkUnit
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        action={actionType}
-                        setShowAlert={setShowAlertDelete}
-                        showAlert={showAlertDelete}
-                    />
+                    {
+                        workUnitPermission?.can_view && (
+                            <WorkUnitTable
+                                selectRecord={setSelectedRecord}
+                                refreshTrigger={refreshTrigger}
+                                setAction={setActionType}
+                                setAlertDelete={setShowAlertDelete}
+                                permission={workUnitPermission}
+                                fieldId={Number(param.id)}
+                                action={actionType}
+                                setShowSubunit={setShowSubunit}
+                            />
+                        )
+                    }
+                    {
+                        workUnitPermission?.can_delete && (
+                            <DeleteWorkUnit
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                action={actionType}
+                                setShowAlert={setShowAlertDelete}
+                                showAlert={showAlertDelete}
+                            />
+                        )
+                    }
                 </div>
             </Section>
-
-            <SubunitDrawer
-                drawerOpen={showSubunit}
-                setDrawerOpen={setShowSubunit}
-                permission={workUnitPermission}
-                selectRecord={selectedRecord}
-                fieldId={Number(param.id)}
-            />
+            {
+                workUnitPermission?.can_view && (
+                    <SubunitDrawer
+                        drawerOpen={showSubunit}
+                        setDrawerOpen={setShowSubunit}
+                        selectRecord={selectedRecord}
+                        fieldId={Number(param.id)}
+                    />
+                )
+            }
 
         </>
     )

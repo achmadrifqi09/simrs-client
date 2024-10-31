@@ -1,4 +1,4 @@
-import type {SocialStatusDTO} from "@/types/master";
+import type {SocialStatus} from "@/types/master";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -17,7 +17,7 @@ import {Loader2} from "lucide-react";
 
 type DeleteSocialStatusProps = {
     onRefresh: () => void,
-    selectedRecord: SocialStatusDTO | null,
+    selectedRecord: SocialStatus | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>

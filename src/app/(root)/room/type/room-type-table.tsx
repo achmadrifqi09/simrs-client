@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type { RoomTypeDTO} from "@/types/master";
+import type { RoomType} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -14,7 +14,7 @@ import {Switch} from "@/components/ui/switch";
 
 interface RoomTypeProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<RoomTypeDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<RoomType | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
@@ -32,7 +32,7 @@ const RoomTypeTable = (
     const url: string = '/master/room-type'
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<RoomTypeDTO[]>({
+    const {data, loading, error, getData} = useGet<RoomType[]>({
         url: url,
         keyword: searchKeyword,
     })
@@ -90,7 +90,7 @@ const RoomTypeTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((roomType: RoomTypeDTO, index: number) => {
+                        data?.map((roomType: RoomType, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
@@ -155,7 +155,7 @@ const RoomTypeTable = (
                     }
                     {(data && data?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 4 : 3} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {

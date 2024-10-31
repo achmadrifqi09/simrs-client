@@ -13,24 +13,17 @@ import {
 import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
+import {Counter} from "@/types/counter";
 
-type CounterDTO = {
-    id_ms_loket_antrian: number;
-    nama_loket: string;
-    status: number;
-    keterangan: string | undefined;
-    jenis_loket: number;
+interface DeleteCounterProps {
+    onRefresh: () => void;
+    selectedRecord: Counter | null;
+    action: Action;
+    showAlert: boolean;
+    setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-type DeleteCounterDTO = {
-    onRefresh: () => void,
-    selectedRecord: CounterDTO | null,
-    action: Action,
-    showAlert: boolean,
-    setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const DeleteCounter = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteCounterDTO) => {
+const DeleteCounter = ({onRefresh, selectedRecord, action, showAlert, setShowAlert}: DeleteCounterProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete(
 
     )

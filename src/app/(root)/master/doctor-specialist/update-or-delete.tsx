@@ -22,14 +22,14 @@ import {z} from "zod";
 import {doctorSpecialistValidation} from "@/validation-schema/master";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
-import type {DoctorSpecialistDTO} from "@/types/master";
+import type {DoctorSpecialist} from "@/types/master";
 import {Action} from "@/enums/action";
 import {Permission} from "@/types/permission"
 
 type UpdateOrCreateDoctorSpecialistProps = {
     onRefresh: () => void,
-    selectedRecord: DoctorSpecialistDTO | null,
-    setSelectedRecord: React.Dispatch<React.SetStateAction<DoctorSpecialistDTO | null>>
+    selectedRecord: DoctorSpecialist | null,
+    setSelectedRecord: React.Dispatch<React.SetStateAction<DoctorSpecialist | null>>
     actionType: Action
     permission: Permission | null
 }
@@ -88,7 +88,7 @@ const UpdateOrCreateCountry = ({
         }
     }
 
-    const onUpdateCountry = (doctorSpecialistForm: DoctorSpecialistDTO) => {
+    const onUpdateCountry = (doctorSpecialistForm: DoctorSpecialist) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(doctorSpecialistForm.id_ms_spesialis)

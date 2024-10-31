@@ -2,7 +2,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {ProvinceDTO, ProvincesDTO} from "@/types/master";
+import type {Province, Provinces} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
@@ -14,7 +14,7 @@ import {Permission} from "@/types/permission";
 
 interface ProvinceProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<ProvinceDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<Province | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
@@ -34,7 +34,7 @@ const ProvinceTable = (
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [cursor, setCursor] = useState<number>(0);
     const [takeData, setTakeData] = useState<number>(10);
-    const {data, loading, error, getData} = useGet<ProvincesDTO>({
+    const {data, loading, error, getData} = useGet<Provinces>({
         url: url,
         keyword: searchKeyword,
         take: takeData,
@@ -135,7 +135,7 @@ const ProvinceTable = (
                                 </TableRow>
                             ))
                         ) : (
-                            data?.results?.map((province: ProvinceDTO, index: number) => {
+                            data?.results?.map((province: Province, index: number) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <TableRow>
@@ -184,7 +184,7 @@ const ProvinceTable = (
                     }
                     {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 4 : 3} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                 </TableBody>
