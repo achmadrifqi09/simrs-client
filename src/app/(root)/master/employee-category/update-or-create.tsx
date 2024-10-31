@@ -35,17 +35,18 @@ type UpdateOrCreateEmployeeCategoryProps = {
 }
 
 const UpdateOrCreateEmployeeCategory = ({
-                                        onRefresh,
-                                        selectedRecord,
-                                        setSelectedRecord,
-                                        actionType,
-                                        permission
-                                    }: UpdateOrCreateEmployeeCategoryProps) => {
+                                            onRefresh,
+                                            selectedRecord,
+                                            setSelectedRecord,
+                                            actionType,
+                                            permission
+                                        }: UpdateOrCreateEmployeeCategoryProps) => {
     const employeeTypeForm = useForm<z.infer<typeof employeeCategoryValidation>>({
         resolver: zodResolver(employeeCategoryValidation),
         defaultValues: {
             status_jenis_pegawai: "",
-            status: "1"
+            status: "1",
+            kode_nip: 0
         }
     })
 
@@ -68,6 +69,7 @@ const UpdateOrCreateEmployeeCategory = ({
     const handleCloseDialog = () => {
         setValue('status_jenis_pegawai', "")
         setValue('status', '1')
+        setValue('kode_nip', 0)
         setShowDialog(!showDialog)
         setSelectedRecord(null)
     }
@@ -94,24 +96,31 @@ const UpdateOrCreateEmployeeCategory = ({
         setSelectedRecordId(employeeTypeForm.id_ms_jenis_pegawai_status)
         setValue('status_jenis_pegawai', employeeTypeForm.status_jenis_pegawai.toString())
         setValue('status', employeeTypeForm.status.toString())
+        setValue('kode_nip', Number(employeeTypeForm.kode_nip))
     }
 
     const onSubmit = handleSubmit(async (values) => {
         if (!session?.accessToken) {
             return;
         }
-
         const response = submitMode === 'POST' ? (
             await postData(
-                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
+                {
+                    status: Number(values.status),
+                    status_jenis_pegawai: values.status_jenis_pegawai,
+                    kode_nip: Number(values.kode_nip)
+                },
             )
         ) : (
             await updateData(
                 `/master/employee-category/${selectedRecordId}`,
-                {status: Number(values.status), status_jenis_pegawai: values.status_jenis_pegawai},
+                {
+                    status: Number(values.status),
+                    status_jenis_pegawai: values.status_jenis_pegawai,
+                    kode_nip: Number(values.kode_nip)
+                },
             )
         )
-
         if (response?.data) {
             setShowDialog(false)
             toast({
@@ -121,7 +130,8 @@ const UpdateOrCreateEmployeeCategory = ({
             })
             employeeTypeForm.reset({
                 status_jenis_pegawai: "",
-                status: "1"
+                status: "1",
+                kode_nip: 0
             })
             onRefresh();
         }
@@ -135,7 +145,6 @@ const UpdateOrCreateEmployeeCategory = ({
             }
         }
     }, [selectedRecord])
-
     return (
         <div>
             <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
@@ -166,6 +175,23 @@ const UpdateOrCreateEmployeeCategory = ({
                                                     <FormLabel>Nama Kategori Pegawai</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="my-4">
+                                    <FormField
+                                        control={control}
+                                        name="kode_nip"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Kode Kategori Pegawai</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="number" {...field}
+                                                               onChange={(e) => field.onChange(Number(e.target.value))}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
