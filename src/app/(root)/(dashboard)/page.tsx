@@ -21,6 +21,7 @@ import {
 import Stepper from "@/components/ui/stepper";
 import {Step} from "@/types/stepper";
 import {useState} from "react";
+import {Button} from "@/components/ui/button";
 
 
 const chartData = [
@@ -163,7 +164,14 @@ const Dashboard = () => {
 
             </Section>
             <Section className="mt-6">
-                <Stepper steps={steps} activeStep={step} stepperChange={setStep}>
+                <Stepper
+                    steps={steps}
+                    activeStep={step}
+                    stepperChange={setStep}
+                    action={
+                        <Button>Simpan</Button>
+                    }
+                >
                     <div className="mt-4">
                         {step === 1 && (
                             <p>Content step pertama</p>

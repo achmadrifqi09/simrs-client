@@ -9,9 +9,10 @@ interface StepperProps {
     activeStep: number;
     stepperChange: React.Dispatch<React.SetStateAction<number>>
     children: React.ReactNode;
+    action?: React.ReactNode;
 }
 
-const Stepper = ({steps, activeStep, stepperChange, children} : StepperProps) => {
+const Stepper = ({steps, activeStep, stepperChange, children, action} : StepperProps) => {
     const styleStep = 'w-10 h-10 rounded-full mx-auto mb-4 flex items-center justify-center font-medium transition-colors ease-out duration-300'
     const separatorStyle = 'flex-1 mt-5 h-0.5 transition-colors ease-in-out duration-400' ;
     const handlePrevStep = () => {
@@ -74,6 +75,7 @@ const Stepper = ({steps, activeStep, stepperChange, children} : StepperProps) =>
                         </Button>
                     )
                 }
+                {action}
             </div>
         </div>
     )
