@@ -18,6 +18,9 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+import Stepper from "@/components/ui/stepper";
+import {Step} from "@/types/stepper";
+import {useState} from "react";
 
 
 const chartData = [
@@ -27,6 +30,12 @@ const chartData = [
     { month: "April", desktop: 73, mobile: 190 },
     { month: "May", desktop: 209, mobile: 130 },
     { month: "June", desktop: 214, mobile: 140 },
+]
+
+const steps: Step[] = [
+    {step: 1, title: 'Step pertama'},
+    {step: 2, title: 'Step kedua'},
+    {step: 3, title: 'Step ketiga'},
 ]
 
 const chartConfig = {
@@ -42,7 +51,7 @@ const chartConfig = {
 
 
 const Dashboard = () => {
-
+    const [step, setStep] = useState<number>(1)
     return (
         <>
             <Heading headingLevel="h3" variant="page-title">Dashboard</Heading>
@@ -152,6 +161,21 @@ const Dashboard = () => {
                     </Card>
                 </div>
 
+            </Section>
+            <Section className="mt-6">
+                <Stepper steps={steps} activeStep={step} stepperChange={setStep}>
+                    <div className="mt-4">
+                        {step === 1 && (
+                            <p>Content step pertama</p>
+                        )}
+                        {step === 2 && (
+                            <p>Content step kedua</p>
+                        )}
+                        {step === 3 && (
+                            <p>Content step ketiga</p>
+                        )}
+                    </div>
+                </Stepper>
             </Section>
         </>
     )
