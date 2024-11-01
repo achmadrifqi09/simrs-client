@@ -11,11 +11,11 @@ import {useSession} from "next-auth/react";
 import {Permission} from "@/types/permission";
 import Link from "next/link";
 import {Skeleton} from "@/components/ui/skeleton";
-import {EmployeeDTO} from "@/types/employee";
+import {Employee} from "@/types/employee";
 
 interface EmployeeTableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<EmployeeDTO | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<Employee | null>>
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
     setAction: React.Dispatch<React.SetStateAction<Action>>;
     setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,7 +35,7 @@ const EmployeeTable = (
 
     const {status} = useSession();
     const [fieldOfEmployeeSearch, setEmployeeSearch] = useState<string>('');
-    const {data, loading, error, getData} = useGet<EmployeeDTO[]>({
+    const {data, loading, error, getData} = useGet<Employee[]>({
         url: '/field-of-work-unit',
         keyword: fieldOfEmployeeSearch,
     })
@@ -116,7 +116,7 @@ const EmployeeTable = (
                             ))
                         ) : (
 
-                            data?.map((fieldOfEmployee: EmployeeDTO, index: number) => {
+                            data?.map((fieldOfEmployee: Employee, index: number) => {
                                 return (
                                     <React.Fragment key={index}>
                                         <TableRow>

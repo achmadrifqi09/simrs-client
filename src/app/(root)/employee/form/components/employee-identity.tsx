@@ -13,7 +13,7 @@ import {CalendarDays} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import SelectSearch from "@/components/ui/select-search";
-import {BloodType} from "@/types/master";
+import {BloodType, MaritalStatus, Religion} from "@/types/master";
 
 interface PersonalDataProps {
     control: Control<EmployeeForm>;
@@ -54,8 +54,7 @@ const EmployeeIdentity = ({
                         </FormItem>
                     )}
                 />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
                 <FormField
                     control={control}
                     name="nip_pns"
@@ -83,8 +82,6 @@ const EmployeeIdentity = ({
                         </SelectContent>
                     </Select>
                 </FormItem>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <FormField
                     control={control}
                     name="gelar_depan"
@@ -112,8 +109,6 @@ const EmployeeIdentity = ({
                             </FormItem>
                         )
                     }}/>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <FormField
                     control={control}
                     name="tempat_lahir"
@@ -179,6 +174,76 @@ const EmployeeIdentity = ({
                         <FormMessage/>
                     </FormItem>
                 </div>
+                <FormField
+                    control={control}
+                    name="hp"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>No Hp</FormLabel>
+                                <FormControl>
+                                    <Input type="text" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
+                <FormField
+                    control={control}
+                    name="email"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input type="email" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
+                <FormField
+                    control={control}
+                    name="id_ms_status_kawin"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Pilih Status Kawin</FormLabel>
+                                <FormControl>
+                                    <SelectSearch<MaritalStatus>
+                                        url="/master/marital-status?status=1"
+                                        labelName="nama_status_kawin"
+                                        valueName="id_ms_status_kawin"
+                                        placeholder="Masukkan status kawin untuk mencari..."
+                                        onChange={field.onChange}
+                                        defaultValue={Number(field.value) || undefined}
+                                    />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
+                <FormField
+                    control={control}
+                    name="id_ms_agama"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Pilih Agama</FormLabel>
+                                <FormControl>
+                                    <SelectSearch<Religion>
+                                        url="/master/regligion?status=1"
+                                        labelName="nama_agama"
+                                        valueName="id_ms_agama"
+                                        placeholder="Masukkan agama untuk mencari..."
+                                        onChange={field.onChange}
+                                        defaultValue={Number(field.value) || undefined}
+                                    />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
             </div>
         </>
     )
