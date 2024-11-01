@@ -9,7 +9,7 @@ import {TrafficCone} from "lucide-react";
 import {useMenuStore} from "@/lib/zustand/store";
 
 interface NavigationProps {
-    show: boolean; // Define the type of the props
+    show: boolean;
 }
 
 

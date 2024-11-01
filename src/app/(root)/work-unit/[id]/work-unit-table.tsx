@@ -104,16 +104,20 @@ const WorkUnitTable = (
                         <TableHead>Nama Unit</TableHead>
                         <TableHead>Jenis Pelayanan</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Status Antrean</TableHead>
                         <TableHead>Aksi</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
-                        loading && action !== Action.UPDATE_STATUS ? (
+                        (loading && (action !== Action.UPDATE_STATUS && action !== Action.UPDATE_QUEUE_STATUS)) ? (
                             Array.from({length: 2}, (_, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-16 rounded-lg"/>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Skeleton className="h-5 w-1/2 rounded-lg"/>
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
@@ -149,6 +153,21 @@ const WorkUnitTable = (
                                                                 () => {
                                                                     selectRecord(workUnit);
                                                                     setAction(Action.UPDATE_STATUS)
+                                                                }
+                                                            }
+                                                        />
+                                                    ) : (workUnit.status === 1 ? 'Aktif' : 'Non Aktif')
+                                                }
+                                            </TableCell>
+                                            <TableCell>
+                                                {
+                                                    (permission?.can_update || permission?.can_update) ? (
+                                                        <Switch
+                                                            checked={workUnit.status_antrian === 1}
+                                                            onCheckedChange={
+                                                                () => {
+                                                                    selectRecord(workUnit);
+                                                                    setAction(Action.UPDATE_QUEUE_STATUS)
                                                                 }
                                                             }
                                                         />
@@ -202,7 +221,7 @@ const WorkUnitTable = (
                     }
                     {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={5} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 6 : 5} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                 </TableBody>
