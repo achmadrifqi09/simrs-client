@@ -13,8 +13,8 @@ interface StepperProps {
 }
 
 const Stepper = ({steps, activeStep, stepperChange, children, action} : StepperProps) => {
-    const styleStep = 'w-10 h-10 rounded-full mx-auto mb-4 flex items-center justify-center font-medium transition-colors ease-out duration-300'
-    const separatorStyle = 'flex-1 mt-5 h-0.5 transition-colors ease-in-out duration-400' ;
+    const styleStep = 'w-6 h-6 text-sm lg:w-10 lg:h-10 lg:text-normal rounded-full mx-auto mb-4 flex items-center justify-center font-medium transition-colors ease-out duration-300'
+    const separatorStyle = 'flex-1 mt-3 lg:mt-5 h-0.5 transition-colors ease-in-out duration-400' ;
     const handlePrevStep = () => {
         if(activeStep <= steps.length){
             stepperChange(activeStep - 1)
@@ -32,22 +32,22 @@ const Stepper = ({steps, activeStep, stepperChange, children, action} : StepperP
                 {steps.map((step, index) => {
                     return (
                         <React.Fragment key={index}>
-                            <div className="max-w-[10ch] w-full" key={index}>
+                            <div className="max-w-[6ch] lg:max-w-[10ch] w-full" key={index}>
                                 <button
                                     onClick={() => stepperChange(Number(step.step))}
                                     className={cn(styleStep, (index+ 1 <= activeStep) ?
                                         'bg-red-600 text-white' :
                                         'bg-gray-200 text-gray-700',
-                                        activeStep === index + 1 && ('ring-8 ring-red-200'))}>
+                                        activeStep === index + 1 && ('ring-4 lg:ring-8 ring-red-200'))}>
                                     {
                                         index + 1 < activeStep ? (
-                                            <Check/>
+                                            <Check className="w-4 h-4 lg:w-6 lg:h-6"/>
                                         ) : (
                                             step.step
                                         )
                                     }
                                 </button>
-                                <p className="text-sm text-gray-900 text-center">{step.title}</p>
+                                <p className="text-xs md:text-sm text-gray-900 text-center">{step.title}</p>
                             </div>
                             {index !== steps.length - 1 && (
                                 <div className={cn(separatorStyle, index + 1 < activeStep ? 'bg-red-600' : 'bg-gray-300')}></div>
