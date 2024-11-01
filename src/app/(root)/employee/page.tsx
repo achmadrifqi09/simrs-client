@@ -8,6 +8,8 @@ import {Permission} from "@/types/permission";
 import {usePermissionsStore} from "@/lib/zustand/store";
 import EmployeeTable from "@/app/(root)/employee/employee-table";
 import EmployeeDelete from "@/app/(root)/employee/delete";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
 
 const Employee = () => {
     const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
@@ -19,7 +21,7 @@ const Employee = () => {
 
     useEffect(() => {
         const permission = getPermissions('data-pegawai');
-        if(permission) setProvincePermission(permission)
+        if (permission) setProvincePermission(permission)
     }, [])
 
     const onRefresh = () => {
@@ -30,22 +32,36 @@ const Employee = () => {
         <>
             <Heading headingLevel="h3" variant="page-title">Data Pegawai</Heading>
             <Section>
+                {
+                    employeePermission?.can_create && (
+                        <Button asChild>
+                            <Link href={`/employee/form?mode=create`}>Tambah Pegawai</Link>
+                        </Button>
+                    )}
                 <div className="space-y-6">
-                    <EmployeeTable
-                        selectRecord={setSelectedRecord}
-                        refreshTrigger={refreshTrigger}
-                        setAction={setActionType}
-                        setAlertDelete={setShowAlertDelete}
-                        action={actionType}
-                        permission={employeePermission}
-                    />
-                    <EmployeeDelete
-                        onRefresh={onRefresh}
-                        selectedRecord={selectedRecord}
-                        action={actionType}
-                        setShowAlert={setShowAlertDelete}
-                        showAlert={showAlertDelete}
-                    />
+                    {
+                        employeePermission?.can_update && (
+                            <EmployeeTable
+                                selectRecord={setSelectedRecord}
+                                refreshTrigger={refreshTrigger}
+                                setAction={setActionType}
+                                setAlertDelete={setShowAlertDelete}
+                                action={actionType}
+                                permission={employeePermission}
+                            />
+                        )
+                    }
+                    {
+                        employeePermission?.can_delete && (
+                            <EmployeeDelete
+                                onRefresh={onRefresh}
+                                selectedRecord={selectedRecord}
+                                action={actionType}
+                                setShowAlert={setShowAlertDelete}
+                                showAlert={showAlertDelete}
+                            />
+                        )
+                    }
                 </div>
             </Section>
         </>

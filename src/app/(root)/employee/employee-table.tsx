@@ -75,12 +75,6 @@ const EmployeeTable = (
     return (
         <>
             <div className="py-2 sticky top-0 bg-white w-full z-10 space-y-4">
-                {
-                    permission?.can_create && (
-                        <Button asChild>
-                            <Link href={`/employee/form?mode=create`}>Tambah Pegawai</Link>
-                        </Button>
-                    )}
                 <Input type="text" id="fieldSearch" name="fieldSearch" className="w-full md:w-1/3 min-w-40 mb-4"
                        placeholder="Cari data ..."
                        onChange={debouncedChangeSearch}/>

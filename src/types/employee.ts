@@ -1,19 +1,19 @@
-type PaginationDTO = {
+type Pagination = {
     current_cursor: number;
     take: number
 }
 
-type EmployeePaginationDTO = {
-    pagination: PaginationDTO;
-    results: EmployeeDTO[];
+type EmployeePagination = {
+    pagination: Pagination;
+    results: Employee[];
 }
 
-type EmployeeRelationDTO = {
+type EmployeeRelation = {
     id?: number;
     nama: string;
 };
 
-type EmployeeDTO = {
+type Employee = {
     id_pegawai: number;
     no_reg: string;
     nip_pegawai?: number;
@@ -21,20 +21,20 @@ type EmployeeDTO = {
     gelar_depan: string;
     gelar_belakang: string;
     nama_pegawai: string;
-    id_ms_negara_asal?: EmployeeRelationDTO;
-    id_ms_provinsi_asal?: EmployeeRelationDTO;
-    id_ms_kota_asal?: EmployeeRelationDTO;
-    id_ms_kecamatan_asal?: EmployeeRelationDTO;
-    id_ms_desa_asal?: EmployeeRelationDTO;
+    id_ms_negara_asal?: EmployeeRelation;
+    id_ms_provinsi_asal?: EmployeeRelation;
+    id_ms_kota_asal?: EmployeeRelation;
+    id_ms_kecamatan_asal?: EmployeeRelation;
+    id_ms_desa_asal?: EmployeeRelation;
     alamat_asal?: string;
     kode_pos_asal?: string;
     rt_asal?: string;
     rw_asal?: string;
-    id_ms_negara_tinggal: EmployeeRelationDTO;
-    id_ms_provinsi_tinggal: EmployeeRelationDTO;
-    id_ms_kota_tinggal: EmployeeRelationDTO;
-    id_ms_kecamatan_tinggal: EmployeeRelationDTO;
-    id_ms_desa_tinggal: EmployeeRelationDTO;
+    id_ms_negara_tinggal: EmployeeRelation;
+    id_ms_provinsi_tinggal: EmployeeRelation;
+    id_ms_kota_tinggal: EmployeeRelation;
+    id_ms_kecamatan_tinggal: EmployeeRelation;
+    id_ms_desa_tinggal: EmployeeRelation;
     alamat_tinggal: string;
     kode_pos_tinggal?: string;
     rt_tinggal?: string;
@@ -71,8 +71,8 @@ type EmployeeDTO = {
 };
 
 export type {
-    EmployeeRelationDTO,
-    EmployeeDTO,
-    EmployeePaginationDTO
+    EmployeeRelation,
+    Employee,
+    EmployeePagination
 
 }
