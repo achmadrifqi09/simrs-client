@@ -113,7 +113,7 @@ const CallQueueTable = () => {
                     }
                     {(data && data.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center h-[68.5px]">Data tidak
+                            <TableCell colSpan={5} className="text-center h-[68.5px]">Data tidak
                                 ditemukan</TableCell>
                         </TableRow>
                     )}

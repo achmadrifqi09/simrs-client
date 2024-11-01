@@ -19,21 +19,20 @@ import SelectSearch from "@/components/ui/select-search";
 import {Input} from "@/components/ui/input";
 import FormError from "@/components/ui/form-error";
 import {
-    BloodTypeDTO,
-    CountryDTO,
-    DistrictDTO,
-    DoctorSpecialistDTO,
-    EducationDTO,
-    EmployeeStatusDTO,
-    MaritalStatusDTO,
-    ProvinceDTO,
-    RankOrClassDTO,
-    RegencyDTO,
-    ReligionDTO,
-    StructuralPositionDTO
+    BloodType,
+    Country,
+    District,
+    DoctorSpecialist,
+    Education,
+    EmployeeStatus,
+    MaritalStatus,
+    Province,
+    RankOrClass,
+    Regency,
+    Religion,
+    StructuralPosition
 } from "@/types/master";
 import {Textarea} from "@/components/ui/textarea";
-import {Label} from "@/components/ui/label";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {cn} from "@/lib/utils";
 import {format} from "date-fns";
@@ -119,8 +118,41 @@ const FormEmployee = ({
     const {handleSubmit, control, setValue} = employeeForm
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
     const [date, setDate] = useState<Date>();
-
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
+
+    const [files, setFiles] = useState<(File | null)[]>([null, null, null, null, null]);
+    const [previewUrls, setPreviewUrls] = useState<(string | null)[]>([null, null, null, null, null]);
+
+    const handleFileChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const newFiles = [...files];
+        const selectedFile = event.target.files?.[0] || null;
+        setFiles(newFiles);
+        if (selectedFile) {
+            const fileType = selectedFile.type;
+            if (fileType !== 'image/jpeg' && fileType !== 'image/png' && fileType !== 'image/jpg') {
+                alert('Hanya file JPG, JPEG, dan PNG yang diperbolehkan!'); // Alert untuk kesalahan
+                newFiles[index] = null; // Reset file jika tidak valid
+                setPreviewUrls((prev) => {
+                    const newPreviewUrls = [...prev];
+                    newPreviewUrls[index] = null; // Reset preview jika file tidak valid
+                    return newPreviewUrls;
+                });
+            } else {
+                newFiles[index] = selectedFile;
+                const newPreviewUrls = [...previewUrls];
+                newPreviewUrls[index] = URL.createObjectURL(selectedFile);
+                setPreviewUrls(newPreviewUrls);
+            }
+        } else {
+            // Reset preview jika tidak ada file yang dipilih
+            const newPreviewUrls = [...previewUrls];
+            newPreviewUrls[index] = null;
+            setPreviewUrls(newPreviewUrls);
+            newFiles[index] = null; // Reset file
+        }
+
+        setFiles(newFiles);
+    };
 
     const defaultEmployeeValues = {
         id_pegawai: 0,
@@ -279,7 +311,7 @@ const FormEmployee = ({
                 <div className="w-full flex-wrap">
                     <Form {...employeeForm}>
                         <form onSubmit={onSubmit}>
-                            {/*<div className="my-4">*/}
+                            {/*<div className="">*/}
                             {/*    <FormField*/}
                             {/*        control={control}*/}
                             {/*        name="nip_pegawai"*/}
@@ -295,77 +327,76 @@ const FormEmployee = ({
                             {/*            )*/}
                             {/*        }}/>*/}
                             {/*</div>*/}
-                            <Section>
-                                <div className="flex w-full space-x-4 px-4">
-                                    <div className="w-1/2 my-4">
-                                        <FormField
-                                            control={control}
-                                            name="nama_pegawai"
-                                            render={({field}) => {
-                                                return (
-                                                    <FormItem>
-                                                        <FormLabel>Nama Pegawai</FormLabel>
-                                                        <FormControl>
-                                                            <Input type="text" {...field}/>
-                                                        </FormControl>
-                                                        <FormMessage/>
-                                                    </FormItem>
-                                                )
-                                            }}/>
-                                    </div>
-                                    <div className="w-1/2 my-4">
-                                        <FormField
-                                            control={control}
-                                            name="nip_pns"
-                                            render={({field}) => (
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="nama_pegawai"
+                                        render={({field}) => {
+                                            return (
                                                 <FormItem>
-                                                    <FormLabel>NIP PNS</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="number" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex w-full space-x-4 px-4">
-                                    <div className="w-1/2 my-4">
-                                        <FormField
-                                            control={control}
-                                            name="gelar_belakang"
-                                            render={({field}) => {
-                                                return (
-                                                    <FormItem>
-                                                        <FormLabel>Gelar Belakang</FormLabel>
-                                                        <FormControl>
-                                                            <Input type="text" {...field}/>
-                                                        </FormControl>
-                                                        <FormMessage/>
-                                                    </FormItem>
-                                                )
-                                            }}/>
-                                    </div>
-                                    <div className="w-1/2 my-4">
-                                        <FormField
-                                            control={control}
-                                            name="gelar_depan"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Gelar Depan</FormLabel>
+                                                    <FormLabel>Nama Pegawai</FormLabel>
                                                     <FormControl>
                                                         <Input type="text" {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
-                                            )}
-                                        />
-                                    </div>
+                                            )
+                                        }}/>
                                 </div>
-                            </Section>
-                            <div className="flex w-full space-x-4 px-4">
-                                <div className="w-full my-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="nip_pns"
+                                        render={({field}) => (
+                                            <FormItem>
+                                                <FormLabel>NIP PNS</FormLabel>
+                                                <FormControl>
+                                                    <Input type="number" {...field} />
+                                                </FormControl>
+                                                <FormMessage/>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="gelar_belakang"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Gelar Belakang</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="text" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="gelar_depan"
+                                        render={({field}) => (
+                                            <FormItem>
+                                                <FormLabel>Gelar Depan</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" {...field} />
+                                                </FormControl>
+                                                <FormMessage/>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full">
                                     <FormField
                                         control={control}
                                         name="id_ms_negara_asal"
@@ -374,7 +405,7 @@ const FormEmployee = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Negara Asal</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<CountryDTO>
+                                                        <SelectSearch<Country>
                                                             url="/master/country?status=1"
                                                             labelName="nama"
                                                             valueName="id"
@@ -388,7 +419,7 @@ const FormEmployee = ({
                                             )
                                         }}/>
                                 </div>
-                                <div className="w-full my-4">
+                                <div className="w-full ">
                                     <FormField
                                         control={control}
                                         name="id_ms_provinsi_asal"
@@ -397,7 +428,7 @@ const FormEmployee = ({
                                                 <FormItem>
                                                     <FormLabel>Pilih Provinsi Asal</FormLabel>
                                                     <FormControl>
-                                                        <SelectSearch<ProvinceDTO>
+                                                        <SelectSearch<Province>
                                                             url="/master/province?status=1"
                                                             labelName="nama"
                                                             valueName="id"
@@ -412,507 +443,690 @@ const FormEmployee = ({
                                         }}/>
                                 </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_kota_asal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Kota Asal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<RegencyDTO>
-                                                        url="/master/regency?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan kota untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_kota_asal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Kota Asal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<Regency>
+                                                            url="/master/regency?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kota untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_kecamatan_asal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Kecamatan Asal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<District>
+                                                            url="/master/regency?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kecamatan untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_kecamatan_asal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Kecamatan Asal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<DistrictDTO>
-                                                        url="/master/regency?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan kecamatan untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_desa_asal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Kelurahan Asal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<District>
+                                                            url="/master/village?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kelurahan untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_desa_asal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Kelurahan Asal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<DistrictDTO>
-                                                        url="/master/village?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan kelurahan untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full">
+                                    <h1>Alamat Asal</h1>
+                                    <Textarea placeholder="Enter your text here..." className="my-custom-class"/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <h1>Alamat</h1>
-                                <Textarea placeholder="Enter your text here..." className="my-custom-class"/>
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_negara_tinggal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Negara Tinggal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<Country>
+                                                            url="/master/country?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan negara untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_provinsi_tinggal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Provinsi Tingal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<Province>
+                                                            url="/master/province?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan Provinsi untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_negara_tinggal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Negara Tinggal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<CountryDTO>
-                                                        url="/master/country?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan negara untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_kota_tinggal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Kota Tinggal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<Regency>
+                                                            url="/master/regency?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan Kota untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_kecamatan_tinggal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Kecamatan Tinggal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<District>
+                                                            url="/master/regency?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan Kecamatan untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_provinsi_tinggal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Provinsi Tingal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<ProvinceDTO>
-                                                        url="/master/province?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan Provinsi untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_desa_tinggal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Kelurahan Tinggal</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<District>
+                                                            url="/master/village?status=1"
+                                                            labelName="nama"
+                                                            valueName="id"
+                                                            placeholder="Masukkan kelurahan untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="kode_pos_tinggal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Kode Pos Tinggal</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="number" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_kota_tinggal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Kota Tinggal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<RegencyDTO>
-                                                        url="/master/regency?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan Kota untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+                            <div className="flex flex-col md:flex-row w-full space-y-4 md:space-y-0 md:space-x-4 px-4">
+                                <div className="">
+                                    <FormField
+                                        control={control}
+                                        name="rt_tinggal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>RT Tinggal</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="number" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="">
+                                    <FormField
+                                        control={control}
+                                        name="rw_asal"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>RW Tinggal</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="number" {...field}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_kecamatan_tinggal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Kecamatan Tinggal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<DistrictDTO>
-                                                        url="/master/regency?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan Kecamatan untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_desa_tinggal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Kelurahan Tinggal</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<DistrictDTO>
-                                                        url="/master/village?status=1"
-                                                        labelName="nama"
-                                                        valueName="id"
-                                                        placeholder="Masukkan kelurahan untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="kode_pos_tinggal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Kode Pos Tinggal</FormLabel>
-                                                <FormControl>
-                                                    <Input type="number" {...field}/>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="rt_tinggal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>RT Tinggal</FormLabel>
-                                                <FormControl>
-                                                    <Input type="number" {...field}/>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="rw_asal"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>RW Tinggal</FormLabel>
-                                                <FormControl>
-                                                    <Input type="number" {...field}/>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
+                            <div className="flex flex-wrap md:flex-row w-full space-y-4 md:space-y-0 px-4">
                                 <h1>Alamat Tinggal</h1>
                                 <Textarea placeholder="Enter your text here..." className="my-custom-class"/>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="tempat_lahir"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Tempat Lahir</FormLabel>
-                                                <FormControl>
-                                                    <Input type="text" {...field}/>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4 flex flex-col flex-wrap">
-                                <Label htmlFor="select">Tanggal Lahir</Label>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant={"outline"}
-                                            className={cn(
-                                                "w-[240px] justify-between text-left font-normal border-input",
-                                                !date && "text-muted-foreground"
-                                            )}
-                                        >
-                                            {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                            <CalendarDays className="ml-2 h-4 w-4"/>
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            mode="single"
-                                            selected={date}
-                                            onSelect={setDate}
-                                            initialFocus
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
-                            <div className="my-4">
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih Jenis Kelamin"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="1">Laki - laki</SelectItem>
-                                            <SelectItem value="2">Perempuan</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                            <div className="flex flex-wrap md:flex-row w-full space-y-4 md:space-y-0 px-4">
+                                <div className="w-full md:w-1/2">
+                                    <FormField
+                                        control={control}
+                                        name="tempat_lahir"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Tempat Lahir</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="text" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            );
+                                        }}
+                                    />
+                                </div>
 
+                                <div className="w-full md:w-1/4 ml-4">
+                                    <FormItem>
+                                        <FormLabel>Tanggal Lahir</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    className={cn(
+                                                        "w-full justify-between text-left font-normal border-input",
+                                                        !date && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                                    <CalendarDays className="ml-2 h-4 w-4"/>
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={date}
+                                                    onSelect={setDate}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage/>
+                                    </FormItem>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_golongan_darah"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Golongan Darah</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<BloodTypeDTO>
-                                                        url="/master/blood-type?status=1"
-                                                        labelName="nama_golongan_darah"
-                                                        valueName="id_ms_golongan_darah"
-                                                        placeholder="Masukkan golongan..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+
+                            <div className="flex flex-wrap md:flex-row w-full space-y-4 md:space-y-0 px-4">
+                                <div className="w-full md:w-1/4">
+                                    <FormItem>
+                                        <FormLabel>Jenis Kelamin</FormLabel>
+                                        <Select>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Pilih Jenis Kelamin"/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="1">Laki - laki</SelectItem>
+                                                    <SelectItem value="2">Perempuan</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormItem>
+                                </div>
+
+                                <div className="w-full md:w-1/4 ml-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_golongan_darah"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Golongan Darah</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<BloodType>
+                                                            url="/master/blood-type?status=1"
+                                                            labelName="nama_golongan_darah"
+                                                            valueName="id_ms_golongan_darah"
+                                                            placeholder="Masukkan golongan..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            );
+                                        }}
+                                    />
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_status_kawin"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Status Kawin</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<MaritalStatusDTO>
-                                                        url="/master/marital-status?status=1"
-                                                        labelName="nama_status_kawin"
-                                                        valueName="id_ms_status_kawin"
-                                                        placeholder="Masukkan status kawin untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+
+                            <div className="flex flex-wrap md:flex-row w-full space-y-4 md:space-y-0 px-4">
+                                <div className="w-full md:w-1/4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_status_kawin"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Status Kawin</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<MaritalStatus>
+                                                            url="/master/marital-status?status=1"
+                                                            labelName="nama_status_kawin"
+                                                            valueName="id_ms_status_kawin"
+                                                            placeholder="Masukkan status kawin untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/4 ml-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_agama"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Agama</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<Religion>
+                                                            url="/master/regligion?status=1"
+                                                            labelName="nama_agama"
+                                                            valueName="id_ms_agama"
+                                                            placeholder="Masukkan agama untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/4 ml-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_pendidikan"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Tingkat Pendidikan</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<Education>
+                                                            url="/master/marital-status?status=1"
+                                                            labelName="nama_tingkat_pendidikan"
+                                                            valueName="id_ms_tingkat_pendidikan"
+                                                            placeholder="Masukkan Pendidikan untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_pendidikan"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Status Pegawai</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<EmployeeStatus>
+                                                            url="/master/employee-status?status=1"
+                                                            labelName="nama_status_pegawai"
+                                                            valueName="id_ms_status_pegawai"
+                                                            placeholder="Masukkan Status Pegawai untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/4 ml-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_ms_spesialis"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Spesialis</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<DoctorSpecialist>
+                                                            url="/master/doktor-specialist?status=1"
+                                                            labelName="nama_spesialis"
+                                                            valueName="id_ms_spesialis"
+                                                            placeholder="Masukkan Spesialis untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/4 ml-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_unit_induk"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Unit Induk</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<WorkUnit>
+                                                            url="/master/doktor-specialist?status=1"
+                                                            labelName="nama_unit_kerja"
+                                                            valueName="id_unit_induk"
+                                                            placeholder="Masukkan Unit untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/4">
+                                    <FormField
+                                        control={control}
+                                        name="id_pangkat"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Pangkat</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<RankOrClass>
+                                                            url="/master/rank-or-class?status=1"
+                                                            labelName="nama_pangkat"
+                                                            valueName="id_ms_pangkat"
+                                                            placeholder="Masukkan Pangkat untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
+                                <div className="w-full md:w-1/4 ml-4">
+                                    <FormField
+                                        control={control}
+                                        name="id_jabatan"
+                                        render={({field}) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Pilih Jabatan</FormLabel>
+                                                    <FormControl>
+                                                        <SelectSearch<StructuralPosition>
+                                                            url="/master/struktural-position?status=1"
+                                                            labelName="nama_jabatan"
+                                                            valueName="id_ms_jabatan"
+                                                            placeholder="Masukkan Jabatan untuk mencari..."
+                                                            onChange={field.onChange}
+                                                            defaultValue={Number(field.value) || undefined}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}/>
+                                </div>
                             </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_agama"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Agama</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<ReligionDTO>
-                                                        url="/master/regligion?status=1"
-                                                        labelName="nama_agama"
-                                                        valueName="id_ms_agama"
-                                                        placeholder="Masukkan agama untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
+                            <div className="ml-4">
+                                <p>Silakan unggah dokumen berikut:</p>
+                                <div>
+                                    <div className="mb-4">
+                                        <span className="font-semibold">1. KTP (JPG/PNG):</span>
+                                        <div
+                                            className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
+                                            {previewUrls[0] ? (
+                                                <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
+                                                    <img
+                                                        src={previewUrls[0]}
+                                                        className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
+                                                        alt="Preview KTP"
                                                     />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_pendidikan"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Tingkat Pendidikan</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<EducationDTO>
-                                                        url="/master/marital-status?status=1"
-                                                        labelName="nama_tingkat_pendidikan"
-                                                        valueName="id_ms_tingkat_pendidikan"
-                                                        placeholder="Masukkan Pendidikan untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
+                                                </div>
+                                            ) : (
+                                                <p className="text-center my-4">Tidak ada file yang dipilih</p>
+                                            )}
+                                            <label htmlFor="ktp"
+                                                   className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                                                Pilih Foto KTP
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="ktp"
+                                                accept="image/jpeg,image/png"
+                                                onChange={(e) => handleFileChange(0, e)}
+                                                hidden
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <span className="font-semibold">2. KK (JPG/PNG):</span>
+                                        <div
+                                            className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
+                                            {previewUrls[1] ? (
+                                                <div className="w-full max-w-md mx-auto">
+                                                    <img
+                                                        src={previewUrls[1]}
+                                                        className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
+                                                        alt="Preview KK"
                                                     />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_pendidikan"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Status Pegawai</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<EmployeeStatusDTO>
-                                                        url="/master/employee-status?status=1"
-                                                        labelName="nama_status_pegawai"
-                                                        valueName="id_ms_status_pegawai"
-                                                        placeholder="Masukkan Status Pegawai untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
+                                                </div>
+                                            ) : (
+                                                <p className="text-center my-4">Tidak ada file yang dipilih</p>
+                                            )}
+                                            <label htmlFor="kk"
+                                                   className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                                                Pilih Foto KK
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="kk"
+                                                accept="image/jpeg,image/png"
+                                                onChange={(e) => handleFileChange(1, e)}
+                                                hidden
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <span className="font-semibold">3. KTAM (JPG/PNG):</span>
+                                        <div
+                                            className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
+                                            {previewUrls[2] ? (
+                                                <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
+                                                    <img
+                                                        src={previewUrls[2]}
+                                                        className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
+                                                        alt="Preview KTAM"
                                                     />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_ms_spesialis"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Spesialis</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<DoctorSpecialistDTO>
-                                                        url="/master/doktor-specialist?status=1"
-                                                        labelName="nama_spesialis"
-                                                        valueName="id_ms_spesialis"
-                                                        placeholder="Masukkan Spesialis untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
+                                                </div>
+                                            ) : (
+                                                <p className="text-center my-4">Tidak ada file yang dipilih</p>
+                                            )}
+                                            <label htmlFor="ktam"
+                                                   className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                                                Pilih Foto KTAM
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="ktam"
+                                                accept="image/jpeg,image/png"
+                                                onChange={(e) => handleFileChange(2, e)}
+                                                hidden
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <span className="font-semibold">4. NPWP (JPG/PNG):</span>
+                                        <div
+                                            className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
+                                            {previewUrls[3] ? (
+                                                <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
+                                                    <img
+                                                        src={previewUrls[3]}
+                                                        className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
+                                                        alt="Preview NPWP"
                                                     />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_unit_induk"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Unit Induk</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<WorkUnit>
-                                                        url="/master/doktor-specialist?status=1"
-                                                        labelName="nama_unit_kerja"
-                                                        valueName="id_unit_induk"
-                                                        placeholder="Masukkan Unit untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
+                                                </div>
+                                            ) : (
+                                                <p className="text-center my-4">Tidak ada file yang dipilih</p>
+                                            )}
+                                            <label htmlFor="npwp"
+                                                   className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                                                Pilih Foto NPWP
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="npwp"
+                                                accept="image/jpeg,image/png"
+                                                onChange={(e) => handleFileChange(3, e)}
+                                                hidden
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <span className="font-semibold">5. Foto Diri (JPG/PNG):</span>
+                                        <div
+                                            className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
+                                            {previewUrls[4] ? (
+                                                <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
+                                                    <img
+                                                        src={previewUrls[4]}
+                                                        className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
+                                                        alt="Preview Foto"
                                                     />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_pangkat"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Pangkat</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<RankOrClassDTO>
-                                                        url="/master/rank-or-class?status=1"
-                                                        labelName="nama_pangkat"
-                                                        valueName="id_ms_pangkat"
-                                                        placeholder="Masukkan Pangkat untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
-                            </div>
-                            <div className="my-4">
-                                <FormField
-                                    control={control}
-                                    name="id_jabatan"
-                                    render={({field}) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Pilih Jabatan</FormLabel>
-                                                <FormControl>
-                                                    <SelectSearch<StructuralPositionDTO>
-                                                        url="/master/struktural-position?status=1"
-                                                        labelName="nama_jabatan"
-                                                        valueName="id_ms_jabatan"
-                                                        placeholder="Masukkan Jabatan untuk mencari..."
-                                                        onChange={field.onChange}
-                                                        defaultValue={Number(field.value) || undefined}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}/>
+                                                </div>
+                                            ) : (
+                                                <p className="text-center my-4">Tidak ada file yang dipilih</p>
+                                            )}
+                                            <label htmlFor="diri"
+                                                   className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                                                Pilih Foto Diri
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="diri"
+                                                accept="image/jpeg,image/png"
+                                                onChange={(e) => handleFileChange(4, e)}
+                                                hidden
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <FormError
                                 errors={postError || patchError}
