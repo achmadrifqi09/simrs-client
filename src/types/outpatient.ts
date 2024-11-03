@@ -6,4 +6,12 @@ type PolyclinicCounter = {
     total_antrean_selesai: number;
 };
 
-export type {PolyclinicCounter}
+type QueueUnit = {
+    id: number;
+    nama_unit_kerja: string;
+    kode_instalasi_bpjs: string;
+    "status_antrian": number,
+    "status": number
+}
+
+export type {PolyclinicCounter, QueueUnit}

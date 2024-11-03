@@ -90,8 +90,14 @@ const WorkUnitTable = (
                             <SelectItem value="0">
                                 Unit Kerja
                             </SelectItem>
+                            <SelectItem value="1">
+                                Poliklinik
+                            </SelectItem>
                             <SelectItem value="2">
                                 Penunjang
+                            </SelectItem>
+                            <SelectItem value="3">
+                                IGD
                             </SelectItem>
                         </SelectGroup>
                     </SelectContent>

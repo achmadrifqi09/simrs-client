@@ -85,7 +85,7 @@ const UpdateOrCreateFieldWorkUnit = ({
         }
     }
 
-    const onUpdateBloodType = (fieldOfWorkUnit: FieldOfWorkUnit) => {
+    const onUpdateFieldOfWorkUnit = (fieldOfWorkUnit: FieldOfWorkUnit) => {
         setSubmitMode('PATCH')
         setShowDialog(true)
         setSelectedRecordId(fieldOfWorkUnit.id)
@@ -115,7 +115,7 @@ const UpdateOrCreateFieldWorkUnit = ({
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
-                    : 'memperbarui data '} bidang unit kerja ${response.data.nama_golongan_darah}`,
+                    : 'memperbarui data '} bidang unit kerja ${response.data.nama_bidang}`,
             })
             workUnitForm.reset();
             onRefresh();
@@ -124,7 +124,7 @@ const UpdateOrCreateFieldWorkUnit = ({
 
     useEffect(() => {
         if (selectedRecord) {
-            if (actionType === Action.UPDATE_FIELDS) onUpdateBloodType(selectedRecord);
+            if (actionType === Action.UPDATE_FIELDS) onUpdateFieldOfWorkUnit(selectedRecord);
             if (actionType === Action.UPDATE_STATUS) {
                 updateStatus(selectedRecord.id, selectedRecord.status)
             }

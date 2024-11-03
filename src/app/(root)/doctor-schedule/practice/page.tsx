@@ -15,7 +15,7 @@ import {
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {id} from 'date-fns/locale'
-import SchedulePerDate from "@/app/(root)/doctor-schedule/per-date/schedule";
+import SchedulePerDate from "@/app/(root)/doctor-schedule/practice/schedule";
 
 const options: Intl.DateTimeFormatOptions = {
     weekday: 'long',
