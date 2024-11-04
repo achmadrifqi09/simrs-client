@@ -32,7 +32,7 @@ const Employee = () => {
         <>
             <Heading headingLevel="h3" variant="page-title">Data Pegawai</Heading>
             <Section>
-                <div className="gap-2 space-x-4">
+                <div className="gap-2 space-x-4 mb-4">
                     {
                         employeePermission?.can_create && (
                             <Button asChild>
@@ -40,9 +40,6 @@ const Employee = () => {
                             </Button>
                         )
                     }
-                    <Button asChild>
-                        <Link href={`/employee/form?action=edit{id}`}>Edit Pegawai</Link>
-                    </Button>
                 </div>
                 <div className="space-y-6">
                     {

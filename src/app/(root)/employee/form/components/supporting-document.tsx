@@ -3,12 +3,14 @@
 import React, {useState} from "react";
 import {Control} from "react-hook-form";
 import {EmployeeForm} from "@/app/(root)/employee/form/form";
+import Image from "next/image";
+import { Label } from "@/components/ui/label";
 
 interface PersonalDataProps {
     control: Control<EmployeeForm>;
 }
 
-const ContactPerson = ({
+const SupportingDocument = ({
                            control
                        }: PersonalDataProps
 ) => {
@@ -50,22 +52,23 @@ const ContactPerson = ({
         <div className="ml-4">
             <div>
                 <div className="mb-4">
-                    <span className="font-semibold">1. Foto Diri (JPG/PNG):</span>
+                    <Label>Foto Diri (JPG/PNG)</Label>
                     <div
                         className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
                         {previewUrls[4] ? (
-                            <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
-                                <img
+                            <div className="max-w-md w-48 h-72 max-h-96 relative mx-auto">
+                                <Image
                                     src={previewUrls[4]}
-                                    className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
+                                    className="object-contain mx-auto mb-4"
                                     alt="Preview Foto"
+                                    fill
                                 />
                             </div>
                         ) : (
                             <p className="text-center my-4">Tidak ada file yang dipilih</p>
                         )}
                         <label htmlFor="diri"
-                               className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                               className="mt-6 px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
                             Pilih Foto Diri
                         </label>
                         <input
@@ -78,12 +81,12 @@ const ContactPerson = ({
                     </div>
                 </div>
                 <div className="mb-4">
-                    <span className="font-semibold">2. KTP (JPG/PNG):</span>
+                    <Label>KTP (JPG/PNG)</Label>
                     <div
                         className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
                         {previewUrls[0] ? (
                             <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
-                                <img
+                                <Image
                                     src={previewUrls[0]}
                                     className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
                                     alt="Preview KTP"
@@ -93,7 +96,7 @@ const ContactPerson = ({
                             <p className="text-center my-4">Tidak ada file yang dipilih</p>
                         )}
                         <label htmlFor="ktp"
-                               className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                               className=" px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
                             Pilih Foto KTP
                         </label>
                         <input
@@ -107,12 +110,12 @@ const ContactPerson = ({
                 </div>
 
                 <div className="mb-4">
-                    <span className="font-semibold">3. KK (JPG/PNG):</span>
+                    <Label>KK (JPG/PNG)</Label>
                     <div
                         className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
                         {previewUrls[1] ? (
                             <div className="w-full max-w-md mx-auto">
-                                <img
+                                <Image
                                     src={previewUrls[1]}
                                     className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
                                     alt="Preview KK"
@@ -122,7 +125,7 @@ const ContactPerson = ({
                             <p className="text-center my-4">Tidak ada file yang dipilih</p>
                         )}
                         <label htmlFor="kk"
-                               className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                               className=" px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
                             Pilih Foto KK
                         </label>
                         <input
@@ -136,12 +139,12 @@ const ContactPerson = ({
                 </div>
 
                 <div className="mb-4">
-                    <span className="font-semibold">4. KTAM (JPG/PNG):</span>
+                    <Label>KTAM (JPG/PNG)*</Label>
                     <div
                         className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
                         {previewUrls[2] ? (
                             <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
-                                <img
+                                <Image
                                     src={previewUrls[2]}
                                     className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
                                     alt="Preview KTAM"
@@ -151,7 +154,7 @@ const ContactPerson = ({
                             <p className="text-center my-4">Tidak ada file yang dipilih</p>
                         )}
                         <label htmlFor="ktam"
-                               className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                               className=" px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
                             Pilih Foto KTAM
                         </label>
                         <input
@@ -165,12 +168,12 @@ const ContactPerson = ({
                 </div>
 
                 <div className="mb-4">
-                    <span className="font-semibold">5. NPWP (JPG/PNG):</span>
+                    <Label>NPWP (JPG/PNG)</Label>
                     <div
                         className="w-full h-auto border-2 border-dashed border-gray-300 p-4 rounded-md">
                         {previewUrls[3] ? (
                             <div className="w-full max-w-md aspect-w-4 aspect-h-3 mx-auto">
-                                <img
+                                <Image
                                     src={previewUrls[3]}
                                     className="w-full h-auto max-h-96 object-contain mx-auto mb-4"
                                     alt="Preview NPWP"
@@ -180,7 +183,7 @@ const ContactPerson = ({
                             <p className="text-center my-4">Tidak ada file yang dipilih</p>
                         )}
                         <label htmlFor="npwp"
-                               className="flex flex-col px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
+                               className=" px-4 py-2 bg-red-600 rounded-md w-max text-white mx-auto block">
                             Pilih Foto NPWP
                         </label>
                         <input
@@ -198,4 +201,4 @@ const ContactPerson = ({
     )
 }
 
-export default ContactPerson
+export default SupportingDocument

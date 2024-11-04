@@ -33,7 +33,7 @@ const EmployeeIdentity = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Nama Pegawai</FormLabel>
+                                <FormLabel>Nama Pegawai*</FormLabel>
                                 <FormControl>
                                     <Input type="text" {...field} />
                                 </FormControl>
@@ -46,7 +46,7 @@ const EmployeeIdentity = ({
                     name="no_ktp"
                     render={({field}) => (
                         <FormItem>
-                            <FormLabel>No. KTP</FormLabel>
+                            <FormLabel>No. KTP*</FormLabel>
                             <FormControl>
                                 <Input type="number" {...field} />
                             </FormControl>
@@ -69,7 +69,7 @@ const EmployeeIdentity = ({
                     )}
                 />
                 <FormItem>
-                    <FormLabel>Jenis Kelamin</FormLabel>
+                    <FormLabel>Jenis Kelamin*</FormLabel>
                     <Select>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Pilih Jenis Kelamin"/>
@@ -115,7 +115,7 @@ const EmployeeIdentity = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Tempat Lahir</FormLabel>
+                                <FormLabel>Tempat Lahir*</FormLabel>
                                 <FormControl>
                                     <Input type="text" {...field} />
                                 </FormControl>
@@ -146,31 +146,13 @@ const EmployeeIdentity = ({
                         );
                     }}
                 />
-                <div className="w-full md:w-1/2">
+                <div className="w-full">
                     <FormItem>
-                        <FormLabel>Tanggal Lahir</FormLabel>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className={cn(
-                                        "w-full justify-between text-left font-normal border-input",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                >
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                    <CalendarDays className="ml-2 h-4 w-4"/>
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
+                        <FormLabel>Tanggal Lahir*</FormLabel>
+                        <Input
+                            type="date"
+                            className="block"
+                        />
                         <FormMessage/>
                     </FormItem>
                 </div>
@@ -180,7 +162,7 @@ const EmployeeIdentity = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>No Hp</FormLabel>
+                                <FormLabel>No Hp*</FormLabel>
                                 <FormControl>
                                     <Input type="text" {...field} />
                                 </FormControl>
@@ -194,7 +176,7 @@ const EmployeeIdentity = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>Email*</FormLabel>
                                 <FormControl>
                                     <Input type="email" {...field} />
                                 </FormControl>
@@ -208,7 +190,7 @@ const EmployeeIdentity = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Status Kawin</FormLabel>
+                                <FormLabel>Pilih Status Kawin*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<MaritalStatus>
                                         url="/master/marital-status?status=1"
@@ -229,7 +211,7 @@ const EmployeeIdentity = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Agama</FormLabel>
+                                <FormLabel>Pilih Agama*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<Religion>
                                         url="/master/regligion?status=1"

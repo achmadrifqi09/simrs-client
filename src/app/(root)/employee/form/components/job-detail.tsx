@@ -1,18 +1,13 @@
 "use client"
 
 import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import React, {useState} from "react";
+import React from "react";
 import {Control} from "react-hook-form";
 import {EmployeeForm} from "@/app/(root)/employee/form/form";
 import SelectSearch from "@/components/ui/select-search";
 import {DoctorSpecialist, Education, EmployeeStatus, RankOrClass, StructuralPosition} from "@/types/master";
 import {WorkUnit} from "@/types/work-unit";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Button} from "@/components/ui/button";
-import {cn} from "@/lib/utils";
-import {format} from "date-fns";
-import {CalendarDays} from "lucide-react";
-import {Calendar} from "@/components/ui/calendar";
+import {Input} from "@/components/ui/input";
 
 interface PersonalDataProps {
     control: Control<EmployeeForm>;
@@ -22,7 +17,6 @@ const JobDetail = ({
                        control
                    }: PersonalDataProps
 ) => {
-    const [date, setDate] = useState<Date>();
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
@@ -32,7 +26,7 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Tingkat Pendidikan</FormLabel>
+                                <FormLabel>Pilih Tingkat Pendidikan*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<Education>
                                         url="/master/marital-status?status=1"
@@ -53,7 +47,7 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Status Pegawai</FormLabel>
+                                <FormLabel>Pilih Status Pegawai*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<EmployeeStatus>
                                         url="/master/employee-status?status=1"
@@ -97,7 +91,7 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Unit Induk</FormLabel>
+                                <FormLabel>Pilih Unit Induk*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<WorkUnit>
                                         url="/master/doktor-specialist?status=1"
@@ -118,7 +112,7 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Pangkat</FormLabel>
+                                <FormLabel>Pilih Pangkat*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<RankOrClass>
                                         url="/master/rank-or-class?status=1"
@@ -140,7 +134,7 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Jabatan</FormLabel>
+                                <FormLabel>Pilih Jabatan*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<StructuralPosition>
                                         url="/master/struktural-position?status=1"
@@ -155,59 +149,24 @@ const JobDetail = ({
                             </FormItem>
                         )
                     }}/>
-                <div className="w-full md:w-1/2">
+                <div className="w-full">
                     <FormItem>
-                        <FormLabel>Tanggal Masuk</FormLabel>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className={cn(
-                                        "w-full justify-between text-left font-normal border-input",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                >
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                    <CalendarDays className="ml-2 h-4 w-4"/>
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
+                        <FormLabel>Tanggal Masuk*</FormLabel>
+                        <Input
+                            type="date"
+                            className="block"
+                        />
                         <FormMessage/>
                     </FormItem>
                 </div>
-                <div className="w-full md:w-1/2">
+                <div className="w-full">
                     <FormItem>
                         <FormLabel>Tanggal keluar</FormLabel>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className={cn(
-                                        "w-full justify-between text-left font-normal border-input",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                >
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                    <CalendarDays className="ml-2 h-4 w-4"/>
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
+                        <Input
+                            type="date"
+
+                            className="block"
+                        />
                         <FormMessage/>
                     </FormItem>
                 </div>

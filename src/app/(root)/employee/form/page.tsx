@@ -1,32 +1,33 @@
-"use client"
+"use client";
 
-import Section from "@/components/ui/section"
+import Section from "@/components/ui/section";
 import Stepper from "@/components/ui/stepper";
-import {useState} from "react";
-import {Step} from "@/types/stepper";
+import { useState } from "react";
+import { Step } from "@/types/stepper";
 import EmployeeIdentity from "@/app/(root)/employee/form/components/employee-identity";
-import {useForm} from "react-hook-form";
-import {employeeValidation} from "@/validation-schema/employee";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {EmployeeForm} from "@/app/(root)/employee/form/form";
-import {Form} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { employeeValidation } from "@/validation-schema/employee";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EmployeeForm } from "@/app/(root)/employee/form/form";
+import { Form } from "@/components/ui/form";
 import ResidenceAddress from "@/app/(root)/employee/form/components/residence-address";
 import OriginAddress from "@/app/(root)/employee/form/components/origin-address";
 import Heading from "@/components/ui/heading";
 import SupportingDocument from "@/app/(root)/employee/form/components/supporting-document";
 import JobDetail from "@/app/(root)/employee/form/components/job-detail";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const steps: Step[] = [
-    {step: 1, title: 'Data Diri'},
-    {step: 2, title: 'Alamat Asal'},
-    {step: 3, title: 'Alamat Tinggal'},
-    {step: 4, title: 'Dokumen Pendukung'},
-    {step: 5, title: 'Detail pekerjaan'},
-]
+    { step: 1, title: "Data Diri" },
+    { step: 2, title: "Alamat Asal" },
+    { step: 3, title: "Alamat Tinggal" },
+    { step: 4, title: "Dokumen Pendukung" },
+    { step: 5, title: "Detail pekerjaan" },
+];
 
 const UpdateOrCreateEmployee = () => {
     const [formStep, setFormStep] = useState<number>(1);
+    // const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
 
     const employeeForm = useForm<EmployeeForm>({
         resolver: zodResolver(employeeValidation),
@@ -85,45 +86,64 @@ const UpdateOrCreateEmployee = () => {
             status_pns: 0,
             status_aktif: 1,
             id_pelamar: 0,
-        }
-    })
-    const {control} = employeeForm
+        },
+    });
+    const { control } = employeeForm;
+
+    // const onSubmit = handleSubmit(async (values) => {
+    //     if (!session?.accessToken) {
+    //         return;
+    //     }
+    //     const response === submitMode = 'POST' ? (
+    //         await postData(
+    //             {
+    //
+    //             }
+    //         )
+    //     ) : (
+    //         await updateData(
+    //             `/employee/${seletedRecordId}`,
+    // )
+    // )
+    // })
+
     return (
         <>
-            <Heading headingLevel="h4" variant="page-title">
-                Formulir Pegawai
-            </Heading>
+            <div className="flex justify-between items-center mb-4">
+                <Heading headingLevel="h4" variant="page-title">
+                    Formulir Pegawai
+                </Heading>
+                <Button variant="outline" onClick={() => window.history.back()}>
+                    Kembali
+                </Button>
+            </div>
             <Section className="pt-8">
                 <Stepper
                     steps={steps}
                     activeStep={formStep}
                     stepperChange={setFormStep}
                     action={
-                        formStep === 5 && (<Button>Simpan</Button>)
-                    }>
+                        formStep === 5 && <Button>Simpan</Button>
+                    }
+                >
                     <Form {...employeeForm}>
                         <form>
-                            {formStep === 1 && (
-                                <EmployeeIdentity control={control}/>
-                            )}
-                            {formStep === 2 && (
-                                <ResidenceAddress control={control}/>
-                            )}
-                            {formStep === 3 && (
-                                <OriginAddress control={control}/>
-                            )}
-                            {formStep === 4 && (
-                                <SupportingDocument control={control}/>
-                            )}
-                            {formStep === 5 && (
-                                <JobDetail control={control}/>
-                            )}
+                            {formStep === 1 &&
+                                <EmployeeIdentity control={control} />}
+                            {formStep === 2 &&
+                                <ResidenceAddress control={control} />}
+                            {formStep === 3 &&
+                                <OriginAddress control={control} />}
+                            {formStep === 4 &&
+                                <SupportingDocument control={control} />}
+                            {formStep === 5 &&
+                                <JobDetail control={control} />}
                         </form>
                     </Form>
                 </Stepper>
             </Section>
         </>
-    )
-}
+    );
+};
 
-export default UpdateOrCreateEmployee
+export default UpdateOrCreateEmployee;
