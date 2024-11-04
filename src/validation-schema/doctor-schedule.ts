@@ -14,12 +14,12 @@ const doctorScheduleValidation = z.object({
         .nullish(),
     jam_buka_praktek: z
         .string()
-        .regex(/^(0?[1-9]|1[0-2]):([0-5]\d):([0-5]\d)( [APap][mM])?$/, {
+        .regex(/^(0?[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/, {
             message: 'Jam buka praktek harus berformat HH:mm:ss',
         }),
     jam_tutup_praktek: z
         .string()
-        .regex(/^(0?[1-9]|1[0-2]):([0-5]\d):([0-5]\d)( [APap][mM])?$/, {
+        .regex(/^(0?[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/, {
             message: 'Jam tutup praktek harus berformat HH:mm:ss',
         }),
     kuota_mjkn: z.string({message: 'Kuota MJKN harus di isi'}),

@@ -13,6 +13,7 @@ import {formatISODayToNormalDay} from "@/lib/formatter/date-formatter";
 import {Button} from "@/components/ui/button";
 import {X} from "lucide-react";
 import CursorPagination from "@/components/ui/cursor-pagination";
+import {timeStringFormatter} from "@/utils/time-formatter";
 
 interface PerPolyclinicTableProps {
     refreshTrigger: number;
@@ -119,18 +120,18 @@ const PerPolyclinicTable = (
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>No</TableHead>
-                        <TableHead>Poliklinik</TableHead>
-                        <TableHead>Dokter</TableHead>
-                        <TableHead>Hari/Tgl praktek</TableHead>
-                        <TableHead>Jam buka praktek</TableHead>
-                        <TableHead>Jam tutup praktek</TableHead>
-                        <TableHead>Kuota MJKN</TableHead>
-                        <TableHead>Kuota online umum</TableHead>
-                        <TableHead>Kuota onsite</TableHead>
+                        <TableHead className="text-sm py-2">No</TableHead>
+                        <TableHead className="text-sm py-2">Poliklinik</TableHead>
+                        <TableHead className="text-sm py-2">Dokter</TableHead>
+                        <TableHead className="text-sm py-2">Hari / Tgl praktek</TableHead>
+                        <TableHead className="text-sm py-2">Jam buka praktek</TableHead>
+                        <TableHead className="text-sm py-2">Jam tutup praktek</TableHead>
+                        <TableHead className="text-sm py-2">Kuota MJKN</TableHead>
+                        <TableHead className="text-sm py-2">Kuota online umum</TableHead>
+                        <TableHead className="text-sm py-2">Kuota onsite</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
-                                <TableHead>Aksi</TableHead>
+                                <TableHead className="text-sm py-2">Aksi</TableHead>
                             )
                         }
                     </TableRow>
@@ -141,7 +142,7 @@ const PerPolyclinicTable = (
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
-                                        <TableCell className="font-medium">{index + 1}</TableCell>
+                                        <TableCell>{index + 1}</TableCell>
                                         <TableCell>
                                             {schedule.unit?.nama_unit_kerja}
                                         </TableCell>
@@ -167,10 +168,10 @@ const PerPolyclinicTable = (
                                             }
                                         </TableCell>
                                         <TableCell>
-                                            {schedule.jam_buka_praktek}
+                                            {timeStringFormatter(schedule.jam_buka_praktek)}
                                         </TableCell>
                                         <TableCell>
-                                            {schedule.jam_tutup_praktek}
+                                            {timeStringFormatter(schedule.jam_tutup_praktek)}
                                         </TableCell>
                                         <TableCell>
                                             {schedule.kuota_mjkn}
