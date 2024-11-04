@@ -76,18 +76,23 @@ const UpdateOrCreateWorkUnit = ({
         setSelectedRecord(null)
     }
 
-    const updateStatus = async (id: number | undefined, status: number | undefined) => {
+    const updateStatus = async (id: number | undefined) => {
+        const url = `/work-unit/${id}/${
+            actionType === Action.UPDATE_STATUS ? 'status' : 'queue-status'
+        }`
+
         const response = await updateData(
-            `/work-unit/${id}/status`,
-            {status: status === 1 ? 0 : 1},
+            url,
+            actionType === Action.UPDATE_STATUS ?
+                {status: selectedRecord?.status === 1 ? 0 : 1} :
+                {status_antrian: selectedRecord?.status_antrian === 1 ? 0 : 1},
         )
 
         if (response?.status_code === 200) {
             onRefresh()
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil mengupdate status unit kerja ${selectedRecord?.nama_unit_kerja} 
-                menjadi ${status === 0 ? 'Aktif' : 'Tidak Aktif'}`,
+                description: `Berhasil mengupdate status unit kerja ${selectedRecord?.nama_unit_kerja}`,
             })
         }
     }
@@ -140,8 +145,9 @@ const UpdateOrCreateWorkUnit = ({
     useEffect(() => {
         if (selectedRecord) {
             if (actionType === Action.UPDATE_FIELDS) onUpdateWorkUnit(selectedRecord);
-            if (actionType === Action.UPDATE_STATUS) {
-                updateStatus(selectedRecord.id, selectedRecord.status)
+            if (actionType === Action.UPDATE_STATUS ||
+                actionType === Action.UPDATE_QUEUE_STATUS) {
+                updateStatus(selectedRecord.id)
             }
         }
     }, [selectedRecord])

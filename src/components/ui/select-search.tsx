@@ -15,6 +15,7 @@ interface SelectSearchProps<T> {
     defaultValue?: string | number;
     placeholder?: string;
     onChange?: (value: string | number | null) => void;
+    clearTrigger?: number;
 }
 
 type Option = {
@@ -36,11 +37,11 @@ const SelectSearch = <T extends Record<string, any>>({
                                                          valueName,
                                                          defaultValue,
                                                          placeholder = "Pilih opsi ...",
-                                                         onChange
+                                                         onChange,
+                                                         clearTrigger,
                                                      }: SelectSearchProps<T>) => {
     const {data: session} = useSession();
     const [selectedOption, setSelectedOption] = useState<Option | null>(null);
-
     const generateOptions = (options: T[] | { results?: T[] }): Option[] => {
         if (Array.isArray(options)) {
             return options.map((item: T) => ({
@@ -74,9 +75,9 @@ const SelectSearch = <T extends Record<string, any>>({
                 return generateOptions(Array.isArray(data) ? data : (data?.results || []));
             }
             return [];
-        } catch (error) {
+        } catch {
             toast({
-                description: "Gagal mendapatkan data pilihan input," + error,
+                description: "Gagal mendapatkan data opsi data",
             })
             return [];
         }
@@ -108,8 +109,6 @@ const SelectSearch = <T extends Record<string, any>>({
             if (defaultValue !== undefined) {
                 const options = await fetchOptions(defaultValue as string);
                 const defaultOption = options.find(option => option.value === defaultValue);
-                console.log(defaultValue)
-                console.log(defaultOption)
                 if (defaultOption) {
                     setSelectedOption(defaultOption);
                     if (onChange) {
@@ -118,9 +117,18 @@ const SelectSearch = <T extends Record<string, any>>({
                 }
             }
         };
-
-        loadDefaultValue();
+        loadDefaultValue().catch(() => {
+            toast({
+                description: "Gagal mendapatkan data opsi data",
+            })
+        });
     }, [defaultValue]);
+
+    useEffect(() => {
+        if(clearTrigger !== 0){
+            setSelectedOption(null)
+        }
+    }, [clearTrigger]);
 
     const customStyles = {
         control: (provided: any) => ({
