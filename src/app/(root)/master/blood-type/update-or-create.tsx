@@ -51,9 +51,7 @@ const UpdateOrCreateBloodType = ({
 
     const {data: session} = useSession();
     const [showDialog, setShowDialog] = useState<boolean>(false);
-
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
-
     const {postData, postLoading, postError} = usePost('/master/blood-type')
     const {updateData, patchError, patchLoading} = usePatch()
     const {handleSubmit, control, setValue} = bloodTypeForm

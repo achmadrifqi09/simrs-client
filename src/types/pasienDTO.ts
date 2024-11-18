@@ -1,6 +1,4 @@
-
-type PatientType = {
-    id_pasien: number;
+export interface PatientDTO {
     kode_rm: string;
     nama_pasien: string;
     tempat_lahir: string;
@@ -44,16 +42,4 @@ type PatientType = {
     modified_at?: Date;
     modified_by?: number;
     deleted_at?: Date;
-};
-
-type PatientTypePagination = {
-    results: PatientType[]
-    pagination: {
-        current_cursor: number;
-        take: number
-    }
 }
-export type {
-    PatientType,
-    PatientTypePagination
-};

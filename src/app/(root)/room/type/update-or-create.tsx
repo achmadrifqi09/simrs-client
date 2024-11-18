@@ -180,7 +180,7 @@ const UpdateOrCreatedRoomType = ({
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Pilih Kelas kamar</FormLabel>
+                                                    <FormLabel>Pilih Kelas kamar*</FormLabel>
                                                     <FormControl>
                                                         <SelectSearch<RoomClass>
                                                             url="/master/room-class?status=1"

@@ -110,7 +110,11 @@ const employeeCategoryValidation = z.object({
         .string({message: 'ID Jenis Pegawai harus diisi'})
         .min(2, {message: 'ID Jenis Pegawai minimal 2'})
         .max(20, {message: 'ID Jenis Pegawai maximal 20'}),
-    status: z.string({message: 'Status jabatan harus di isi'})
+    status: z.string({message: 'Status jabatan harus di isi'}),
+    kode_nip: z.preprocess((val) => {
+        if (val === '' || val === null) return NaN;
+        return Number(val);
+    }, z.number().nonnegative({ message: 'Kode harus diisi dan tidak boleh negatif' }))
 })
 
 const educationLeveValidation = z.object({
@@ -197,6 +201,7 @@ const employeeTypeValidation = z.object({
         .max(50, {message: 'nama jenis pegawai maximal 2 krakter'}),
     status: z.string({message: 'Status Kamar harus Diisi'}),
 })
+
 export {
     religionValidation,
     bloodTypeValidation,

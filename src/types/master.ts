@@ -41,6 +41,7 @@ type RankOrClass = {
 type EmployeeCategory = {
     id_ms_jenis_pegawai_status: number;
     status_jenis_pegawai: string;
+    kode_nip: number;
     status: number;
 }
 type EmployeeTypeRelation = {

@@ -91,7 +91,7 @@ const BedTable = (
     }, [error])
 
     useEffect(() => {
-        if (status === 'authenticated') {
+        if (status === 'authenticated' && refreshTrigger !== 0) {
             getData().catch(() => {
                 toast({
                     title: "Terjadi Kesalahan",
@@ -112,7 +112,6 @@ const BedTable = (
                         <TableHead>Nama Kasur</TableHead>
                         <TableHead>Nama Kamar</TableHead>
                         <TableHead>Keterangan</TableHead>
-                        <TableHead>Status Kasur</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -162,7 +161,6 @@ const BedTable = (
                                         <TableCell className="font-medium">{bed?.kamar?.nama_kamar}</TableCell>
                                         <TableCell
                                             className="font-medium">{bed?.keterangan}</TableCell>
-                                        <TableCell className="font-medium">{bed?.status_bed}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (

@@ -80,7 +80,7 @@ const AvailableTable = (
     }, [data]);
 
     useEffect(() => {
-        if (status === 'authenticated') {
+        if (status === 'authenticated' && refreshTrigger !== 0) {
             getData().catch(() => {
                 toast({
                     title: "Terjadi Kesalahan",
@@ -154,7 +154,7 @@ const AvailableTable = (
                                             : available?.status_bed === 1
                                                 ? 'Dibersihkan'
                                                 : available?.status_bed === 2
-                                                    ? 'Dalam Perbaikan'
+                                                    ? 'Digunakan'
                                                     : available?.status_bed === 3
                                                         ? 'Rusak'
                                                         : ''}

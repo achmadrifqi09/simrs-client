@@ -58,7 +58,7 @@ const EmployeeCategoryTable = (
     }, [error])
 
     useEffect(() => {
-        if (status === 'authenticated') {
+        if (status === 'authenticated' && refreshTrigger !== 0) {
             getData().catch(() => {
                 toast({
                     title: "Terjadi Kesalahan",
@@ -78,6 +78,7 @@ const EmployeeCategoryTable = (
                     <TableRow>
                         <TableHead>No</TableHead>
                         <TableHead>Nama Kategori Pegawai</TableHead>
+                        <TableHead>Kode Kategori Pegawai</TableHead>
                         <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -94,7 +95,9 @@ const EmployeeCategoryTable = (
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         <TableCell
-                                            className="font-medium">{employeeCategory.status_jenis_pegawai}</TableCell>
+                                            className="font-medium">{employeeCategory.status_jenis_pegawai}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{employeeCategory.kode_nip}</TableCell>
                                         <TableCell>
                                             {
                                                 permission?.can_update ? (

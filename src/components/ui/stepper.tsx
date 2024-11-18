@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import {Step} from "@/types/stepper";
 import {cn} from "@/lib/utils";

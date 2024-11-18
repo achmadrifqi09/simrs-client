@@ -1,41 +1,41 @@
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import React, {useCallback, useEffect, useState} from "react";
 import useGet from "@/hooks/use-get";
-import type {MaritalStatus} from "@/types/master";
+import {PatientType, type PatientTypePagination} from "@/types/patient";
 import {Input} from "@/components/ui/input";
 import debounce from "debounce";
 import {toast} from "@/hooks/use-toast";
-import {Switch} from "@/components/ui/switch";
 import {Action} from "@/enums/action";
 import {useSession} from "next-auth/react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
+import moment from 'moment-timezone';
+import Link from "next/link";
 
-interface MaritalStatusProps {
+interface PatientTableProps {
     refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<MaritalStatus | null>>
+    selectRecord: React.Dispatch<React.SetStateAction<PatientType | null>>;
     onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
-    setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
-    permission: Permission | null
+    setAction: React.Dispatch<React.SetStateAction<Action>>;
+    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>;
+    permission: Permission | null;
 }
 
-const MaritalStatusTable = (
-    {
-        refreshTrigger,
-        selectRecord,
-        setAction,
-        setAlertDelete,
-        permission
-    }: MaritalStatusProps) => {
-    const url: string = '/master/marital-status'
+const PatientTable = ({
+                          refreshTrigger,
+                          selectRecord,
+                          setAction,
+                          setAlertDelete,
+                          permission
+                      }: PatientTableProps) => {
+    const url: string = '/patient';
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
-    const {data, loading, error, getData} = useGet<MaritalStatus[]>({
+    const {data, loading, error, getData} = useGet<PatientTypePagination>({
         url: url,
         keyword: searchKeyword,
-    })
+    });
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const keyword = e.target.value;
@@ -47,15 +47,23 @@ const MaritalStatusTable = (
         []
     );
 
+    const calculateAge = (birthDate: Date) => {
+        const now = moment.tz('Asia/Jakarta');
+        const birthMoment = moment(birthDate);
+        const years = now.diff(birthMoment, 'years');
+        const months = now.diff(birthMoment, 'months') % 12;
+        return `${years} Tahun, ${months} Bulan`;
+    };
+
     useEffect(() => {
         if (error) {
             toast({
                 title: "Terjadi Kesalahan",
                 description: error?.toString(),
                 duration: 4000,
-            })
+            });
         }
-    }, [error])
+    }, [error]);
 
     useEffect(() => {
         if (status === 'authenticated' && refreshTrigger !== 0) {
@@ -64,21 +72,28 @@ const MaritalStatusTable = (
                     title: "Terjadi Kesalahan",
                     description: "Terjadi kesalahan saat memperbarui data di tabel",
                     duration: 4000,
-                })
+                });
             });
         }
     }, [refreshTrigger, getData, status]);
 
     return (
         <>
-            <Input type="search" className="w-full md:w-1/3" placeholder="Cari data ..."
+            <Input type="search" className="w-full md:w-1/3" placeholder="Cari Nama/RM/BPJS/KTP"
                    onChange={debouncedChangeSearch}/>
             <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead>No</TableHead>
-                        <TableHead>Nama Status Perkawinan</TableHead>
-                        <TableHead>Status (Visibilitas)</TableHead>
+                        <TableHead>RM</TableHead>
+                        <TableHead>Nama Pasien</TableHead>
+                        <TableHead>Usia (T/B)</TableHead>
+                        <TableHead>JK</TableHead>
+                        <TableHead>No.Ktp</TableHead>
+                        <TableHead>No.BPJS</TableHead>
+                        <TableHead>Alamat</TableHead>
+                        <TableHead>Alamat KTP</TableHead>
+                        {/*<TableHead>Status</TableHead>*/}
                         {
                             (permission?.can_update || permission?.can_delete) && (
                                 <TableHead>Aksi</TableHead>
@@ -88,57 +103,42 @@ const MaritalStatusTable = (
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.map((maritalStatus: MaritalStatus, index: number) => {
+                        data?.results?.map((patient: PatientType, index: number) => {
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
                                         <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{maritalStatus.nama_status_kawin}</TableCell>
-                                        <TableCell>
-                                            {
-                                                permission?.can_update ?(
-                                                    <Switch
-                                                        checked={maritalStatus.status === 1}
-                                                        onCheckedChange={
-                                                            () => {
-                                                                selectRecord(maritalStatus);
-                                                                setAction(Action.UPDATE_STATUS)
-                                                            }
-                                                        }
-                                                    />
-                                                ):(maritalStatus.status === 1 ? 'aktif' : 'Non Aktif')
-                                            }
+                                        <TableCell className="font-medium">{patient.kode_rm}</TableCell>
+                                        <TableCell className="font-medium">{patient.nama_pasien}</TableCell>
+                                        <TableCell className="font-medium">
+                                            {calculateAge(patient.tgl_lahir)}
                                         </TableCell>
+                                        <TableCell className="font-medium">
+                                            {patient.jenis_kelamin === 1 ? 'Laki-laki' : 'Perempuan'}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{patient.no_identitas}</TableCell>
+                                        <TableCell className="font-medium">{patient.no_bpjs}</TableCell>
+                                        <TableCell className="font-medium">{patient.alamat_tinggal}</TableCell>
+                                        <TableCell className="font-medium">{patient.alamat_asal}</TableCell>
                                         <TableCell>
                                             {
                                                 (permission?.can_update || permission?.can_delete) && (
                                                     <div className="flex gap-2">
-                                                        {
-                                                            permission?.can_update && (
-                                                                <Button
-                                                                    onClick={() => {
-                                                                        selectRecord(maritalStatus);
-                                                                        setAction(Action.UPDATE_FIELDS)
-                                                                    }}
-                                                                    size="sm">
-                                                                    Update
-                                                                </Button>
-
-                                                            )
-                                                        }
-                                                        {
-                                                            permission?.can_delete && (
-                                                                <Button
-                                                                    onClick={() => {
-                                                                        selectRecord(maritalStatus);
-                                                                        setAction(Action.DELETE)
-                                                                        setAlertDelete(true)
-                                                                    }}
-                                                                    size="sm" variant="outline">
-                                                                    Hapus
-                                                                </Button>
-                                                            )
-                                                        }
+                                                        <Button
+                                                            size="sm" asChild>
+                                                            <Link href={`/patient/${patient.id_pasien}`}>
+                                                                Update
+                                                            </Link>
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => {
+                                                                selectRecord(patient);
+                                                                setAction(Action.DELETE);
+                                                                setAlertDelete(true);
+                                                            }}
+                                                            size="sm" variant="outline">
+                                                            Hapus
+                                                        </Button>
                                                     </div>
                                                 )
                                             }
@@ -148,9 +148,12 @@ const MaritalStatusTable = (
                             )
                         })
                     }
-                    {(data && data.length === 0 && !loading) && (
+                    {(data && data?.results?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 4 : 3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 10 : 9}
+                                       className="text-center">
+                                Data tidak ditemukan
+                            </TableCell>
                         </TableRow>
                     )}
                     {
@@ -158,7 +161,7 @@ const MaritalStatusTable = (
                             Array.from({length: 4}, (_, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="text-center">
-                                        <Skeleton className="h-5 w-16 rounded-lg"/>
+                                        <Skeleton className="h-5 w-12 rounded-lg"/>
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Skeleton className="h-5 w-1/2 rounded-lg"/>
@@ -180,9 +183,8 @@ const MaritalStatusTable = (
                     }
                 </TableBody>
             </Table>
-
         </>
     )
 }
 
-export default MaritalStatusTable;
+export default PatientTable;

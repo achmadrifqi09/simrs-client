@@ -60,7 +60,7 @@ const RoomTypeTable = (
 
 
     useEffect(() => {
-        if (status === 'authenticated') {
+        if (status === 'authenticated' && refreshTrigger !== 0) {
             getData().catch(() => {
                 toast({
                     title: "Terjadi Kesalahan",
@@ -155,7 +155,7 @@ const RoomTypeTable = (
                     }
                     {(data && data?.length === 0 && !loading) && (
                         <TableRow>
-                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 4 : 3} className="text-center">Data tidak ditemukan</TableCell>
+                            <TableCell colSpan={(permission?.can_update || permission?.can_delete) ? 5 : 4} className="text-center">Data tidak ditemukan</TableCell>
                         </TableRow>
                     )}
                     {

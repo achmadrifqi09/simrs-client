@@ -248,35 +248,7 @@ const UpdateOrCreatedRoom = ({
                                             )
                                         }}/>
                                 </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="status_bed"
-                                        render={({field}) => (
-                                            <FormItem>
-                                                <FormLabel>Status Kasur</FormLabel>
-                                                <FormControl>
-                                                    <Select
-                                                        onValueChange={field.onChange}
-                                                        defaultValue={field.value}>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Status kamar .."/>
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectGroup>
-                                                                <SelectItem value="0">Siap Digunakan</SelectItem>
-                                                                <SelectItem value="1">Digunakan</SelectItem>
-                                                                <SelectItem value="2">Dibersihkan</SelectItem>
-                                                                <SelectItem value="3">Rusak</SelectItem>
-                                                            </SelectGroup>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+
                                 <div className="my-4">
                                     <FormField
                                         control={control}
