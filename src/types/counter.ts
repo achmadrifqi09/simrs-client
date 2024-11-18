@@ -13,4 +13,11 @@ type Counter = {
     jenis_loket: number;
 }
 
-export type { CallingCounter, Counter };
+type CounterWS = {
+    id_ms_loket_antrian: number;
+    nama_loket: string;
+    jenis_loket: number;
+    is_used?: boolean;
+};
+
+export type { CallingCounter, Counter, CounterWS };

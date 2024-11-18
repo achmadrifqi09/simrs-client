@@ -1,7 +1,7 @@
 import {getToken, JWT} from 'next-auth/jwt'
 import {NextFetchEvent, NextMiddleware, NextResponse} from "next/server";
 import moment from "moment-timezone";
-import {guestRoutes} from "@/const/routeWithoutPanel";
+import {guestRoutes} from "@/const/guest-routes";
 import {generateCurrentTimestamp} from "@/lib/formatter/date-formatter";
 import {decompressFromBase64} from "lz-string";
 import {clearSessionAndRedirect} from "@/utils/cookies-cleaner";
@@ -15,6 +15,7 @@ export default function withAuth(
 
         if (pathname.includes('/manifest')
             || pathname.includes('/icons')
+            || pathname.includes('/audios')
             || pathname.includes('/screenshot')
             || pathname.includes('sw.js')
             || pathname.includes('/workbox')

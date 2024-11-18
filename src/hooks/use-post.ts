@@ -4,14 +4,14 @@ import {generateSignature} from "@/lib/crypto-js/cipher";
 import {signOut, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
 
-const usePost = <T>(url: string) => {
+const usePost = <T>(url: string, isGuest: boolean = false) => {
     const router = useRouter();
     const [postLoading, setPostLoading] = useState<boolean>(false);
     const [postError, setPostError] = useState<string | object | [] | null>(null);
     const {data: session, status} = useSession();
 
     const postData = async (body: T, headers?: object) => {
-        if(status === 'unauthenticated') await signOut();
+        if (status === 'unauthenticated' && !isGuest) await signOut();
         setPostLoading(true);
         setPostError(null)
         try {

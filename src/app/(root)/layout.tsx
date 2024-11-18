@@ -6,7 +6,7 @@ import Footer from '@/components/ui/footer';
 import DynamicBreadcrumb from '@/components/ui/dynamic-breadcrumb';
 import {AppProgressBar as ProgressBar} from 'next-nprogress-bar';
 import {usePathname} from 'next/navigation';
-import {routeWithoutPanel} from '@/const/routeWithoutPanel';
+import {guestRoutes} from '@/const/guest-routes';
 import {useSession} from 'next-auth/react';
 import {fetcher} from '@/utils/fetcher';
 import {toast} from "@/hooks/use-toast";
@@ -20,14 +20,14 @@ import {useMenuStore, usePermissionsStore} from "@/lib/zustand/store";
 const PanelLayout = ({children}: { children: ReactNode }) => {
     const pathName = usePathname();
     const [show, setShow] = useState<boolean>(true);
-    const checkingPath = routeWithoutPanel.some((path) => pathName.includes(path));
+    const checkingPath = guestRoutes.some((path) => pathName.includes(path));
     const {data: session, status} = useSession();
     const {setPermissions, permissions} = usePermissionsStore();
     const {setMenu, menus} = useMenuStore();
 
     useEffect(() => {
         const fetchMenus = async () => {
-            if (session?.user?.id && session?.accessToken) {
+            if (session?.user?.id && session?.accessToken && !checkingPath) {
 
                 try {
                     if (menus.length === 0) {

@@ -1,9 +1,10 @@
 "use client"
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
+import {useRouter} from "next/navigation";
 
 const Custom404 = () => {
+    const router = useRouter();
     return (
         <main className="w-screen flex-col h-dvh flex justify-center items-center text-gray-700 px-4">
             <div className="flex flex-col justify-center items-center flex-1">
@@ -21,10 +22,10 @@ const Custom404 = () => {
                 </div>
                 <Button
                     className="mt-8 w-full"
-                    variant="outline" asChild>
-                    <Link href="/">
-                        Kembali
-                    </Link>
+                    variant="outline"
+                    onClick={() => router.back()}
+                >
+                    Kembali
                 </Button>
             </div>
             <footer className="py-4">

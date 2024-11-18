@@ -3,7 +3,7 @@ import Section from "@/components/ui/section";
 import React from "react";
 import Heading from "@/components/ui/heading";
 import Link from "next/link";
-import {oldPatientSchema} from "@/validation-schema/queue-register";
+import {oldPatientValidationSchema} from "@/validation-schema/queue-register";
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
@@ -14,8 +14,8 @@ import * as z from "zod";
 import {Input} from "@/components/ui/input";
 
 const AddRegistrant = () => {
-    const addRegistrantForm = useForm<z.infer<typeof oldPatientSchema>>({
-        resolver: zodResolver(oldPatientSchema),
+    const addRegistrantForm = useForm<z.infer<typeof oldPatientValidationSchema>>({
+        resolver: zodResolver(oldPatientValidationSchema),
         defaultValues: {
             patient_type: PatientType.BPJS,
             identifier_number: "",

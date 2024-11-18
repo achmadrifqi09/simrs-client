@@ -1,542 +1,293 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import Section from "@/components/ui/section";
-import { useToast } from "@/hooks/use-toast";
-import { Bar, BarChart, ResponsiveContainer } from "recharts";
-import React, { useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Heading from "@/components/ui/heading";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarDays, MinusCircle, PlusCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import Section from "@/components/ui/section";
+import {Input} from "@/components/ui/input";
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
+import {Button} from "@/components/ui/button";
+import {Filter} from "lucide-react";
+import {Label} from "@/components/ui/label";
+import {useSession} from "next-auth/react";
+import useGet from "@/hooks/use-get";
+import debounce from "debounce";
+import {toast} from "@/hooks/use-toast";
+import {AdmissionQueue, AdmissionQueues} from "@/types/admission-queue";
+import {Skeleton} from "@/components/ui/skeleton";
+import CursorPagination from "@/components/ui/cursor-pagination";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {formatToStandardDate} from "@/utils/time-formatter";
+import DrawerTaskId from "@/app/(root)/queue/(user)/data/components/drawer-task-id";
 
-const data = [
-  {
-    goal: 400,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 239,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 349,
-  },
-];
+type DateFilter = {
+    fromDate: string,
+    toDate: string,
+}
 
-const Home = () => {
-  const { toast } = useToast();
-  const [date, setDate] = useState<Date>();
-  const [goal, setGoal] = useState(350);
-
-  function onClick(adjustment: number) {
-    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
-  }
-
-  const handleToast = () => {
-    toast({
-      title: "Notification",
-      description: "testing toast message",
+const QueueDataTable = () => {
+    const [filter, setFilter] = useState<DateFilter>({
+        fromDate: new Date().toISOString().split("T")[0],
+        toDate: new Date().toISOString().split("T")[0],
     });
-  };
-  return (
-    <>
-      <Heading headingLevel="h3" variant="page-title">
-        Daftar Antrean
-      </Heading>
+    const url: string = '/queue'
+    const {status} = useSession();
+    const [canRefresh, setCanRefresh] = useState<boolean>(false);
+    const [showFilter, setShowFilter] = useState<boolean>(false);
+    const [cursor, setCursor] = useState<number>(0);
+    const [takeData, setTakeData] = useState<number>(10);
+    const [searchKeyword, setSearchKeyword] = useState<string>('');
+    const [title, setTitle] = useState<string>('');
+    const [showTaskId, setShowTaskId] = useState<boolean>(false)
+    const [selectedQueue, setSelectedQueue] = useState<AdmissionQueue | null>(null)
 
-      <div className="space-y-6">
-        <Section>
-          <Heading headingLevel="h5">Daftar Antrean</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 bg-gray-300">
-            <div className="my-4">
-              <Label htmlFor="text">Filter Tanggal Layanan</Label>
-              <div className="flex sm:flex-row flex-col gap-2">
-                <div className="my-3">
-                  <Label htmlFor="select">Dari Tanggal</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] justify-between text-left font-normal border-input",
-                          !date && "text-muted-foreground"
-                        )}
-                      >
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        <CalendarDays className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="my-3">
-                  <Label htmlFor="select">Sampai Tanggal</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] justify-between text-left font-normal border-input",
-                          !date && "text-muted-foreground"
-                        )}
-                      >
-                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        <CalendarDays className="ml-2 h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="my-9 ml-1">
-                  <Button>Filter</Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Section>
+    const {data, loading, error, getData} = useGet<AdmissionQueues>({
+        url: `${url}?from_date=${filter.fromDate}&to_date=${filter.toDate}`,
+        keyword: searchKeyword,
+        take: takeData,
+        cursor: cursor
+    })
 
-        <Section>
-          <Heading headingLevel="h5">Button</Heading>
-          <div className="flex gap-4 flex-wrap">
-            <Button>Primary</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="link">Link</Button>
-          </div>
-        </Section>
+    const handleShowTaskId = (queue: AdmissionQueue | null) => {
+        if (showTaskId) {
+            setSelectedQueue(null)
+        } else {
+            setSelectedQueue(queue)
+        }
+        setShowTaskId(prev => !prev)
+    }
 
-        <Section>
-          <Heading headingLevel="h5">User Input</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <div className="my-4">
-              <Label htmlFor="text">Input</Label>
-              <Input type="text" id="text" placeholder="Email" />
-            </div>
-            <div className="my-4">
-              <Label htmlFor="select">Select</Label>
-              <Select>
-                <SelectTrigger id="select">
-                  <SelectValue placeholder="Select a fruit" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Fruits</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="my-4">
-              <Label htmlFor="select">Date Picker</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-[240px] justify-start text-left font-normal border-input",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarDays className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="my-4 space-y-3">
-              <div className="flex gap-2 items-center">
-                <Checkbox id="terms" />
-                <label
-                  htmlFor="terms"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Accept terms
-                </label>
-              </div>
-              <div className="flex gap-2 items-center">
-                <Checkbox id="conditions" />
-                <label
-                  htmlFor="conditions"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Accept conditions
-                </label>
-              </div>
-            </div>
-            <div className="my-4">
-              <RadioGroup defaultValue="comfortable">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="default" id="r1" />
-                  <Label htmlFor="r1">Default</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="comfortable" id="r2" />
-                  <Label htmlFor="r2">Comfortable</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="compact" id="r3" />
-                  <Label htmlFor="r3">Compact</Label>
-                </div>
-              </RadioGroup>
-            </div>
-            <div className="my-4 flex items-center gap-2">
-              <Switch id="airplane-mode" />
-              <Label htmlFor="airplane-mode">Airplane Mode</Label>
-            </div>
-            <div className="md:col-span-2 lg:col-span-3 xl:col-span-4">
-              <Label htmlFor="textarea">Textarea</Label>
-              <Textarea id="textarea" placeholder="Type your message here." />
-            </div>
-          </div>
-        </Section>
+    const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const keyword: string = e.target.value;
+        setSearchKeyword(keyword);
+        setCanRefresh(true);
+    };
 
-        <Section>
-          <Heading headingLevel="h5">
-            Popup (dialog, toast, drawer, sheet)
-          </Heading>
-          <div className="flex gap-4 flex-wrap">
-            <Button onClick={handleToast}>Toast</Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>Dialog</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Example Dialog</DialogTitle>
-                  <DialogDescription>
-                    Make changes to your profile here. Click save when youre
-                    done.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
-                    <Input id="name" className="col-span-3" />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="username" className="text-right">
-                      Username
-                    </Label>
-                    <Input id="username" className="col-span-3" />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+    const handleChangeDataPerPage = (value: number) => {
+        setTakeData(value);
+        setCursor(0);
+        setCanRefresh(true);
+    };
 
-            <Drawer>
-              <DrawerTrigger asChild>
-                <Button>Open Drawer</Button>
-              </DrawerTrigger>
-              <DrawerContent>
-                <div className="mx-auto w-full max-w-sm">
-                  <DrawerHeader>
-                    <DrawerTitle>Move Goal</DrawerTitle>
-                    <DrawerDescription>
-                      Set your daily activity goal.
-                    </DrawerDescription>
-                  </DrawerHeader>
-                  <div className="p-4 pb-0">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 shrink-0 rounded-full"
-                        onClick={() => onClick(-10)}
-                        disabled={goal <= 200}
-                      >
-                        <MinusCircle className="h-4 w-4" />
-                        <span className="sr-only">Decrease</span>
-                      </Button>
-                      <div className="flex-1 text-center">
-                        <div className="text-7xl font-bold tracking-tighter">
-                          {goal}
-                        </div>
-                        <div className="text-[0.70rem] uppercase text-muted-foreground">
-                          Calories/day
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 shrink-0 rounded-full"
-                        onClick={() => onClick(10)}
-                        disabled={goal >= 400}
-                      >
-                        <PlusCircle className="h-4 w-4" />
-                        <span className="sr-only">Increase</span>
-                      </Button>
+    const handleNextPage = () => {
+        if (data?.pagination?.current_cursor !== undefined) {
+            setCursor(data.pagination.current_cursor + takeData);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        const newCursor = Math.max(0, cursor - takeData);
+        setCursor(newCursor);
+        setCanRefresh(true);
+    };
+
+    const debouncedChangeSearch = useCallback(
+        debounce(handleChangeSearch, 500),
+        []
+    );
+
+    const handleChangeFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+        setFilter({...filter, [name]: value});
+        setCanRefresh(true);
+    };
+
+    useEffect(() => {
+        setTitle(`Rentang tanggal ${formatToStandardDate(filter.fromDate)} - ${formatToStandardDate(filter.toDate)}`);
+        setCursor(data?.pagination?.current_cursor || 0)
+    }, [data]);
+
+    useEffect(() => {
+        if (error) {
+            toast({
+                title: "Terjadi Kesalahan",
+                description: error?.toString(),
+                duration: 4000,
+            })
+        }
+    }, [error])
+
+    useEffect(() => {
+        if (status === 'authenticated' && canRefresh) {
+            getData().catch(() => {
+                toast({
+                    title: "Terjadi Kesalahan",
+                    description: "Terjadi kesalahan saat memperbarui data di tabel",
+                    duration: 4000,
+                })
+            });
+        }
+    }, [getData, status])
+
+    return (
+        <>
+            <Heading headingLevel="h3" variant="page-title">
+                Daftar Antrean
+            </Heading>
+            <Section>
+                <Heading headingLevel="h5" variant="section-title" className="mb-6">
+                    {title}
+                </Heading>
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <Input
+                        type="search"
+                        className="w-full md:w-1/3"
+                        placeholder="Nama/RM/BPJS/No Rujukan"
+                        onChange={debouncedChangeSearch}/>
+                    <div className="flex w-full justify-end md:block md:w-max">
+                        <Popover open={showFilter} onOpenChange={setShowFilter}>
+                            <PopoverTrigger asChild>
+                                <Button variant="ghost">
+                                    <Filter className="w-4 h-4 mr-1.5"/>
+                                    Filter
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent align="end" className="w-[20em] space-y-3">
+                                <div>
+                                    <Label>Dari Tanggal</Label>
+                                    <Input
+                                        type="date"
+                                        className="block mt-1"
+                                        name="fromDate"
+                                        defaultValue={filter.fromDate}
+                                        onChange={handleChangeFilter}/>
+                                </div>
+                                <div>
+                                    <Label>Sampai Tanggal</Label>
+                                    <Input
+                                        type="date"
+                                        name="toDate"
+                                        className="block mt-1"
+                                        defaultValue={filter.toDate}
+                                        onChange={handleChangeFilter}/>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                     </div>
-                    <div className="mt-3 h-[120px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data}>
-                          <Bar
-                            dataKey="goal"
-                            style={
-                              {
-                                fill: "hsl(var(--foreground))",
-                                opacity: 0.9,
-                              } as React.CSSProperties
-                            }
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                  <DrawerFooter>
-                    <Button>Submit</Button>
-                    <DrawerClose asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
                 </div>
-              </DrawerContent>
-            </Drawer>
-
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button>Sheet</Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Edit profile</SheetTitle>
-                  <SheetDescription>
-                    Make changes to your profile here. Click save when you done.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
-                    <Input id="name" className="col-span-3" />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="username" className="text-right">
-                      Username
-                    </Label>
-                    <Input id="username" className="col-span-3" />
-                  </div>
-                </div>
-                <SheetFooter>
-                  <SheetClose asChild>
-                    <Button type="submit">Save changes</Button>
-                  </SheetClose>
-                </SheetFooter>
-              </SheetContent>
-            </Sheet>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button>Alert</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your account and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Continue</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </Section>
-
-        <Section>
-          <Heading headingLevel="h5">Table & Pagination</Heading>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Invoice</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell className="text-right">$250.00</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell className="text-right">$250.00</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  2
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">3</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </Section>
-      </div>
-    </>
-  );
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>No</TableHead>
+                            <TableHead>Nama Pasien</TableHead>
+                            <TableHead>No Antrean</TableHead>
+                            <TableHead>Kode RM</TableHead>
+                            <TableHead>No BPJS</TableHead>
+                            <TableHead>No Rujukan</TableHead>
+                            <TableHead>Jenis Penjamin</TableHead>
+                            <TableHead>Jenis Pasien</TableHead>
+                            <TableHead>Poli Tujuan</TableHead>
+                            <TableHead>Aksi</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {
+                            (loading || status == 'loading') ? (
+                                Array.from({length: 2}, (_, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-16 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Skeleton className="h-8 w-10 rounded md:w-1/2 rounded-lg"/>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                data?.results?.map((queue: AdmissionQueue, index: number) => {
+                                    return (
+                                        <React.Fragment key={index}>
+                                            <TableRow>
+                                                <TableCell className="font-medium">{index + 1}</TableCell>
+                                                <TableCell className="font-medium">{queue?.nama_pasien}</TableCell>
+                                                <TableCell
+                                                    className="font-medium">{queue?.kode_antrian}-{queue.no_antrian}</TableCell>
+                                                <TableCell className="font-medium">{queue?.kode_rm || '-'}</TableCell>
+                                                <TableCell className="font-medium">{queue?.no_bpjs || '-'}</TableCell>
+                                                <TableCell
+                                                    className="font-medium">{queue?.no_rujukan || '-'}</TableCell>
+                                                <TableCell
+                                                    className="font-medium">{
+                                                    queue?.jenis_penjamin === 1 ? 'Umum' : 'BPJS'}
+                                                </TableCell>
+                                                <TableCell className="font-medium">
+                                                    {queue?.jenis_pasien === 1 ? 'Lama' : 'Baru'}
+                                                </TableCell>
+                                                <TableCell className="font-medium">
+                                                    {queue?.jadwal_dokter.kode_instalasi_bpjs || '-'}
+                                                </TableCell>
+                                                <TableCell className="font-medium">
+                                                    <Button size="sm" disabled={Number(queue.jenis_penjamin) === 1} onClick={() => handleShowTaskId(queue)}>
+                                                        Task ID
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        </React.Fragment>
+                                    )
+                                })
+                            )
+                        }
+                        {(data && data?.results?.length === 0 && !loading) && (
+                            <TableRow>
+                                <TableCell colSpan={9} className="text-center">Data tidak ditemukan</TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+                {
+                    (loading || status === 'loading') ? (
+                        <div className="flex justify-between items-center mt-2">
+                            <Skeleton className="h-10 w-[128px] rounded-lg"/>
+                            <div className="flex gap-4">
+                                <Skeleton className="h-10 w-10 rounded-lg"/>
+                                <Skeleton className="h-10 w-10 rounded-lg"/>
+                            </div>
+                        </div>
+                    ) : (
+                        <CursorPagination
+                            currentCursor={data?.pagination?.current_cursor || 0}
+                            take={takeData}
+                            onNextPage={handleNextPage}
+                            onPreviousPage={handlePreviousPage}
+                            onItemsPerPageChange={handleChangeDataPerPage}
+                            hasMore={(data?.results?.length || 0) >= takeData}
+                        />
+                    )
+                }
+                {selectedQueue && (
+                    <DrawerTaskId
+                        showTaskId={showTaskId}
+                        setShowTaskId={setShowTaskId}
+                        selectedQueue={selectedQueue}
+                        setSelectedQueue={setSelectedQueue}
+                    />
+                )
+                }
+            </Section>
+        </>
+    );
 };
 
-export default Home;
+export default QueueDataTable;

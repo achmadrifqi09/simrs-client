@@ -8,14 +8,27 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {useSession} from "next-auth/react";
 import {toast} from "@/hooks/use-toast";
 import {CallingCounter} from "@/types/counter";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Label} from "@/components/ui/label";
+import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
 
 const QueueData = () => {
     const [counters, setCounters] = useState<CallingCounter[]>([]);
+    const [queueCode, setQueueCode] = useState<string | null>(null);
+    const [selectedCounterId, setSelectedCounterId] = useState<number | null>(null)
+    const [openSelectQueue, setOpenSelectQueue] = useState<boolean>(false);
     const COUNTER_TYPE = 1;
     const [loading, setLoading] = useState<boolean>(false);
     const [isEmpty, setIsEmpty] = useState<boolean>(false)
     const [socket, setSocket] = useState<Socket | null>(null);
     const {data: session, status} = useSession();
+
+    const handleToCounter = (counterId: number) => {
+        setSelectedCounterId(openSelectQueue ? null : counterId);
+        setOpenSelectQueue(prev => !prev);
+    }
 
     useEffect(() => {
         const counterSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/counter`, {
@@ -29,14 +42,14 @@ const QueueData = () => {
                 counterSocket.disconnect();
             }
         };
-    }, [session]);
+    }, [session?.accessToken]);
 
 
     useEffect(() => {
         if (!socket || status !== 'authenticated') return;
         setLoading(true);
 
-        socket.on(`counter-${COUNTER_TYPE}`, (result) => {
+        socket.on(`counter-type-${COUNTER_TYPE}`, (result) => {
             setLoading(false);
             setCounters(result.data || result);
             if (result.data?.length === 0) setIsEmpty(true);
@@ -58,7 +71,7 @@ const QueueData = () => {
 
         return () => {
             socket.off(`counter-${COUNTER_TYPE}`);
-            socket.off(`error-${socket.id}`);
+            socket.off(`error-type-${socket.id}`);
             socket.off('connect');
         };
     }, [status, socket]);
@@ -76,10 +89,10 @@ const QueueData = () => {
                     ) : (
                         counters.map((counter: CallingCounter) => (
                             <SolidCard
-                                type={counter?.is_used ? 'button' : 'url'}
+                                type="button"
                                 disabled={counter?.is_used}
                                 key={counter.id_ms_loket_antrian}
-                                href={`/queue/admission-counter/${counter?.id_ms_loket_antrian}`}
+                                onClick={() => handleToCounter(counter.id_ms_loket_antrian)}
                             >
                                 <p className="font-medium">{counter.nama_loket}{counter?.is_used && ' (Digunakan)'}</p>
                             </SolidCard>
@@ -94,6 +107,58 @@ const QueueData = () => {
                     }
                 </div>
             </Section>
+            <Dialog open={openSelectQueue} onOpenChange={setOpenSelectQueue}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Pilih kode antrean</DialogTitle>
+                        <DialogDescription className="hidden">
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4">
+                        <Label>Kode antrean</Label>
+                        <RadioGroup
+                            className="grid grid-cols-1 md:grid-cols-2 items-center"
+                            onValueChange={(value) => setQueueCode(value)}
+                        >
+                            <Label
+                                className="flex items-center space-x-2 w-full px-3 py-4 border border-gray-300 rounded-md hover:cursor-pointer">
+                                <RadioGroupItem value="A"/>
+                                <span>Kode A</span>
+                            </Label>
+                            <Label
+                                className="flex items-center space-x-2 w-full px-3 py-4 border border-gray-300 rounded-md hover:cursor-pointer">
+                                <RadioGroupItem value="B"/>
+                                <span>Kode B</span>
+                            </Label>
+                            <Label
+                                className="flex items-center space-x-2 w-full px-3 py-4 border border-gray-300 rounded-md hover:cursor-pointer">
+                                <RadioGroupItem value="C"/>
+                                <span>Kode C</span>
+                            </Label>
+                            <Label
+                                className="flex items-center space-x-2 w-full px-3 py-4 border border-gray-300 rounded-md hover:cursor-pointer">
+                                <RadioGroupItem value="D"/>
+                                <span>Kode D</span>
+                            </Label>
+                        </RadioGroup>
+                    </div>
+                    {
+                        queueCode ? (
+                            <Button asChild>
+                                <Link
+                                    href={`/queue/admission-counter/${selectedCounterId}?queue_code=${queueCode}`}>
+                                    Lanjutkan
+                                </Link>
+                            </Button>
+                        ) : (
+                            <Button disabled={true}>
+                                Lanjutkan
+                            </Button>
+                        )
+
+                    }
+                </DialogContent>
+            </Dialog>
         </>
     )
 }
