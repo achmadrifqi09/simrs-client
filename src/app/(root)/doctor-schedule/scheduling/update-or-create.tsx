@@ -1,15 +1,8 @@
 "use client"
 import {Button} from "@/components/ui/button"
-import {
-    Drawer,
-    DrawerContent,
-    DrawerDescription,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
-import {Loader2, XIcon} from "lucide-react";
-import React, {useState} from "react";
+import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle,} from "@/components/ui/drawer"
+import {Calendar as CalendarIcon, Loader2, XIcon} from "lucide-react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -20,14 +13,9 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {formatISODayToNormalDay} from "@/lib/formatter/date-formatter";
 import {format} from "date-fns"
-import {Calendar as CalendarIcon} from "lucide-react"
 import {cn} from "@/lib/utils"
 import {Calendar} from "@/components/ui/calendar"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
 import SelectSearch from "@/components/ui/select-search";
 import {QueueUnit} from "@/types/outpatient";
 import {usePost} from "@/hooks/use-post";
@@ -35,18 +23,26 @@ import {DoctorSchedule, DoctorSchedulePayload} from "@/types/doctor-schedule";
 import {Action} from "@/enums/action";
 import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
-import {Permission} from "@/types/permission";
 import FormError from "@/components/ui/form-error";
+import {timeStringFormatter} from "@/utils/date-formatter";
 
 type UpdateOrCreateDoctorScheduleProps = {
     onRefresh: () => void;
     selectedRecord: DoctorSchedule | null;
     setSelectedRecord: React.Dispatch<React.SetStateAction<DoctorSchedule | null>>;
     actionType: Action;
-    permission: Permission | null;
+    openDrawer: boolean
+    setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const UpdateOrCreateDoctorSchedule = () => {
+const UpdateOrCreateDoctorSchedule = ({
+                                          onRefresh,
+                                          selectedRecord,
+                                          setSelectedRecord,
+                                          actionType,
+                                          openDrawer,
+                                          setOpenDrawer
+                                      }: UpdateOrCreateDoctorScheduleProps) => {
     const [scheduleType, setScheduleType] = useState<1 | 2>(1)
     const [practiceDate, setPracticeDate] = useState<Date | undefined>(undefined)
     const scheduleForm = useForm<z.infer<typeof doctorScheduleValidation>>({
@@ -66,8 +62,34 @@ const UpdateOrCreateDoctorSchedule = () => {
     const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
-    const {postData, postLoading, postError, setPostError} = usePost('/doctor-schedule');
+    const {postData, postLoading, postError} = usePost('/doctor-schedule');
     const {updateData, patchError, patchLoading} = usePatch();
+
+    const handleCloseDrawer = () => {
+        setValue('kode_instalasi_bpjs', '')
+        setValue('hari_praktek', '')
+        setValue('kuota_mjkn', '')
+        setValue('kuota_online_umum', '')
+        setValue('kuota_onsite', '')
+        setValue('jam_buka_praktek', '0')
+        setValue('jam_tutup_praktek', '0')
+        setDrawerOpen(!drawerOpen);
+        setSelectedRecord(null)
+        setOpenDrawer(false);
+    }
+    const onUpdateDoctorSchedule = (scheduleForm: DoctorSchedule) => {
+        setSubmitMode('PATCH')
+        setDrawerOpen(true);
+        setSelectedRecordId(scheduleForm.id_jadwal_dokter)
+        setValue('id_pegawai', scheduleForm.id_pegawai.toString())
+        setValue('kode_instalasi_bpjs', scheduleForm.kode_instalasi_bpjs)
+        setValue('hari_praktek', scheduleForm.hari_praktek.toString())
+        setValue('kuota_mjkn', scheduleForm.kuota_mjkn.toString())
+        setValue('kuota_online_umum', scheduleForm.kuota_online_umum.toString())
+        setValue('kuota_onsite', scheduleForm.kuota_onsite.toString())
+        setValue('jam_buka_praktek', timeStringFormatter(scheduleForm.jam_buka_praktek))
+        setValue('jam_tutup_praktek', timeStringFormatter(scheduleForm.jam_tutup_praktek))
+    }
 
     const onSubmit = handleSubmit(async (values) => {
         const payload: DoctorSchedulePayload = {
@@ -79,7 +101,6 @@ const UpdateOrCreateDoctorSchedule = () => {
             kuota_onsite: Number(values.kuota_onsite),
             jenis_jadwal: scheduleType
         }
-        console.log(payload)
         if (scheduleType === 2) {
             if (practiceDate) {
                 delete payload.hari_praktek;
@@ -101,25 +122,25 @@ const UpdateOrCreateDoctorSchedule = () => {
                 payload
             )
         )
-
         if (response?.data) {
+            setOpenDrawer(false)
             toast({
                 title: "Aksi Berhasil",
                 description: `Berhasil ${submitMode === 'POST' ? 'menambah data'
                     : 'memperbarui data '}`,
             })
             scheduleForm.reset();
-            setDrawerOpen(false)
-            // onRefresh();
+            onRefresh();
         }
     })
-
+    useEffect(() => {
+        if (selectedRecord) {
+            if (actionType === Action.UPDATE_FIELDS) onUpdateDoctorSchedule(selectedRecord);
+        }
+    }, [selectedRecord])
     return (
         <>
-            <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-                <DrawerTrigger asChild>
-                    <Button>Tambah Jadwal</Button>
-                </DrawerTrigger>
+            <Drawer open={openDrawer} onOpenChange={handleCloseDrawer}>
                 <DrawerContent>
                     <div
                         className="max-w-screen-xl xl:max-w-screen-2xl mx-auto w-full text-xl px-6 h-[88dvh] md:h-auto">
@@ -129,7 +150,7 @@ const UpdateOrCreateDoctorSchedule = () => {
                                     {submitMode === 'POST' ? 'Tambah' : 'Update'} Jadwal Dokter
                                     <Button variant="ghost" size="icon" className="text-gray-600"
                                             onClick={() => {
-                                                setDrawerOpen(false);
+                                                setOpenDrawer(false)
                                                 setSubmitMode('POST')
                                             }}>
                                         <XIcon/>

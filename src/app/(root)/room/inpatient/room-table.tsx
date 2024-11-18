@@ -62,7 +62,7 @@ const AvailableTable = (
 
 
     useEffect(() => {
-        if (status === 'authenticated') {
+        if (status === 'authenticated' && refreshTrigger !== 0) {
             getData().catch(() => {
                 toast({
                     title: "Terjadi Kesalahan",

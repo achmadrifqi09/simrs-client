@@ -1,54 +1,63 @@
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import React, {useEffect, useState} from "react";
-import useGet from "@/hooks/use-get";
-import type {DoctorSchedule, DoctorScheduleWithPagination} from "@/types/doctor-schedule";
-import {toast} from "@/hooks/use-toast";
-import {Action} from "@/enums/action";
-import {useSession} from "next-auth/react";
-import {Skeleton} from "@/components/ui/skeleton";
+import {DoctorSchedule, type DoctorScheduleWithPagination} from "@/types/doctor-schedule";
 import {Permission} from "@/types/permission";
-import SelectSearch from "@/components/ui/select-search";
-import {QueueUnit} from "@/types/outpatient";
-import {formatISODayToNormalDay} from "@/lib/formatter/date-formatter";
+import useGet from "@/hooks/use-get";
+import {toast} from "@/hooks/use-toast";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
-import {X} from "lucide-react";
+import {dateFormatter, timeStringFormatter} from "@/utils/date-formatter";
+import {Skeleton} from "@/components/ui/skeleton";
 import CursorPagination from "@/components/ui/cursor-pagination";
-import {timeStringFormatter} from "@/utils/time-formatter";
+import {useSession} from "next-auth/react";
+import moment from "moment";
+import DoctorVacationDialog from "@/app/(root)/doctor-schedule/practice/doctor-vacation-dialog";
+import {usePatch} from "@/hooks/use-patch";
+import AdditionalQuota from "@/app/(root)/doctor-schedule/practice/additional-quota";
+import {Action} from "@/enums/action";
 
-interface PerPolyclinicTableProps {
-    refreshTrigger: number;
-    selectRecord: React.Dispatch<React.SetStateAction<DoctorSchedule | null>>
-    onChangeStatus?: (id: number | undefined, status: number | undefined) => void;
-    setAction: React.Dispatch<React.SetStateAction<Action>>
-    setAlertDelete: React.Dispatch<React.SetStateAction<boolean>>
+interface ScheduleProps {
+    date: Date | undefined
     permission: Permission | null
+    refreshTrigger: number
+    onRefresh: () => void,
+    actionType: Action;
+    setAction: React.Dispatch<React.SetStateAction<Action>>
 }
 
-const PerPolyclinicTable = (
-    {
-        refreshTrigger,
-        selectRecord,
-        setAction,
-        setAlertDelete,
-        permission
-    }: PerPolyclinicTableProps) => {
-    const [queueUnit, setQueueUnit] = useState<string | number>("");
-    const [clearTrigger, setClearTrigger] = useState<number>(0)
+const SchedulePerDate = ({
+                             date,
+                             permission,
+                             refreshTrigger,
+                             onRefresh,
+                             setAction
+                         }: ScheduleProps) => {
+
     const url: string = '/doctor-schedule'
-    const {status} = useSession();
     const [cursor, setCursor] = useState<number>(0);
     const [takeData, setTakeData] = useState<number>(10);
+    const [show, setShow] = useState<boolean>(false);
+    const [id, setId] = useState<number | undefined>();
+    const [selectedDate, setSelectedDate] = useState<string>(dateFormatter(date));
+    const {updateData, patchLoading} = usePatch();
+    const {data: session} = useSession();
+
+    const [openQuotaDialog, setOpenQuotaDialog] = useState<boolean>(false)
+
     const {data, loading, error, getData} = useGet<DoctorScheduleWithPagination>({
-        url: `${url}?poly_code=${queueUnit}`,
+        url: `${url}?practice_date=${selectedDate}`,
         cursor: cursor,
         take: takeData
     })
 
+    const handleQuotaDialog = (id: number | undefined) => {
+        setId(id)
+        setOpenQuotaDialog(true)
+    }
+    const {status} = useSession()
     const handleChangeDataPerPage = (value: number) => {
         setTakeData(value);
         setCursor(0);
     };
-
     const handleNextPage = () => {
         if (data?.pagination?.current_cursor !== undefined) {
             setCursor(data.pagination.current_cursor + takeData);
@@ -60,6 +69,33 @@ const PerPolyclinicTable = (
         setCursor(newCursor);
     };
 
+    const handleCancelVacation = async (id: number) => {
+        if (!session?.accessToken) {
+            return;
+        }
+        const response = await updateData(
+            `/doctor-schedule/${id}/cancel-vacation`,
+            {}
+        )
+
+        if (response?.data) {
+            onRefresh()
+            toast({
+                title: "Aksi Berhasil",
+                description: 'Berhasil Membatalkan jadwal libur',
+            })
+        }
+    }
+
+    const handleIsVacation = (vacationDate: string | null) => {
+        if (vacationDate) {
+            if (moment(dateFormatter(new Date(vacationDate))).isSame(moment(dateFormatter(date)))) {
+                return true
+            }
+        }
+        return false
+    }
+
     useEffect(() => {
         if (error) {
             toast({
@@ -68,10 +104,14 @@ const PerPolyclinicTable = (
                 duration: 4000,
             })
         }
+
     }, [error])
 
     useEffect(() => {
-        if (status === 'authenticated') {
+        if (status === 'authenticated' && refreshTrigger !== 0) {
+            if (date) {
+                setSelectedDate(dateFormatter(date))
+            }
             getData().catch(() => {
                 toast({
                     title: "Terjadi Kesalahan",
@@ -80,55 +120,38 @@ const PerPolyclinicTable = (
                 })
             });
         }
-    }, [refreshTrigger, getData, status]);
 
+    }, [refreshTrigger, getData, status, date]);
     return (
         <>
-            <div className="flex gap-1">
-                {
-                    status == 'loading' ? (
-                        <>
-                            <Skeleton className="w-full md:w-1/3 h-10"/>
-                            <Skeleton className="w-full md:w-1/3 h-10"/>
-                        </>
-                    ) : (
-                        <>
-                            <div className="w-full lg:w-1/3">
-                                <SelectSearch<QueueUnit>
-                                    url="/work-unit/queue-unit"
-                                    labelName="nama_unit_kerja"
-                                    valueName="kode_instalasi_bpjs"
-                                    onChange={(value) => setQueueUnit(value || '')}
-                                    defaultValue={queueUnit}
-                                    clearTrigger={clearTrigger}
-                                />
-                            </div>
-                            <Button
-                                size="icon"
-                                variant="outline"
-                                className="border-gray-200 py-4"
-                                onClick={() => {
-                                    setQueueUnit('');
-                                    setClearTrigger(clearTrigger + 1)
-                                }}>
-                                <X className="text-gray-400 hover:text-red-600"/>
-                            </Button>
-                        </>
-                    )
-                }
-            </div>
+            <DoctorVacationDialog
+                setShow={setShow}
+                show={show}
+                id={id}
+                vacation_date={date}
+                onRefresh={onRefresh}/>
+
+            <AdditionalQuota
+                onRefresh={onRefresh}
+                show={openQuotaDialog}
+                setShow={setOpenQuotaDialog}
+                id={id}
+                currentDate={date}
+                actionType={Action.CREATE}/>
+
             <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead className="text-sm py-2">No</TableHead>
                         <TableHead className="text-sm py-2">Poliklinik</TableHead>
                         <TableHead className="text-sm py-2">Dokter</TableHead>
-                        <TableHead className="text-sm py-2">Hari / Tgl praktek</TableHead>
                         <TableHead className="text-sm py-2">Jam buka praktek</TableHead>
                         <TableHead className="text-sm py-2">Jam tutup praktek</TableHead>
                         <TableHead className="text-sm py-2">Kuota MJKN</TableHead>
                         <TableHead className="text-sm py-2">Kuota online umum</TableHead>
                         <TableHead className="text-sm py-2">Kuota onsite</TableHead>
+                        <TableHead className="text-sm py-2">libur</TableHead>
+                        <TableHead className="text-sm py-2">Keterangan</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
                                 <TableHead className="text-sm py-2">Aksi</TableHead>
@@ -146,7 +169,7 @@ const PerPolyclinicTable = (
                                         <TableCell>
                                             {schedule.unit?.nama_unit_kerja}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="min-w-[16ch]">
                                             <span
                                                 className="capitalize">
                                                 {schedule.pegawai?.gelar_depan?.toLocaleLowerCase() + '. ' || ''}
@@ -161,47 +184,69 @@ const PerPolyclinicTable = (
                                             </span>
                                         </TableCell>
                                         <TableCell>
-                                            {
-                                                schedule?.jenis_jadwal == 1 ? (
-                                                    formatISODayToNormalDay(schedule.hari_praktek)
-                                                ) : (schedule.tgl_praktek && (schedule.tgl_praktek.split('T')[0]))
-                                            }
-                                        </TableCell>
-                                        <TableCell>
                                             {timeStringFormatter(schedule.jam_buka_praktek)}
                                         </TableCell>
                                         <TableCell>
                                             {timeStringFormatter(schedule.jam_tutup_praktek)}
                                         </TableCell>
                                         <TableCell>
-                                            {schedule.kuota_mjkn}
+                                            {(
+                                                schedule.kuota_tambahan?.length == 1
+                                                    ? schedule.kuota_tambahan[0]?.kuota_mjkn
+                                                    + schedule.kuota_mjkn : schedule.kuota_mjkn
+                                            )}
                                         </TableCell>
                                         <TableCell>
-                                            {schedule.kuota_online_umum}
+                                            {(
+                                                schedule.kuota_tambahan?.length == 1
+                                                    ? schedule.kuota_tambahan[0]?.kuota_online_umum
+                                                    + schedule.kuota_online_umum : schedule.kuota_online_umum
+                                            )}
                                         </TableCell>
                                         <TableCell>
-                                            {schedule.kuota_onsite}
+                                            {(
+                                                schedule.kuota_tambahan?.length == 1
+                                                    ? schedule.kuota_tambahan[0]?.kuota_onsite
+                                                    + schedule.kuota_onsite : schedule.kuota_onsite
+                                            )}
                                         </TableCell>
+                                        <TableCell>{handleIsVacation(schedule?.tanggal_libur) ? 'Ya' : 'Tidak'}</TableCell>
+                                        <TableCell>{handleIsVacation(schedule?.tanggal_libur) ? schedule.keterangan_libur : '-'}</TableCell>
                                         <TableCell>
                                             {
                                                 (permission?.can_update || permission?.can_delete) && (
                                                     <div className="flex gap-2">
-                                                        <Button
-                                                            onClick={() => {
-                                                                selectRecord(schedule);
-                                                                setAction(Action.UPDATE_FIELDS)
-                                                            }}
-                                                            size="sm">
-                                                            Update
-                                                        </Button>
-                                                        <Button
-                                                            onClick={() => {
-                                                                selectRecord(schedule);
-                                                                setAction(Action.DELETE)
-                                                                setAlertDelete(true)
-                                                            }}
-                                                            size="sm" variant="outline">
-                                                            Hapus
+                                                        {
+                                                            handleIsVacation(schedule?.tanggal_libur)
+                                                                ? (
+
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="outline"
+                                                                        onClick={() => {
+                                                                            handleCancelVacation(schedule.id_jadwal_dokter)
+                                                                            setAction(Action.UPDATE_FIELDS)
+                                                                        }}
+                                                                    >
+                                                                        Batalkan Libur
+                                                                    </Button>
+                                                                ) : (
+                                                                    <Button
+                                                                        size="sm"
+                                                                        onClick={() => {
+                                                                            setShow(true)
+                                                                            setId(schedule.id_jadwal_dokter)
+                                                                        }}>
+                                                                        Libur
+                                                                    </Button>
+                                                                )}
+                                                        <Button variant='outline'
+                                                                size='sm'
+                                                                onClick={() => {
+                                                                    handleQuotaDialog(schedule.id_jadwal_dokter)
+                                                                }}
+                                                        >
+                                                            Tambah Kuota
                                                         </Button>
                                                     </div>
                                                 )
@@ -246,7 +291,7 @@ const PerPolyclinicTable = (
                 </TableBody>
             </Table>
             {
-                loading || status === 'loading' ? (
+                patchLoading || status === 'loading' ? (
                     <div className="flex justify-between items-center">
                         <Skeleton className="h-10 w-[128px] rounded-lg"/>
                         <div className="flex gap-4">
@@ -265,8 +310,9 @@ const PerPolyclinicTable = (
                     />
                 )
             }
+
         </>
     )
 }
 
-export default PerPolyclinicTable
+export default SchedulePerDate

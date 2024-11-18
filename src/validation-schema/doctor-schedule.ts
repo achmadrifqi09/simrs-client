@@ -27,4 +27,18 @@ const doctorScheduleValidation = z.object({
     kuota_onsite: z.string({message: 'Kuota onsite harus di isi'}),
 });
 
-export {doctorScheduleValidation};
+const vacationScheduleValidation = z.object ({
+    keterangan_libur: z.string()
+        .min(4, {message: 'Keterangan Minimal 4 Karakter'})
+})
+
+const quotaValidation = z.object({
+    kuota_mjkn: z.string({message: 'Kuota MJKN harus di isi'}),
+    kuota_online_umum: z.string({message: 'Kuota online umum harus di isi'}),
+    kuota_onsite: z.string({message: 'Kuota onsite harus di isi'})
+})
+export {
+    doctorScheduleValidation,
+    vacationScheduleValidation,
+    quotaValidation
+};

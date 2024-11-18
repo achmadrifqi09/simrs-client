@@ -5,3 +5,10 @@ export const timeStringFormatter = (dateString: string) => {
     const seconds = String(date.getUTCSeconds()).padStart(2, '0');
     return `${hours}:${minutes}:${seconds}`;
 }
+
+export const dateFormatter = (date: Date | undefined) => {
+    if (date) {
+        return `${date?.getDate() >= 10 ? date.getDate() : '0' + date.getDate()}-${date?.getMonth() + 1}-${date?.getFullYear()}`
+    }
+    return ''
+}

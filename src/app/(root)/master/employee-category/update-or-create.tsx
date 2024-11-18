@@ -158,7 +158,7 @@ const UpdateOrCreateEmployeeCategory = ({
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Master Nama Kategori Pegawai
+                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data <br/> Master Kategori Pegawai
                         </DialogTitle>
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
@@ -191,6 +191,8 @@ const UpdateOrCreateEmployeeCategory = ({
                                                     <FormLabel>Kode Kategori Pegawai</FormLabel>
                                                     <FormControl>
                                                         <Input type="number" {...field}
+                                                               max={5}
+                                                               min={1}
                                                                onChange={(e) => field.onChange(Number(e.target.value))}/>
                                                     </FormControl>
                                                     <FormMessage/>

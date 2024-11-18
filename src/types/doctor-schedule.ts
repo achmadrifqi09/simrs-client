@@ -8,7 +8,7 @@ type DoctorSchedulePayload = {
     jam_tutup_praktek: string;
     kuota_mjkn: number;
     kuota_online_umum: number;
-    kuota_onsite: number;
+    kuota_onsite: number
 };
 
 type DoctorSchedule = {
@@ -35,7 +35,22 @@ type DoctorSchedule = {
         gelar_depan: string | null;
         gelar_belakang: string | null;
     };
+    kuota_tambahan?: AdditionalQuota[]
 };
+
+type AdditionalQuota = {
+    kuota_mjkn: number;
+    kuota_online_umum: number;
+    kuota_onsite: number;
+    tanggal_diterapkan: string | null;
+}
+type AdditionalQuotaPayload = {
+    id_kuota_tambahan: number;
+    kuota_mjkn: number;
+    kuota_online_umum: number;
+    kuota_onsite: number;
+    tanggal_diterapkan: string | null;
+}
 
 type DoctorScheduleWithPagination = {
     results: DoctorSchedule[]
@@ -45,4 +60,9 @@ type DoctorScheduleWithPagination = {
     }
 }
 
-export type { DoctorSchedulePayload, DoctorSchedule, DoctorScheduleWithPagination }
+export type {
+    DoctorSchedulePayload,
+    DoctorSchedule,
+    DoctorScheduleWithPagination,
+    AdditionalQuota,
+    AdditionalQuotaPayload }

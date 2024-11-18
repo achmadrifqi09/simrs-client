@@ -1,3 +1,4 @@
+import type {DoctorSchedule} from "@/types/doctor-schedule";
 import React from "react";
 import {Action} from "@/enums/action";
 import {
@@ -13,29 +14,28 @@ import {
 import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
-import {EmployeeDTO} from "@/types/employee";
 
-type DeleteEmployeeProps = {
+type DeleteDoctorScheduleProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeDTO | null,
-    action: Action,
+    selectedRecord: DoctorSchedule | null,
+    actionType: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DeleteEmployee = ({
-                                   onRefresh,
-                                   selectedRecord,
-                                   action,
-                                   showAlert,
-                                   setShowAlert
-                               }: DeleteEmployeeProps) => {
+const DeleteDoctorSchedule = ({
+                                  onRefresh,
+                                  selectedRecord,
+                                  actionType,
+                                  showAlert,
+                                  setShowAlert
+                              }: DeleteDoctorScheduleProps) => {
     const {deleteData, deleteError, deleteLoading} = useDelete(
 
     )
     const handleDelete = async () => {
-        if (action === Action.DELETE) {
-            const result = await deleteData(`/field-of-work-unit/${selectedRecord?.id}`)
+        if (actionType === Action.DELETE) {
+            const result = await deleteData(`/doctor-schedule/${selectedRecord?.id_jadwal_dokter}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -59,8 +59,8 @@ const DeleteEmployee = ({
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data bindang unit
-                            kerja {"'"}{selectedRecord?.nama_bidang}{"'"} ?
+                            Apakah anda yakin akan menghapus data Jadwal Dokter dengan
+                            {selectedRecord?.id_pegawai}?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -84,4 +84,4 @@ const DeleteEmployee = ({
     );
 }
 
-export default DeleteEmployee;
+export default DeleteDoctorSchedule;
