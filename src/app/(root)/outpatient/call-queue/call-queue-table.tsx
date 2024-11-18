@@ -78,35 +78,32 @@ const CallQueueTable = () => {
                                 </TableRow>
                             ))
                         ) : (
-
                             data?.map((polyclinicCounter: PolyclinicCounter, index: number) => {
                                 return (
-                                    <React.Fragment key={index}>
-                                        <TableRow>
-                                            <TableCell className="font-medium">{index + 1}</TableCell>
-                                            <TableCell
-                                                className="font-medium">{polyclinicCounter?.nama_unit_kerja}
-                                            </TableCell>
-                                            <TableCell
-                                                className="font-medium">{polyclinicCounter?.total_antrean}
-                                            </TableCell>
-                                            <TableCell
-                                                className="font-medium">{polyclinicCounter?.total_antrean_selesai}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        variant="default"
-                                                        size="sm" asChild>
-                                                        <Link
-                                                            href={`/outpatient/call-queue/${polyclinicCounter.id}?poly_name=${polyclinicCounter.nama_unit_kerja}`}>
-                                                            Detail
-                                                        </Link>
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    </React.Fragment>
+                                    <TableRow key={index}>
+                                        <TableCell className="font-medium">{index + 1}</TableCell>
+                                        <TableCell
+                                            className="font-medium">{polyclinicCounter?.nama_unit_kerja}
+                                        </TableCell>
+                                        <TableCell
+                                            className="font-medium">{polyclinicCounter?.total_antrean}
+                                        </TableCell>
+                                        <TableCell
+                                            className="font-medium">{polyclinicCounter?.total_antrean_selesai}
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    variant="default"
+                                                    size="sm" asChild>
+                                                    <Link
+                                                        href={`/outpatient/call-queue/${polyclinicCounter.id}?poly_name=${polyclinicCounter.nama_unit_kerja}`}>
+                                                        Detail
+                                                    </Link>
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
                                 )
                             })
                         )
@@ -120,7 +117,6 @@ const CallQueueTable = () => {
 
                 </TableBody>
             </Table>
-
         </>
     )
 }

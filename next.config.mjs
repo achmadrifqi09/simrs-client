@@ -6,7 +6,11 @@ const nextConfig = {
         return [
             {
                 source: '/ambil-antrean',
-                destination: '/queue/polyclinic',
+                destination: '/queue/unit',
+            },
+            {
+                source: '/display-antrian-admisi',
+                destination: '/queue/display',
             },
         ]
     },
