@@ -15,7 +15,7 @@ import {AdmissionQueue, AdmissionQueues} from "@/types/admission-queue";
 import {Skeleton} from "@/components/ui/skeleton";
 import CursorPagination from "@/components/ui/cursor-pagination";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {formatToStandardDate} from "@/utils/time-formatter";
+import {formatToStandardDate} from "@/utils/date-formatter";
 import DrawerTaskId from "@/app/(root)/queue/(user)/data/components/drawer-task-id";
 
 type DateFilter = {
@@ -239,7 +239,8 @@ const QueueDataTable = () => {
                                                     {queue?.jadwal_dokter.kode_instalasi_bpjs || '-'}
                                                 </TableCell>
                                                 <TableCell className="font-medium">
-                                                    <Button size="sm" disabled={Number(queue.jenis_penjamin) === 1} onClick={() => handleShowTaskId(queue)}>
+                                                    <Button size="sm" disabled={Number(queue.jenis_penjamin) === 1}
+                                                            onClick={() => handleShowTaskId(queue)}>
                                                         Task ID
                                                     </Button>
                                                 </TableCell>

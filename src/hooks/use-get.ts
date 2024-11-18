@@ -59,7 +59,7 @@ const useGet = <T>({ isGuest = false, url, headers, keyword, cursor, take}: GetP
         getData().catch((error) => {
             setError(error.message);
         });
-    }, [!isGuest && status])
+    }, [status, getData])
 
     return {data, loading, error, getData}
 }

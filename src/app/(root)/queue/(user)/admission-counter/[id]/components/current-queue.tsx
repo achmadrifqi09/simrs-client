@@ -7,7 +7,7 @@ import {io, Socket} from "socket.io-client";
 import {useSession} from "next-auth/react";
 import {toast} from "@/hooks/use-toast";
 import {AdmissionQueueWS} from "@/types/admission-queue";
-import {timeStringFormatter} from "@/utils/time-formatter";
+import {timeStringFormatter} from "@/utils/date-formatter";
 import {Separator} from "@/components/ui/separator";
 import {usePathname} from "next/navigation";
 
