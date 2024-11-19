@@ -16,6 +16,9 @@ import {isAxiosError} from "axios";
 import {compressToBase64} from "lz-string";
 import {Permission} from "@/types/permission";
 import {useMenuStore, usePermissionsStore} from "@/lib/zustand/store";
+import {Skeleton} from "@/components/ui/skeleton";
+import {Loader2} from "lucide-react";
+import Section from "@/components/ui/section";
 
 const PanelLayout = ({children}: { children: ReactNode }) => {
     const pathName = usePathname();
@@ -101,7 +104,21 @@ const PanelLayout = ({children}: { children: ReactNode }) => {
                     <div className="main-wrapper overflow-hidden">
                         <main className="p-4 md:p-6 flex-1 main shadow-inner">
                             <DynamicBreadcrumb/>
-                            {children}
+                            {
+                                status === 'loading' ? (
+                                    <>
+                                        <div className="h-[32px] mt-1 mb-4">
+                                            <Skeleton className="h-6 w-1/2 sm:w-1/3"/>
+                                        </div>
+                                        <Section className="flex items-center justify-center h-[40dvh]">
+                                            <div className="flex justify-center items-center gap-4">
+                                                <Loader2 className="text-red-600 animate-spin"/>
+                                                <p className="text-sm text-gray-500">Loading ...</p>
+                                            </div>
+                                        </Section>
+                                    </>
+                                ) : (children)
+                            }
                         </main>
                         <Footer/>
                     </div>

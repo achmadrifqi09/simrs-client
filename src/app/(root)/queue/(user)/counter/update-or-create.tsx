@@ -39,7 +39,8 @@ const UpdateOrCreateCounter = ({
                                    onRefresh,
                                    selectedRecord,
                                    setSelectedRecord,
-                                   actionType
+                                   actionType,
+                                   permission
                                }: UpdateOrCreateCounterProps) => {
     const counterForm = useForm<z.infer<typeof counterValidation>>({
         resolver: zodResolver(counterValidation),
@@ -148,136 +149,142 @@ const UpdateOrCreateCounter = ({
 
     return (
         <div>
-            <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
-                <DialogTrigger asChild>
-                    <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Loket
-                        </DialogTitle>
-                        <DialogDescription></DialogDescription>
-                    </DialogHeader>
-                    <div>
-                        <Form {...counterForm}>
-                            <form onSubmit={onSubmit}>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="nama_loket"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Nama Loket</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="text" {...field}/>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="jenis_loket"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Jenis Loket</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={field.onChange}
-                                                                defaultValue={field.value.toString() || "1"}>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Pilih jenis loket"/>
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectItem value="1">
-                                                                        Loket Admisi
-                                                                    </SelectItem>
-                                                                    <SelectItem value="2">
-                                                                        Loket Farmasi
-                                                                    </SelectItem>
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="status"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Status</FormLabel>
-                                                    <FormControl>
-                                                        <Select onValueChange={field.onChange}
-                                                                defaultValue={field.value.toString() || "1"}>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Pilih status / visibilitas"/>
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectItem value="1">
-                                                                        Aktif
-                                                                    </SelectItem>
-                                                                    <SelectItem value="0">
-                                                                        Non Aktif
-                                                                    </SelectItem>
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <div className="my-4">
-                                    <FormField
-                                        control={control}
-                                        name="keterangan"
-                                        render={({field}) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Keterangan</FormLabel>
-                                                    <FormControl>
-                                                        <Textarea onChange={field.onChange} value={field?.value || ""}/>
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )
-                                        }}/>
-                                </div>
-                                <FormError
-                                    errors={postError || patchError}
-                                />
-                                <div className="flex justify-end">
-                                    <Button type="submit" disabled={postLoading}>
-                                        {
-                                            (postLoading || patchLoading) ? (
-                                                <>
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                                    <span>Loading</span>
-                                                </>
-                                            ) : (
-                                                <span>Simpan</span>
-                                            )
-                                        }
-                                    </Button>
-                                </div>
-                            </form>
-                        </Form>
-                    </div>
-                </DialogContent>
-            </Dialog>
+            {
+                (permission?.can_create || permission?.can_update) && (
+                    <Dialog open={showDialog} onOpenChange={handleCloseDialog}>
+                        <DialogTrigger asChild>
+                            <Button className="mb-4" onClick={handleOpenDialog}>Tambah</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>
+                                    {submitMode === 'POST' ? 'Tambah ' : 'Update '} Data Loket
+                                </DialogTitle>
+                                <DialogDescription></DialogDescription>
+                            </DialogHeader>
+                            <div>
+                                <Form {...counterForm}>
+                                    <form onSubmit={onSubmit}>
+                                        <div className="my-4">
+                                            <FormField
+                                                control={control}
+                                                name="nama_loket"
+                                                render={({field}) => {
+                                                    return (
+                                                        <FormItem>
+                                                            <FormLabel>Nama Loket</FormLabel>
+                                                            <FormControl>
+                                                                <Input type="text" {...field}/>
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    )
+                                                }}/>
+                                        </div>
+                                        <div className="my-4">
+                                            <FormField
+                                                control={control}
+                                                name="jenis_loket"
+                                                render={({field}) => {
+                                                    return (
+                                                        <FormItem>
+                                                            <FormLabel>Jenis Loket</FormLabel>
+                                                            <FormControl>
+                                                                <Select onValueChange={field.onChange}
+                                                                        defaultValue={field.value.toString() || "1"}>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Pilih jenis loket"/>
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectGroup>
+                                                                            <SelectItem value="1">
+                                                                                Loket Admisi
+                                                                            </SelectItem>
+                                                                            <SelectItem value="2">
+                                                                                Loket Farmasi
+                                                                            </SelectItem>
+                                                                        </SelectGroup>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    )
+                                                }}/>
+                                        </div>
+                                        <div className="my-4">
+                                            <FormField
+                                                control={control}
+                                                name="status"
+                                                render={({field}) => {
+                                                    return (
+                                                        <FormItem>
+                                                            <FormLabel>Status</FormLabel>
+                                                            <FormControl>
+                                                                <Select onValueChange={field.onChange}
+                                                                        defaultValue={field.value.toString() || "1"}>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue
+                                                                            placeholder="Pilih status / visibilitas"/>
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectGroup>
+                                                                            <SelectItem value="1">
+                                                                                Aktif
+                                                                            </SelectItem>
+                                                                            <SelectItem value="0">
+                                                                                Non Aktif
+                                                                            </SelectItem>
+                                                                        </SelectGroup>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    )
+                                                }}/>
+                                        </div>
+                                        <div className="my-4">
+                                            <FormField
+                                                control={control}
+                                                name="keterangan"
+                                                render={({field}) => {
+                                                    return (
+                                                        <FormItem>
+                                                            <FormLabel>Keterangan</FormLabel>
+                                                            <FormControl>
+                                                                <Textarea onChange={field.onChange}
+                                                                          value={field?.value || ""}/>
+                                                            </FormControl>
+                                                            <FormMessage/>
+                                                        </FormItem>
+                                                    )
+                                                }}/>
+                                        </div>
+                                        <FormError
+                                            errors={postError || patchError}
+                                        />
+                                        <div className="flex justify-end">
+                                            <Button type="submit" disabled={postLoading}>
+                                                {
+                                                    (postLoading || patchLoading) ? (
+                                                        <>
+                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                            <span>Loading</span>
+                                                        </>
+                                                    ) : (
+                                                        <span>Simpan</span>
+                                                    )
+                                                }
+                                            </Button>
+                                        </div>
+                                    </form>
+                                </Form>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                )
+            }
         </div>
     )
 }
