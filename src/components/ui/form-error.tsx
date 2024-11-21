@@ -16,7 +16,7 @@ const FormError: React.FC<FormErrorProps> = ({errors}) => {
                 </div>
             ) : (
                 errors && (
-                    {errors}
+                    <p className="text-sm text-red-600">{errors}</p>
                 )
             )}
         </>
