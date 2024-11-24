@@ -1,8 +1,8 @@
 import moment from "moment-timezone";
-import {timeStringFormatter} from "@/utils/time-formatter";
+import {timeStringFormatter} from "@/utils/date-formatter";
 
 export const checkTimeMissed = (time: string): boolean => {
-    if (time.includes('T')){
+    if (time && time.includes('T')) {
         time = timeStringFormatter(time)
     }
     const currentTime = moment.tz('Asia/Jakarta');
@@ -17,7 +17,7 @@ export const checkTimeMissed = (time: string): boolean => {
 };
 
 export const checkDateIsNow = (date: string) => {
-    if(date.includes('T')) date = date.split('T')[0]
+    if (date.includes('T')) date = date.split('T')[0]
     const targetDate = moment(date).startOf('day');
     const today = moment().startOf('day');
     return today.isSame(targetDate, 'day');

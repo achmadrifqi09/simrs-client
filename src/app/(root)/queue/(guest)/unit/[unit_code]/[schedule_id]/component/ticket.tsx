@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef } from "react";
 import { RegisterResponse } from "@/types/queue-register";
-import {formatToStandardDate, timeStringFormatter} from "@/utils/time-formatter";
+import {formatToStandardDate, timeStringFormatter} from "@/utils/date-formatter";
 
 interface QueueTicketProps {
     data: RegisterResponse;

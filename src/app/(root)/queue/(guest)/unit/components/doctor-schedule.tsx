@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle,} from "@/components/ui/drawer"
 import useGet from "@/hooks/use-get";
 import {DoctorPracticeSchedule, PracticeHours, SchedulesPerDayOrPerDate} from "@/types/doctor-schedule";
@@ -6,9 +6,10 @@ import {Button} from "@/components/ui/button";
 import {X} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {formatISODayToNormalDay} from "@/lib/formatter/date-formatter";
-import {timeStringFormatter} from "@/utils/time-formatter";
+import {timeStringFormatter} from "@/utils/date-formatter";
 import {checkDateIsNow} from "@/utils/time-checker";
 import {Badge} from "@/components/ui/badge";
+import {toast} from "@/hooks/use-toast";
 
 interface ScheduleDrawerProps {
     unitCode: string;
@@ -34,6 +35,14 @@ const ScheduleDrawer = ({unitCode, doctorId, openSchedule, setOpenSchedule}: Sch
             return checkDateIsNow(day.toString())
         }
     }
+
+    useEffect(() => {
+        if (error) {
+            toast({
+                description: error.toString()
+            })
+        }
+    }, [])
 
     return (
         <Drawer open={openSchedule} onOpenChange={setOpenSchedule}>
@@ -73,9 +82,9 @@ const ScheduleDrawer = ({unitCode, doctorId, openSchedule, setOpenSchedule}: Sch
                         className="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-6 gap-4 px-4">
                         {
                             loading ? (
-                                 Array.from({length: 4}, (_, index: number) => (
+                                Array.from({length: 4}, (_, index: number) => (
                                     <Skeleton className="w-full h-28" key={index}/>
-                                 ))
+                                ))
                             ) : (
                                 data?.jadwal?.map((schedule: SchedulesPerDayOrPerDate, i: number) => {
                                     return (

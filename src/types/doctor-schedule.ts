@@ -60,9 +60,36 @@ type DoctorScheduleWithPagination = {
     }
 }
 
+type PracticeHours = {
+    id_jadwal_dokter: number;
+    jam_buka_praktek: Date;
+    jam_tutup_praktek: Date;
+}
+
+type SchedulesPerDayOrPerDate = {
+    jenis_jadwal: number;
+    hari_praktek: number | null;
+    tgl_praktek: Date;
+    tanggal_libur: Date | null;
+    jam_praktek: PracticeHours[];
+}
+
+interface DoctorPracticeSchedule {
+    id_dokter: number | null;
+    nama_dokter: string;
+    gelar_depan: string;
+    gelar_belakang: string;
+    jadwal: SchedulesPerDayOrPerDate[];
+}
+
+
 export type {
     DoctorSchedulePayload,
     DoctorSchedule,
     DoctorScheduleWithPagination,
     AdditionalQuota,
-    AdditionalQuotaPayload }
+    AdditionalQuotaPayload,
+    SchedulesPerDayOrPerDate,
+    DoctorPracticeSchedule,
+    PracticeHours
+}

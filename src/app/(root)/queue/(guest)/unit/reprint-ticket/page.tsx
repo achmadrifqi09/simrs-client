@@ -40,8 +40,11 @@ const ReprintTicket = () => {
     const [queueResult, setQueueResult] = useState<RegisterResponse | null>(null)
     const contentRef = useRef<HTMLDivElement>(null);
     const {handleSubmit, control} = rePrintForm
+    const [alertConfirmation, setAlertConfirmation] = useState<boolean>(false)
+    const [isConfirmed, setIsConfirmed] = useState<boolean>(false)
 
     const onSubmit = handleSubmit(async (values) => {
+        setIsConfirmed(false)
         const response: AxiosResponse = await axios.get(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/queue/${values.identifier_code}?identifier_type=${values.identifier_type}`,
             {
@@ -52,6 +55,7 @@ const ReprintTicket = () => {
             })
         if (response?.status === 200 && response.data?.data) {
             rePrintForm.clearErrors()
+            setAlertConfirmation(true)
             setQueueResult(response.data?.data)
         } else {
             setError('Data pasien tidak ditemukan')
@@ -63,6 +67,11 @@ const ReprintTicket = () => {
     const handleActionError = () => {
         setError(null)
         setShow(false)
+    }
+
+    const handleConfirmationForPrinting = () => {
+        setIsConfirmed(true)
+        setAlertConfirmation(false)
     }
 
     const handleBackButton = () => {
@@ -77,10 +86,10 @@ const ReprintTicket = () => {
     });
 
     useEffect(() => {
-        if (queueResult && contentRef.current) {
+        if (queueResult && contentRef.current && isConfirmed) {
             reactToPrintFn();
         }
-    }, [queueResult]);
+    }, [queueResult, isConfirmed]);
 
     return (
         <div className="h-full flex flex-col overflow-hidden rounded-xl">
@@ -168,8 +177,29 @@ const ReprintTicket = () => {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            <AlertDialog open={alertConfirmation} onOpenChange={setAlertConfirmation}>
+                <AlertDialogTrigger asChild></AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Konfirmasi Antrean</AlertDialogTitle>
+                        <AlertDialogDescription className="text-base">
+                            Antrean terdaftar atas nama {queueResult?.nama_pasien ?? '-'}, lanjutkan cetak tiket ?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <Button variant="outline" onClick={() => {
+                            setIsConfirmed(false)
+                            setQueueResult(null)
+                            setAlertConfirmation(false)
+                        }}>
+                            Batal
+                        </Button>
+                        <AlertDialogAction onClick={handleConfirmationForPrinting}>Lanjutkan</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             {
-                queueResult && (
+                (queueResult && isConfirmed) && (
                     <div className="fixed left-[100vw]">
                         <QueueTicket data={queueResult} ref={contentRef}/>
                     </div>
