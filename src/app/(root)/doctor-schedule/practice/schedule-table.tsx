@@ -27,7 +27,6 @@ interface ScheduleProps {
 const SchedulePerDate = ({
                              date,
                              permission,
-                             refreshTrigger,
                              onRefresh,
                              setAction
                          }: ScheduleProps) => {
