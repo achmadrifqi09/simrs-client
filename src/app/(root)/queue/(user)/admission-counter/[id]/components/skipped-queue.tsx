@@ -7,38 +7,53 @@ import {useSession} from "next-auth/react";
 import {toast} from "@/hooks/use-toast";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import {Button} from "@/components/ui/button";
+import Cookies from "js-cookie";
 
 interface SkippedQueueProps {
     counterId: number;
     queueCode: string | null;
     setCurrentQueue: React.Dispatch<SetStateAction<AdmissionQueueWS | null>>;
+    skippedQueues: AdmissionQueueWS[] | null;
+    setSkippedQueues: React.Dispatch<SetStateAction<AdmissionQueueWS[] | null>>;
 }
 
-const SkippedQueue = ({counterId, queueCode, setCurrentQueue}: SkippedQueueProps) => {
+const SkippedQueue = ({counterId, queueCode, setCurrentQueue, skippedQueues, setSkippedQueues}: SkippedQueueProps) => {
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [skippedQueues, setSkippedQueues] = useState<AdmissionQueueWS[] | null>(null);
     const {data: session, status} = useSession();
 
     const handleRecallQueue = (queue: AdmissionQueueWS) => {
         setCurrentQueue(queue)
-        socket?.emit('admission-queue-calling', {
+        socket?.emit('recall-skipped', {
             id_antrian: queue?.id_antrian,
+            user_id: session?.user.id,
             id_ms_loket_antrian: counterId,
-            user_id: session?.user.id
+            kode_antrian: queue?.kode_antrian
         })
+        if (Cookies.get('ADMISSION_QUEUE_PENDING')) skipQueueOnPending()
     }
 
     const handleQueueCancellationInSkip = (queue: AdmissionQueueWS) => {
-        socket?.emit('admission-queue-skipped-cancelled', {
+        socket?.emit('cancel', {
             id_antrian: queue?.id_antrian,
-            id_ms_loket_antrian: counterId,
             user_id: session?.user.id,
-            kode_antrian: queue.kode_antrian,
+            id_ms_loket_antrian: counterId,
+            kode_antrian: queue?.kode_antrian
         })
     }
 
+    const skipQueueOnPending = () => {
+        socket?.emit('skip', {
+            id_antrian: Number(Cookies.get('ADMISSION_QUEUE_PENDING')),
+            id_user: session?.user.id,
+            id_ms_loket_antrian: counterId,
+            kode_antrian: queueCode
+        })
+        if (Cookies.get('ADMISSION_QUEUE_PENDING')) Cookies.remove('ADMISSION_QUEUE_PENDING')
+
+    }
+
     useEffect(() => {
-        const admissionQueueSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/admission-queue`, {
+        const admissionQueueSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/admission`, {
             extraHeaders: {
                 Authorization: `Bearer ${session?.accessToken}`,
             }
@@ -51,6 +66,10 @@ const SkippedQueue = ({counterId, queueCode, setCurrentQueue}: SkippedQueueProps
         };
     }, []);
 
+    const checkIsAnotherCounter = (currentCounterId: number, callStatus: number) => {
+        return (currentCounterId != counterId && callStatus == 3);
+    }
+
     useEffect(() => {
         if (!socket || status !== 'authenticated') return;
 
@@ -60,22 +79,23 @@ const SkippedQueue = ({counterId, queueCode, setCurrentQueue}: SkippedQueueProps
             });
         });
 
-        socket.on(`admission-queue-skipped-${counterId}`, (result) => {
-            setSkippedQueues(result.data)
+        socket.on(`skips-${queueCode}`, (result) => {
+            setSkippedQueues(result?.data || [])
         });
 
         if (skippedQueues == null) {
-            socket.emit('admission-queue-skipped-init', {
-                queue_code: queueCode,
-                counter_id: counterId
+            socket.emit('skipped-init', {
+                kode_antrian: queueCode,
+                id_ms_loket_antrian: counterId
             });
         }
 
         return () => {
             socket.off(`error-${socket.id}`);
-            socket.off(`admission-queue-skipped-${counterId}`);
+            socket.off(`skips-${queueCode}`);
         };
     }, [socket, status, counterId, queueCode, skippedQueues]);
+
     return (
         <Section className="2xl:col-span-3">
             <Heading headingLevel="h4" variant="section-title">
@@ -106,15 +126,17 @@ const SkippedQueue = ({counterId, queueCode, setCurrentQueue}: SkippedQueueProps
                                                     <Button
                                                         size="sm"
                                                         onClick={() => handleRecallQueue(queue)}
+                                                        disabled={checkIsAnotherCounter(queue?.id_ms_loket_antrian, queue.status_panggil)}
                                                     >
-                                                        Panggil
+                                                        {checkIsAnotherCounter(queue?.id_ms_loket_antrian, queue.status_panggil) ? 'Diloket lain' : 'Panggil'}
                                                     </Button>
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
                                                         onClick={() => handleQueueCancellationInSkip(queue)}
+                                                        disabled={checkIsAnotherCounter(queue?.id_ms_loket_antrian, queue.status_panggil)}
                                                     >
-                                                        Batal
+                                                        {checkIsAnotherCounter(queue?.id_ms_loket_antrian, queue.status_panggil) ? 'Diloket lain' : 'Batal'}
                                                     </Button>
                                                 </div>
                                             </TableCell>

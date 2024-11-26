@@ -4,7 +4,7 @@ import {Stethoscope} from 'lucide-react'
 import {Progress} from "@/components/ui/progress"
 import {Button} from "@/components/ui/button";
 import {Doctor, QueueSchedule} from "@/types/doctor-schedule";
-import {timeStringFormatter} from "@/utils/time-formatter";
+import {timeStringFormatter} from "@/utils/date-formatter";
 import useGet from "@/hooks/use-get";
 import {Skeleton} from "@/components/ui/skeleton";
 import {toast} from "@/hooks/use-toast";

@@ -1,16 +1,15 @@
 import Heading from "@/components/ui/heading";
 import {Button} from "@/components/ui/button";
 import Section from "@/components/ui/section";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip"
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
 import React, {SetStateAction, useEffect, useState} from "react";
 import {io, Socket} from "socket.io-client";
 import {useSession} from "next-auth/react";
 import {toast} from "@/hooks/use-toast";
 import {AdmissionQueueWS} from "@/types/admission-queue";
-import {timeStringFormatter} from "@/utils/time-formatter";
+import {timeStringFormatter} from "@/utils/date-formatter";
 import {Separator} from "@/components/ui/separator";
-import {usePathname} from "next/navigation";
-
+import Cookies from "js-cookie";
 
 interface CurrentQueueProps {
     counterId: number;
@@ -22,10 +21,11 @@ interface CurrentQueueProps {
 const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: CurrentQueueProps) => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const {data: session, status} = useSession();
-    const path = usePathname()
+    const [remainingQueue, setRemainingQueue] = useState<number>(0);
+
     const handleCallQueue = () => {
         if (currentQueue) {
-            socket?.emit('admission-queue-calling', {
+            socket?.emit('calling', {
                 id_antrian: currentQueue?.id_antrian,
                 id_ms_loket_antrian: counterId,
                 user_id: session?.user.id
@@ -37,27 +37,22 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
         }
     }
 
-    const handleChangeQueueCode = (code: string) => {
-        if (window) window.location.replace(`${path}?queue_code=${code}`)
-    }
-
     const handleQueueSkip = () => {
-        socket?.emit('admission-queue-skip', {
+        socket?.emit('skip-and-call', {
             id_antrian: currentQueue?.id_antrian,
             user_id: session?.user.id,
-            status_panggil: 2,
             id_ms_loket_antrian: counterId,
-            kode_antrian: currentQueue?.kode_antrian,
+            kode_antrian: currentQueue?.kode_antrian
         })
     }
 
-    const handleQueueCancellationInSkip = () => {
+    const handleCancellation = () => {
         if (currentQueue) {
-            socket?.emit('admission-queue-cancelled', {
+            socket?.emit('cancel-and-call', {
                 id_antrian: currentQueue?.id_antrian,
-                id_ms_loket_antrian: counterId,
                 user_id: session?.user.id,
-                kode_antrian: currentQueue?.kode_antrian,
+                id_ms_loket_antrian: counterId,
+                kode_antrian: currentQueue?.kode_antrian
             })
         } else {
             toast({
@@ -68,7 +63,7 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
 
     const handleQueueAttendance = () => {
         if (currentQueue) {
-            socket?.emit('admission-queue-attendance', {
+            socket?.emit('admission-attendance', {
                 id_antrian: currentQueue?.id_antrian,
                 id_ms_loket_antrian: counterId,
                 user_id: session?.user.id,
@@ -81,8 +76,18 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
         }
     }
 
+    const handleNextQueueCall = () => {
+        if(socket) {
+            socket.emit('next-call', {
+                id_ms_loket_antrian: counterId,
+                kode_antrian: queueCode,
+                id_user: session?.user.id,
+            })
+        }
+    }
+
     useEffect(() => {
-        const admissionQueueSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/admission-queue`, {
+        const admissionQueueSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/admission`, {
             extraHeaders: {
                 Authorization: `Bearer ${session?.accessToken}`,
             }
@@ -105,60 +110,35 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
                 });
             });
 
-            socket.on(`admission-queue-${counterId}`, (result) => {
+            socket.on(`current-${queueCode}-${socket.id}`, (result) => {
                 setCurrentQueue(result?.data)
+                if(result.data?.id_antrian) Cookies.set('ADMISSION_QUEUE_PENDING', result.data?.id_antrian);
             });
-        });
 
-        socket.emit('admission-queue', {
-            queue_code: queueCode,
-            counter_id: counterId
+            socket.on(`pending-queue-${socket.id}`, (result) => {
+                setCurrentQueue(result?.data)
+            })
+
+            socket.on(`remaining-${queueCode}`, (result) => {
+                setRemainingQueue(Number(result) || 0)
+            })
         });
 
         return () => {
             socket.off(`error-${socket.id}`);
             socket.off('connect');
+            socket.off(`pending-queue-${socket.id}`);
+            socket.off(`current-${queueCode}-${socket.id}`);
+            socket.off(`remaining-${socket.id}`);
         };
     }, [status, socket]);
 
+    useEffect(() => {
+        if (socket && queueCode) socket.emit('remaining-queue-code', queueCode)
+    }, [socket, queueCode])
+
     return (
         <div className="2xl:col-span-2 h-max space-y-6">
-            <Section>
-                <Heading headingLevel="h4" variant="section-title">
-                    Pindah Kode Antrean
-                </Heading>
-                <p className="mb-2">Kode antrean saat ini : {queueCode}</p>
-                <div className="grid grid-cols-4 gap-4">
-                    <Button
-                        variant={queueCode?.toLowerCase() == 'a' ? 'default' : 'outline'}
-                        disabled={queueCode?.toLowerCase() == 'a'}
-                        onClick={() => handleChangeQueueCode('A')}
-                    >
-                        A
-                    </Button>
-                    <Button
-                        variant={queueCode?.toLowerCase() == 'b' ? 'default' : 'outline'}
-                        disabled={queueCode?.toLowerCase() == 'b'}
-                        onClick={() => handleChangeQueueCode('B')}
-                    >
-                        B
-                    </Button>
-                    <Button
-                        variant={queueCode?.toLowerCase() == 'c' ? 'default' : 'outline'}
-                        disabled={queueCode?.toLowerCase() == 'c'}
-                        onClick={() => handleChangeQueueCode('C')}
-                    >
-                        C
-                    </Button>
-                    <Button
-                        variant={queueCode?.toLowerCase() == 'd' ? 'default' : 'outline'}
-                        disabled={queueCode?.toLowerCase() == 'd'}
-                        onClick={() => handleChangeQueueCode('D')}
-                    >
-                        D
-                    </Button>
-                </div>
-            </Section>
             <Section>
                 <Heading headingLevel="h4" variant="section-title">
                     Antrean Dipanggil
@@ -214,7 +194,7 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <Button variant="outline"
-                                                    onClick={handleQueueCancellationInSkip}>Batalkan</Button>
+                                                    onClick={handleCancellation}>Batalkan</Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
                                             <p className="text-xs">
@@ -259,11 +239,21 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
                             </div>
                         </>
                     ) : (
-                        <div className="px-4 py-6 bg-gray-50 rounded-md border border-gray-100">
-                            <p className="text-gray-800 text-center">
-                                Tidak ada antrean dengan kode {queueCode} yang belum <br/>di panggil.{" "}
-                            </p>
-                        </div>
+                        <>
+                            <div className="px-4 py-6 bg-gray-50 rounded-md border border-gray-100">
+                                <p className="text-gray-800 text-center">
+                                    <b>{remainingQueue} pasien </b>
+                                    dengan kode <b>{queueCode}</b> belum di panggil
+                                </p>
+                            </div>
+                            <Button
+                                onClick={handleNextQueueCall}
+                                className="mt-4"
+                                disabled={remainingQueue === 0}
+                            >
+                                Mulai Panggil
+                            </Button>
+                        </>
                     )
                 }
             </Section>

@@ -108,7 +108,7 @@ const SchedulePerDate = ({
     }, [error])
 
     useEffect(() => {
-        if (status === 'authenticated' && refreshTrigger !== 0) {
+        if (status === 'authenticated') {
             if (date) {
                 setSelectedDate(dateFormatter(date))
             }
@@ -121,7 +121,7 @@ const SchedulePerDate = ({
             });
         }
 
-    }, [refreshTrigger, getData, status, date]);
+    }, [status, date]);
     return (
         <>
             <DoctorVacationDialog

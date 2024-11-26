@@ -1,11 +1,11 @@
 "use client"
-import {useParams, useRouter, useSearchParams} from "next/navigation";
+import {useParams} from "next/navigation";
 import Section from "@/components/ui/section";
 import Heading from "@/components/ui/heading";
 import React, {useEffect, useState} from "react";
 import {io, Socket} from "socket.io-client";
 import {useSession} from "next-auth/react";
-import {Expand, Minimize, TicketX} from "lucide-react";
+import {CircleAlert, Expand, Minimize, TicketX} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {CounterWS} from "@/types/counter";
@@ -16,6 +16,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import CurrentQueue from "@/app/(root)/queue/(user)/admission-counter/[id]/components/current-queue";
 import {AdmissionQueueWS} from "@/types/admission-queue";
 import SkippedQueueSkeleton from "@/app/(root)/queue/(user)/admission-counter/[id]/components/skipped-queue-skeleton";
+import SelectQueueCode from "@/app/(root)/queue/(user)/admission-counter/[id]/components/select-queue-code";
 
 type CallAdmissionQueueParam = {
     id: string;
@@ -23,8 +24,6 @@ type CallAdmissionQueueParam = {
 
 const CallAdmissionQueue = () => {
     const param = useParams<CallAdmissionQueueParam>()
-    const searchParam = useSearchParams()
-    const router = useRouter()
     const {data: session, status} = useSession();
     const [error, setError] = useState<string>()
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -32,6 +31,8 @@ const CallAdmissionQueue = () => {
     const [isFullScreen, setIsFullscreen] = useState<boolean>(false)
     const [counter, setCounter] = useState<CounterWS | null>(null);
     const [currentQueue, setCurrentQueue] = useState<AdmissionQueueWS | null>(null);
+    const [skippedQueues, setSkippedQueues] = useState<AdmissionQueueWS[] | null>(null);
+    const [queueCode, setQueueCode] = useState<string>("");
     const COUNTER_TYPE = 1;
 
     const handleFullscreen = () => {
@@ -54,19 +55,16 @@ const CallAdmissionQueue = () => {
         }
     }
 
+    const onResetSkippedQueue = ()=>{
+        setSkippedQueues(null)
+    }
+
     useEffect(() => {
-        if (!searchParam.get('queue_code')) {
-            toast({
-                description: 'Tautan halaman tidak valid'
-            })
-            router.push('/queue/admission-counter')
-        }
         const counterSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/counter`, {
             extraHeaders: {
                 Authorization: `Bearer ${session?.accessToken}`,
             }
         });
-
         setSocket(counterSocket)
         if (status === 'authenticated') {
             counterSocket.emit('connect-counter', {
@@ -85,7 +83,6 @@ const CallAdmissionQueue = () => {
 
     useEffect(() => {
         if (!socket || status !== 'authenticated') return;
-
         socket.on('connect', () => {
             socket.on(`error-${socket.id}`, (result) => {
                 setError(result?.errors || result?.error)
@@ -107,7 +104,7 @@ const CallAdmissionQueue = () => {
 
     return (
         <div className={isFullScreen ? 'absolute inset-0 bg-white z-50 p-6' : 'static'}>
-            <div className="flex justify-between flex-wrap items-center mb-4">
+            <div className="flex justify-between flex-wrap items-center mb-4 gap-4">
                 {
                     loading ? (
                         <>
@@ -119,24 +116,31 @@ const CallAdmissionQueue = () => {
                             <Heading headingLevel="h3" variant="page-title" className="mb-0">
                                 Panggil Antrean Admisi {counter?.nama_loket}
                             </Heading>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleFullscreen}
-                            >
+                            <div className="space-x-4">
+                                <SelectQueueCode
+                                    onResetSkippedQueue={onResetSkippedQueue}
+                                    setQueueCode={setQueueCode}
+                                />
 
-                                {isFullScreen ? (
-                                    <>
-                                        <Minimize className="w-4 h-4 mr-2"/>
-                                        <span>Layar kecil</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Expand className="w-4 h-4 mr-2"/>
-                                        <span>Layar penuh</span>
-                                    </>
-                                )}
-                            </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleFullscreen}
+                                >
+
+                                    {isFullScreen ? (
+                                        <>
+                                            <Minimize className="w-4 h-4 mr-2"/>
+                                            <span>Layar kecil</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Expand className="w-4 h-4 mr-2"/>
+                                            <span>Layar penuh</span>
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
                         </>
                     )
                 }
@@ -162,29 +166,45 @@ const CallAdmissionQueue = () => {
                         </div>
                     </Section>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-5 gap-6">
-                        {
-                            (!counter && loading) ? (
-                                <>
-                                    <CurrentQueueSkeleton/>
-                                    <SkippedQueueSkeleton/>
-                                </>
-                            ) : (
-                                <>
-                                    <CurrentQueue
-                                        counterId={Number(param.id)}
-                                        queueCode={searchParam.get('queue_code')}
-                                        currentQueue={currentQueue}
-                                        setCurrentQueue={setCurrentQueue}
-                                    />
-                                    <SkippedQueue
-                                        counterId={Number(param.id)}
-                                        queueCode={searchParam.get('queue_code')}
-                                        setCurrentQueue={setCurrentQueue}
-                                    />
-                                </>
-                            )
-                        }
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-5 gap-6">
+                            {
+                                (!counter && loading) ? (
+                                    <>
+                                        <CurrentQueueSkeleton/>
+                                        <SkippedQueueSkeleton/>
+                                    </>
+                                ) : (
+                                    <>
+                                        {queueCode && (
+                                            <>
+                                                <CurrentQueue
+                                                    counterId={Number(param.id)}
+                                                    queueCode={queueCode}
+                                                    currentQueue={currentQueue}
+                                                    setCurrentQueue={setCurrentQueue}
+                                                />
+                                                <SkippedQueue
+                                                    counterId={Number(param.id)}
+                                                    queueCode={queueCode}
+                                                    setCurrentQueue={setCurrentQueue}
+                                                    skippedQueues={skippedQueues}
+                                                    setSkippedQueues={setSkippedQueues}
+                                                />
+                                            </>
+                                        )}
+                                            {!queueCode && (
+                                                <Section className="col-span-2 flex gap-2 py-6">
+                                                    <CircleAlert className="text-red-600"/>
+                                                    <p>
+                                                        Pilih kode antrean di kanan atas
+                                                    </p>
+                                                </Section>
+                                            )}
+                                    </>
+                                )
+                            }
+                        </div>
                     </div>
                 )
             }

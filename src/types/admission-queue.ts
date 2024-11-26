@@ -23,13 +23,14 @@ type AdmissionQueue = {
 
 type AdmissionQueueWS = {
     id_antrian: number;
-    status_panggil: number;
+    id_ms_loket_antrian: number;
+    jadwal_dokter: DoctorSchedule
     jenis_pasien: number;
     jenis_penjamin: number;
     kode_antrian: string;
-    no_antrian: number;
     nama_pasien: string;
-    jadwal_dokter: DoctorSchedule
+    no_antrian: number;
+    status_panggil: number;
 }
 
 type DoctorSchedule = {

@@ -4,7 +4,6 @@ import {Button} from "@/components/ui/button";
 import {XIcon} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {AdmissionQueue} from "@/types/admission-queue";
-import {Separator} from "@/components/ui/separator";
 
 interface DrawerTaskIdProps {
     showTaskId: boolean;

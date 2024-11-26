@@ -110,9 +110,9 @@ const AdmissionDisplay = () => {
     }
 
     useEffect(() => {
-        const counterSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/admission-queue`);
+        const counterSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/admission`);
         setSocket(counterSocket)
-        counterSocket.emit('admission-queue-display-init');
+        counterSocket.emit('display-init');
         return () => {
             if (counterSocket) {
                 counterSocket.disconnect();
@@ -137,7 +137,7 @@ const AdmissionDisplay = () => {
                     setError(result?.errors || result?.error)
                     setLoading(false)
                 });
-                socket.on('admission-queue-display', (result) => {
+                socket.on('admission-display', (result) => {
                     if (result.data?.length !== 0) {
                         setCounters(result?.data)
                     }
@@ -145,7 +145,7 @@ const AdmissionDisplay = () => {
                 });
             });
 
-            socket.on('admission-queue-calling-to-display', (result) => {
+            socket.on('calling-to-display', (result) => {
                 refreshCounterValue(result?.data || result)
             });
 

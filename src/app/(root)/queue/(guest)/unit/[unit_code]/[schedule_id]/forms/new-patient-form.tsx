@@ -7,7 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import React from "react";
 import {QueueInputPayload, RegisterResponse} from "@/types/queue-register";
-import {formatToStandardDate} from "@/utils/time-formatter";
+import {formatToStandardDate} from "@/utils/date-formatter";
 import {capitalizeFirstLetter} from "@/utils/word-formatter";
 import {usePost} from "@/hooks/use-post";
 import {Loader2} from "lucide-react";

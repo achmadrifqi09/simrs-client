@@ -10,7 +10,7 @@ import {Input} from "@/components/ui/input";
 import {usePost} from "@/hooks/use-post";
 import {QueueInputPayload, RegisterResponse} from "@/types/queue-register";
 import {capitalizeFirstLetter} from "@/utils/word-formatter";
-import {formatToStandardDate} from "@/utils/time-formatter";
+import {formatToStandardDate} from "@/utils/date-formatter";
 import {toast} from "@/hooks/use-toast";
 import {Loader2} from "lucide-react";
 import Link from "next/link";

@@ -5,7 +5,7 @@ import {useParams, useRouter, useSearchParams} from "next/navigation";
 import useGet from "@/hooks/use-get";
 import {Skeleton} from "@/components/ui/skeleton";
 import {DoctorSchedule} from "@/types/doctor-schedule";
-import {timeStringFormatter} from "@/utils/time-formatter";
+import {timeStringFormatter} from "@/utils/date-formatter";
 import OldPatientForm from "@/app/(root)/queue/(guest)/unit/[unit_code]/[schedule_id]/forms/old-patient-form";
 import NewPatientForm from "@/app/(root)/queue/(guest)/unit/[unit_code]/[schedule_id]/forms/new-patient-form";
 import {RegisterResponse} from "@/types/queue-register";
