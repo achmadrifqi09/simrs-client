@@ -77,7 +77,7 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
     }
 
     const handleNextQueueCall = () => {
-        if(socket) {
+        if (socket) {
             socket.emit('next-call', {
                 id_ms_loket_antrian: counterId,
                 kode_antrian: queueCode,
@@ -104,25 +104,30 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
         if (!socket || status !== 'authenticated') return;
 
         socket.on('connect', () => {
+            console.log('testing')
             socket.on(`error-${socket.id}`, (result) => {
                 toast({
                     description: result?.error,
                 });
             });
 
-            socket.on(`current-${queueCode}-${socket.id}`, (result) => {
-                setCurrentQueue(result?.data)
-                if(result.data?.id_antrian) Cookies.set('ADMISSION_QUEUE_PENDING', result.data?.id_antrian);
-            });
 
             socket.on(`pending-queue-${socket.id}`, (result) => {
                 setCurrentQueue(result?.data)
             })
 
+            socket.on(`current-queue-${socket.id}`, (result) => {
+                setCurrentQueue(result?.data)
+                if (result.data?.id_antrian) Cookies.set('ADMISSION_QUEUE_PENDING', result.data?.id_antrian);
+            });
+        });
+
+
+        if (queueCode) {
             socket.on(`remaining-${queueCode}`, (result) => {
                 setRemainingQueue(Number(result) || 0)
             })
-        });
+        }
 
         return () => {
             socket.off(`error-${socket.id}`);
@@ -131,10 +136,12 @@ const CurrentQueue = ({counterId, queueCode, currentQueue, setCurrentQueue}: Cur
             socket.off(`current-${queueCode}-${socket.id}`);
             socket.off(`remaining-${socket.id}`);
         };
-    }, [status, socket]);
+    }, [status, socket, queueCode]);
 
     useEffect(() => {
-        if (socket && queueCode) socket.emit('remaining-queue-code', queueCode)
+        if (socket && queueCode) {
+            socket.emit('remaining-queue-code', queueCode)
+        }
     }, [socket, queueCode])
 
     return (

@@ -1,4 +1,6 @@
 import z from "zod";
+import moment from 'moment-timezone';
+
 const phoneNumberRegex = /^(\+62|62|0)8[1-9][0-9]{6,11}$/;
 const dateValidation = z
     .string()
@@ -9,57 +11,129 @@ const dateValidation = z
         }
         return new Date(val);
     });
-const patientValidation = z.object({
-    kode_rm:z.string()
-        .max(20, {message: 'Kode RM maksimal 20 karakter'}),
-    nama_pasien: z.string()
-        .max(100, {message: 'Nama Pasien maksimal 100 karakter'}),
-    tempat_lahir: z.string()
-        .max(100, {message: 'Tempat Lahir maksimal 100 karakter'}),
-    tgl_lahir: dateValidation,
-    jenis_kelamin: z.number()
-        .int()
-        .min(1)
-        .max(2, {message: 'Jenis Kelamin harus 1 ( laki-laki ) atau 2 ( perempuan )'}),
-    id_warga_negara: z.number().int(),
-    identitas_pasien: z.number().int(),
-    no_identitas: z
-        .string()
-        .max(100, 'No Identitas tidak boleh melebihi 100 karakter'),
-    no_bpjs: z.string().max(50, 'No BPJS tidak boleh melebihi 50 karakter'),
-    no_hp: z
-        .string()
-        .regex(phoneNumberRegex, 'No HP harus berupa nomor telepon yang valid')
-        .max(20),
-    id_ms_negara_tinggal: z.number().int(),
-    id_ms_provinsi_tinggal: z.string(),
-    id_ms_kota_tinggal: z.string(),
-    id_ms_kecamatan_tinggal: z.string(),
-    id_ms_desa_tinggal: z.string(),
-    alamat_tinggal: z.string(),
-    rt_tinggal: z.string().max(5),
-    rw_tinggal: z.string().max(5),
-    kode_pos_tinggal: z.string().max(10).optional(),
-    alamatgab_tinggal: z.string(),
-    suku: z.string().max(50).optional(),
-    nama_ibu_kandung: z.string().max(100).optional(),
-    id_ms_status_kawin: z.number().int().default(0),
-    id_ms_golongan_darah: z.number().int().default(0),
-    id_ms_agama: z.number().int(),
-    live: z.number().int().default(1),
-    id_ms_negara_asal: z.number().int(),
-    id_ms_propinsi_asal: z.string(),
-    id_ms_kota_asal: z.string(),
-    id_ms_kecamatan_asal: z.string(),
-    id_ms_desa_asal: z.string(),
-    alamat_asal: z.string(),
-    alamatgab_asal: z.string(),
-    rt_asal: z.string().max(5),
-    rw_asal: z.string().max(5),
-    nama_pekerjaan: z.string().max(100),
-    kode_pos_asal: z.string().max(100),
-    id_ms_pendidikan: z.number().max(100),
-})
+const patientValidation = z
+    .object({
+        id_pasien: z.number().int().optional(),
+        nama_pasien: z
+            .string({message: 'Nama pasien harus diisi'})
+            .max(100, 'Nama Pasien tidak boleh melebihi 100 karakter'),
+        tempat_lahir: z
+            .string()
+            .max(100, 'Tempat Lahir tidak boleh melebihi 100 karakter'),
+        tgl_lahir: dateValidation,
+        jenis_kelamin: z
+            .number()
+            .int()
+            .min(1)
+            .max(2, 'Jenis Kelamin harus 1 (Laki-laki) atau 2 (Perempuan)'),
+        id_warga_negara: z
+            .number()
+            .int()
+            .refine((value) => value > 0, {message: 'ID Warga Negara harus valid'}),
+        identitas_pasien: z.number().int(),
+        no_identitas: z
+            .string()
+            .max(100, 'No Identitas tidak boleh melebihi 100 karakter'),
+        no_bpjs: z
+            .string()
+            .max(50, 'No BPJS tidak boleh melebihi 50 karakter')
+            .nullish(),
+        no_hp: z
+            .string()
+            .regex(phoneNumberRegex, 'No HP harus berupa nomor telepon yang valid')
+            .max(20),
+        id_ms_negara_tinggal: z
+            .number()
+            .int()
+            .refine((value) => value > 0, {
+                message: 'ID Negara Tinggal harus valid',
+            }),
+        id_ms_provinsi_tinggal: z.string({
+            message: 'Provinsi Tinggal harus diisi',
+        }),
+        id_ms_kota_tinggal: z.string({message: 'Kota Tinggal harus diisi'}),
+        id_ms_kecamatan_tinggal: z.string({
+            message: 'Kecamatan Tinggal harus diisi',
+        }),
+        id_ms_desa_tinggal: z.string({message: 'Desa Tinggal harus diisi'}),
+        alamat_tinggal: z.string({message: 'Alamat Tinggal harus diisi'}),
+        rt_tinggal: z
+            .string({message: 'RT tinggal harus diisi'})
+            .max(5, 'RT Tinggal tidak boleh melebihi 5 karakter'),
+        rw_tinggal: z
+            .string({message: 'RT tinggal harus diisi'})
+            .max(5, 'RW Tinggal tidak boleh melebihi 5 karakter'),
+        kode_pos_tinggal: z.string().max(10).nullish(),
+        alamatgab_tinggal: z.string().nullish(),
+        id_ms_negara_asal: z
+            .number()
+            .int()
+            .refine((value) => value > 0, {message: 'Negara Asal harus valid'}),
+        id_ms_provinsi_asal: z.string({message: 'Provinsi Asal harus diisi'}),
+        id_ms_kota_asal: z.string({message: 'Kota Asal harus diisi'}),
+        id_ms_kecamatan_asal: z.string({message: 'Kecamatan Asal harus diisi'}),
+        id_ms_desa_asal: z.string({message: 'Desa Asal harus diisi'}),
+        alamat_asal: z.string({message: 'Alamat Asal harus diisi'}),
+        rt_asal: z
+            .string({message: 'RT asal harus diisi'})
+            .max(5, 'RT Asal tidak boleh melebihi 5 karakter'),
+        rw_asal: z
+            .string({message: 'RW Asal harus diisi'})
+            .max(5, 'RW Asal tidak boleh melebihi 5 karakter'),
+        kode_pos_asal: z.string().max(10).nullish(),
+        alamatgab_asal: z.string().nullish(),
+        suku: z.string().max(50).nullish(),
+        nama_ibu_kandung: z.string().max(100).nullish(),
+        id_ms_status_kawin: z.number().int().default(0),
+        id_ms_golongan_darah: z.number().int().default(0),
+        id_ms_agama: z
+            .number()
+            .int()
+            .refine((value) => value > 0, {message: 'ID Agama harus valid'}),
+        id_ms_pendidikan: z
+            .number()
+            .int()
+            .refine((value) => value > 0, {message: 'ID Pendidikan harus valid'}),
+        live: z.number().int().default(1),
+    })
+    .refine(
+        (value) => {
+            const isSeventeen = isSeventeenYearsOld(formatBirthDate(value.tgl_lahir));
+
+            return !(isSeventeen && value.no_identitas.length <= 8);
+        },
+        {message: 'Nomor identitas tidak valid', path: ['no_identitas']},
+    )
+    .refine(
+        (value) => {
+            const isSeventeen = isSeventeenYearsOld(formatBirthDate(value.tgl_lahir));
+
+            return !(isSeventeen && ![1, 2].includes(value.identitas_pasien));
+        },
+        {
+            message: 'Pasien harus menyertakan identitas yang valid',
+            path: ['identitas_pasien'],
+        },
+    );
+
+const formatBirthDate = (date: string | Date) => {
+    if (date instanceof Date) {
+        return date.toISOString().split('T')[0];
+    }
+    const [day, month, year] = date.toString().split('-');
+    return `${year}-${month}/${day}`;
+};
+
+const isSeventeenYearsOld = (birthDate: string) => {
+    const birthDateMoment = moment(birthDate, 'YYYY-MM-DD');
+    const currentDate = moment();
+
+    const age = currentDate.diff(birthDateMoment, 'years');
+    return (
+        age > 17 &&
+        currentDate.isSameOrAfter(birthDateMoment.clone().add(17, 'years'))
+    );
+};
 
 export {
     patientValidation

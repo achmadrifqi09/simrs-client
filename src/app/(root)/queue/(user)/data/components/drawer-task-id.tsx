@@ -38,7 +38,7 @@ const DrawerTaskId = ({showTaskId, setShowTaskId, selectedQueue, setSelectedQueu
                         </div>
                     </DrawerTitle>
                 </DrawerHeader>
-                <div className="h-[72dvh] max-w-screen-xl xl:max-w-screen-2xl mx-auto w-full px-4">
+                <div className="h-[72dvh] max-w-screen-xl xl:max-w-screen-2xl mx-auto w-full px-4 2xl:px-0">
                     <div className="mb-6 bg-gray-50 px-3 py-4 rounded-md">
                         <p className="mb-2">Detail Pasien</p>
                         <div

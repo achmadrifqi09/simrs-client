@@ -86,13 +86,13 @@ const PatientTable = ({
                     <TableRow>
                         <TableHead>No</TableHead>
                         <TableHead>RM</TableHead>
-                        <TableHead>Nama Pasien</TableHead>
-                        <TableHead>Usia (T/B)</TableHead>
-                        <TableHead>JK</TableHead>
+                        <TableHead className="min-w-[16ch]">Nama Pasien</TableHead>
+                        <TableHead className="min-w-[16ch]">Usia (T/B)</TableHead>
+                        <TableHead>Jenis Kelamin</TableHead>
                         <TableHead>No.Ktp</TableHead>
                         <TableHead>No.BPJS</TableHead>
-                        <TableHead>Alamat</TableHead>
-                        <TableHead>Alamat KTP</TableHead>
+                        <TableHead className="min-w-[16ch]">Alamat</TableHead>
+                        <TableHead className="min-w-[16ch]">Alamat KTP</TableHead>
                         {/*<TableHead>Status</TableHead>*/}
                         {
                             (permission?.can_update || permission?.can_delete) && (
@@ -107,19 +107,19 @@ const PatientTable = ({
                             return (
                                 <React.Fragment key={index}>
                                     <TableRow>
-                                        <TableCell className="font-medium">{index + 1}</TableCell>
-                                        <TableCell className="font-medium">{patient.kode_rm}</TableCell>
-                                        <TableCell className="font-medium">{patient.nama_pasien}</TableCell>
-                                        <TableCell className="font-medium">
+                                        <TableCell>{index + 1}</TableCell>
+                                        <TableCell>{patient.kode_rm}</TableCell>
+                                        <TableCell className="min-w-[16ch]">{patient.nama_pasien}</TableCell>
+                                        <TableCell>
                                             {calculateAge(patient.tgl_lahir)}
                                         </TableCell>
-                                        <TableCell className="font-medium">
+                                        <TableCell className="min-w-[16ch]">
                                             {patient.jenis_kelamin === 1 ? 'Laki-laki' : 'Perempuan'}
                                         </TableCell>
-                                        <TableCell className="font-medium">{patient.no_identitas}</TableCell>
-                                        <TableCell className="font-medium">{patient.no_bpjs}</TableCell>
-                                        <TableCell className="font-medium">{patient.alamat_tinggal}</TableCell>
-                                        <TableCell className="font-medium">{patient.alamat_asal}</TableCell>
+                                        <TableCell>{patient.no_identitas}</TableCell>
+                                        <TableCell>{patient.no_bpjs}</TableCell>
+                                        <TableCell className="min-w-[16ch]">{patient.alamat_tinggal}</TableCell>
+                                        <TableCell className="min-w-[16ch]">{patient.alamat_asal}</TableCell>
                                         <TableCell>
                                             {
                                                 (permission?.can_update || permission?.can_delete) && (
