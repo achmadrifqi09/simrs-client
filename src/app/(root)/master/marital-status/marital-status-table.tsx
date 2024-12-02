@@ -78,7 +78,7 @@ const MaritalStatusTable = (
                     <TableRow>
                         <TableHead>No</TableHead>
                         <TableHead>Nama Status Perkawinan</TableHead>
-                        <TableHead>Status (Visibilitas)</TableHead>
+                        <TableHead>Status</TableHead>
                         {
                             (permission?.can_update || permission?.can_delete) && (
                                 <TableHead>Aksi</TableHead>

@@ -182,7 +182,7 @@ const UpdateOrCreateEmployeeType = ({
                                                             url="/master/employee-category?status=1"
                                                             labelName="status_jenis_pegawai"
                                                             valueName="id_ms_jenis_pegawai_status"
-                                                            placeholder="Pilih kamar..."
+                                                            placeholder="Pilih kategori pegawai..."
                                                             onChange={field.onChange}
                                                             defaultValue={field.value || undefined}
                                                         />
