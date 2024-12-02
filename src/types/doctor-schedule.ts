@@ -82,6 +82,28 @@ interface DoctorPracticeSchedule {
     jadwal: SchedulesPerDayOrPerDate[];
 }
 
+type Doctor = {
+    id_pegawai: number;
+    nama_dokter: string;
+    gelar_depan: string;
+    gelar_belakang: string;
+    jadwal: QueueSchedule[];
+}
+
+type QueueSchedule = {
+    id_pegawai: number;
+    id_jadwal_dokter: number;
+    kode_instalasi_bpjs: string;
+    jenis_jadwal: number;
+    hari_praktek?: number;
+    tgl_praktek: string;
+    jam_buka_praktek:string;
+    jam_tutup_praktek: string;
+    kuota_onsite: number;
+    kuota_terisi: number;
+    tanggal_libur?: string;
+    keterangan_libur?: string | null;
+}
 
 export type {
     DoctorSchedulePayload,
@@ -91,5 +113,7 @@ export type {
     AdditionalQuotaPayload,
     SchedulesPerDayOrPerDate,
     DoctorPracticeSchedule,
-    PracticeHours
+    PracticeHours,
+    QueueSchedule,
+    Doctor,
 }

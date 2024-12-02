@@ -35,20 +35,21 @@ const AlertError = ({redirectUrl, message, isShow = false}: AlertErrorProps) => 
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Terjadi Kesalahan</AlertDialogTitle>
-                    <AlertDialogDescription className="text-base">
-                        {message && Array.isArray(message) ? (
-                            <div>
-                                {message.map((error: ZodError, index: number) => (
-                                    <p className="text-sm text-red-600" key={index}>{error.message}</p>
-                                ))}
-                            </div>
-                        ) : (
-                            message && (
-                               message
-                            )
-                        )}
-                    </AlertDialogDescription>
+                    <AlertDialogDescription className="text-base"></AlertDialogDescription>
                 </AlertDialogHeader>
+                <div>
+                    {message && Array.isArray(message) ? (
+                        <div>
+                            {message.map((error: ZodError, index: number) => (
+                                <p className="text-sm text-red-600" key={index}>{error.message}</p>
+                            ))}
+                        </div>
+                    ) : (
+                        message && (
+                            <p className="text-sm text-red-600">{message}</p>
+                        )
+                    )}
+                </div>
                 <AlertDialogFooter>
                     <AlertDialogAction onClick={handleActionError}>Oke</AlertDialogAction>
                 </AlertDialogFooter>

@@ -30,7 +30,7 @@ type PatientType = {
     rt_asal: string;
     rw_asal: string;
     id_ms_negara_asal: number;
-    id_ms_propinsi_asal: string;
+    id_ms_provinsi_asal: string;
     id_ms_kota_asal: string;
     id_ms_kecamatan_asal: string;
     id_ms_desa_asal: string;

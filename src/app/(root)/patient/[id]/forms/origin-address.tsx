@@ -43,7 +43,7 @@ const OriginAddress = ({
                     }}/>
                 <FormField
                     control={control}
-                    name="id_ms_propinsi_asal"
+                    name="id_ms_provinsi_asal"
                     render={({field}) => {
                         return (
                             <FormItem>

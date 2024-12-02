@@ -1,15 +1,31 @@
-import React, { forwardRef, useRef } from "react";
-import { RegisterResponse } from "@/types/queue-register";
+"use client"
+import React, {forwardRef, useEffect, useRef} from "react";
+import {RegisterResponse} from "@/types/queue-register";
 import {formatToStandardDate, timeStringFormatter} from "@/utils/date-formatter";
+import {io} from "socket.io-client";
 
 interface QueueTicketProps {
     data: RegisterResponse;
 }
 
 const QueueTicket = forwardRef<HTMLDivElement, QueueTicketProps>((props, ref) => {
-    const { data } = props;
+    const {data} = props;
     const ticketRef = useRef<HTMLDivElement>(null);
     const combinedRef = ref || ticketRef;
+
+    useEffect(() => {
+        if (data.kode_antrian) {
+            const admissionQueueSocket = io(`${process.env.NEXT_PUBLIC_WS_BASE_URL}/admission`);
+            if (admissionQueueSocket) {
+                admissionQueueSocket.emit('remaining-queue-code', data.kode_antrian)
+            }
+            return () => {
+                if (admissionQueueSocket) {
+                    admissionQueueSocket.disconnect();
+                }
+            };
+        }
+    }, [data]);
 
     return (
         <div ref={combinedRef}>

@@ -114,7 +114,7 @@ const DoctorPatient = () => {
 
                                 <div className="flex justify-end mt-6 gap-2">
                                     <Button variant='outline' type="button"
-                                            onClick={() => window.history.back()}>Back</Button>
+                                            onClick={() => window.history.back()}>Kembali</Button>
                                     {
                                         loading ? (
                                             <Skeleton className="w-32 h-10"/>

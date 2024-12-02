@@ -167,7 +167,7 @@ const QueueDataTable = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead>No</TableHead>
-                            <TableHead>Nama Pasien</TableHead>
+                            <TableHead className="min-w-[16ch]">Nama Pasien</TableHead>
                             <TableHead>No Antrean</TableHead>
                             <TableHead>Kode RM</TableHead>
                             <TableHead>No BPJS</TableHead>
@@ -220,25 +220,22 @@ const QueueDataTable = () => {
                                     return (
                                         <React.Fragment key={index}>
                                             <TableRow>
-                                                <TableCell className="font-medium">{index + 1}</TableCell>
-                                                <TableCell className="font-medium">{queue?.nama_pasien}</TableCell>
-                                                <TableCell
-                                                    className="font-medium">{queue?.kode_antrian}-{queue.no_antrian}</TableCell>
-                                                <TableCell className="font-medium">{queue?.kode_rm || '-'}</TableCell>
-                                                <TableCell className="font-medium">{queue?.no_bpjs || '-'}</TableCell>
-                                                <TableCell
-                                                    className="font-medium">{queue?.no_rujukan || '-'}</TableCell>
-                                                <TableCell
-                                                    className="font-medium">{
-                                                    queue?.jenis_penjamin === 1 ? 'Umum' : 'BPJS'}
+                                                <TableCell>{index + 1}</TableCell>
+                                                <TableCell className="min-w-[16ch]">{queue?.nama_pasien}</TableCell>
+                                                <TableCell>{queue?.kode_antrian}-{queue.no_antrian}</TableCell>
+                                                <TableCell>{queue?.kode_rm || '-'}</TableCell>
+                                                <TableCell>{queue?.no_bpjs || '-'}</TableCell>
+                                                <TableCell>{queue?.no_rujukan || '-'}</TableCell>
+                                                <TableCell>
+                                                    {queue?.jenis_penjamin === 1 ? 'Umum' : 'BPJS'}
                                                 </TableCell>
-                                                <TableCell className="font-medium">
+                                                <TableCell>
                                                     {queue?.jenis_pasien === 1 ? 'Lama' : 'Baru'}
                                                 </TableCell>
-                                                <TableCell className="font-medium">
+                                                <TableCell>
                                                     {queue?.jadwal_dokter.kode_instalasi_bpjs || '-'}
                                                 </TableCell>
-                                                <TableCell className="font-medium">
+                                                <TableCell>
                                                     <Button size="sm" disabled={Number(queue.jenis_penjamin) === 1}
                                                             onClick={() => handleShowTaskId(queue)}>
                                                         Task ID

@@ -25,7 +25,7 @@ export const patient: PatientType = {
     rt_asal: "",
     rw_asal: "",
     id_ms_negara_asal: 0,
-    id_ms_propinsi_asal: "",
+    id_ms_provinsi_asal: "",
     id_ms_kota_asal: "",
     id_ms_kecamatan_asal: "",
     id_ms_desa_asal: "",
@@ -34,6 +34,6 @@ export const patient: PatientType = {
     id_ms_pendidikan: 0,
     kode_pos_tinggal: "",
     kode_pos_asal: "",
-    nama_ibu_kandung:"",
+    nama_ibu_kandung: "",
     nama_pekerjaan: ""
 };
