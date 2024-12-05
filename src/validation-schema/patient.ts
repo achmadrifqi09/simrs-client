@@ -30,7 +30,7 @@ const patientValidation = z
             .number()
             .int()
             .refine((value) => value > 0, {message: 'ID Warga Negara harus valid'}),
-        identitas_pasien: z.number().int(),
+        identitas_pasien: z.number(),
         no_identitas: z
             .string()
             .max(100, 'No Identitas tidak boleh melebihi 100 karakter'),
@@ -95,6 +95,8 @@ const patientValidation = z
             .int()
             .refine((value) => value > 0, {message: 'ID Pendidikan harus valid'}),
         live: z.number().int().default(1),
+        nama_pekerjaan: z.string()
+            .max(100, {message: 'Harus diisi maximal 100'}).nullish(),
     })
     .refine(
         (value) => {
@@ -135,6 +137,13 @@ const isSeventeenYearsOld = (birthDate: string) => {
     );
 };
 
+const cancelValidation = z.object({
+    keterangan_batal: z.string()
+        .min(3, {message: 'keterangan libur minimal 3'})
+        .max(100, {message: 'Keterangan Libur maximal 100'}),
+})
+
 export {
-    patientValidation
+    patientValidation,
+    cancelValidation
 }

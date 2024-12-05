@@ -6,27 +6,26 @@ import {Country, District, Province, Regency} from "@/types/master";
 import {Input} from "@/components/ui/input";
 import React from "react";
 import {Control} from "react-hook-form";
-import {PatientType} from "@/types/patient";
 import Heading from "@/components/ui/heading";
+import {PatientType} from "@/types/patient";
 
-interface OriginAddressProps {
+interface ResidenceAddressProps {
     control: Control<PatientType>;
 }
-
-const OriginAddress = ({
-                           control
-                       }: OriginAddressProps) => {
+const ResidenceAddress = ({
+                              control
+                          }: ResidenceAddressProps) => {
     return (
-        <div className="mt-6">
-            <Heading variant="section-title" headingLevel="h5" className="mb-0">Asal</Heading>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-0">
+        <div className="mt-10">
+            <Heading variant="section-title" headingLevel="h5" className="mb-0">Tinggal</Heading>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-4">
                 <FormField
                     control={control}
-                    name="id_ms_negara_asal"
+                    name="id_ms_negara_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Negara Asal</FormLabel>
+                                <FormLabel>Pilih Negara Tinggal</FormLabel>
                                 <FormControl>
                                     <SelectSearch<Country>
                                         url="/master/country?status=1"
@@ -43,11 +42,11 @@ const OriginAddress = ({
                     }}/>
                 <FormField
                     control={control}
-                    name="id_ms_provinsi_asal"
+                    name="id_ms_provinsi_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Provinsi Asal</FormLabel>
+                                <FormLabel>Pilih Provinsi Tinggal</FormLabel>
                                 <FormControl>
                                     <SelectSearch<Province>
                                         url="/master/province?status=1"
@@ -55,20 +54,21 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan Provinsi untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={field.value.toString()}
+                                        defaultValue={field.value}
                                     />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
                         )
                     }}/>
+
                 <FormField
                     control={control}
-                    name="id_ms_kota_asal"
+                    name="id_ms_kota_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Kota Asal</FormLabel>
+                                <FormLabel>Pilih Kota Tinggal</FormLabel>
                                 <FormControl>
                                     <SelectSearch<Regency>
                                         url="/master/regency?status=1"
@@ -85,11 +85,11 @@ const OriginAddress = ({
                     }}/>
                 <FormField
                     control={control}
-                    name="id_ms_kecamatan_asal"
+                    name="id_ms_kecamatan_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Kecamatan Asal</FormLabel>
+                                <FormLabel>Pilih Kecamatan Tinggal</FormLabel>
                                 <FormControl>
                                     <SelectSearch<District>
                                         url="/master/district?status=1"
@@ -106,11 +106,11 @@ const OriginAddress = ({
                     }}/>
                 <FormField
                     control={control}
-                    name="id_ms_desa_asal"
+                    name="id_ms_desa_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Kelurahan Asal</FormLabel>
+                                <FormLabel>Pilih Kelurahan Tinggal</FormLabel>
                                 <FormControl>
                                     <SelectSearch<District>
                                         url="/master/village?status=1"
@@ -127,11 +127,11 @@ const OriginAddress = ({
                     }}/>
                 <FormField
                     control={control}
-                    name="rt_asal"
+                    name="rt_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>RT Asal</FormLabel>
+                                <FormLabel>RT Tinggal</FormLabel>
                                 <FormControl>
                                     <Input type="number" {...field}/>
                                 </FormControl>
@@ -141,11 +141,11 @@ const OriginAddress = ({
                     }}/>
                 <FormField
                     control={control}
-                    name="rw_asal"
+                    name="rw_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>RW Asal</FormLabel>
+                                <FormLabel>RW Tinggal</FormLabel>
                                 <FormControl>
                                     <Input type="number" {...field}/>
                                 </FormControl>
@@ -155,11 +155,25 @@ const OriginAddress = ({
                     }}/>
                 <FormField
                     control={control}
-                    name="alamat_asal"
+                    name="alamat_tinggal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Alamat Asal</FormLabel>
+                                <FormLabel>Alamat Tinggal</FormLabel>
+                                <FormControl>
+                                    <Input type="text" {...field}/>
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
+                <FormField
+                    control={control}
+                    name="kode_pos_tinggal"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Kode Pos Tinggal</FormLabel>
                                 <FormControl>
                                     <Input type="text" {...field}/>
                                 </FormControl>
@@ -169,8 +183,7 @@ const OriginAddress = ({
                     }}/>
             </div>
         </div>
-
     )
 }
 
-export default OriginAddress
+export default ResidenceAddress

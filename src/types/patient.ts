@@ -5,7 +5,7 @@ type PatientType = {
     nama_pasien: string;
     tempat_lahir: string;
     tgl_lahir: Date;
-    jenis_kelamin: 1 | 2;
+    jenis_kelamin: number;
     id_warga_negara: number;
     identitas_pasien: number;
     no_identitas: string;

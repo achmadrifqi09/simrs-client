@@ -35,6 +35,7 @@ const Stepper = ({steps, activeStep, stepperChange, children, action} : StepperP
                         <React.Fragment key={index}>
                             <div className="max-w-[6ch] lg:max-w-[10ch] w-full" key={index}>
                                 <button
+                                    type="button"
                                     onClick={() => stepperChange(Number(step.step))}
                                     className={cn(styleStep, (index+ 1 <= activeStep) ?
                                         'bg-red-600 text-white' :
@@ -64,14 +65,14 @@ const Stepper = ({steps, activeStep, stepperChange, children, action} : StepperP
             <div className="flex justify-end gap-2 mt-4">
                 {
                     activeStep !== 1 && (
-                        <Button variant="outline" onClick={handlePrevStep}>
+                        <Button variant="outline" typeof="button" onClick={handlePrevStep}>
                             Sebelumnya
                         </Button>
                     )
                 }
                 {
                     activeStep !== steps.length && (
-                        <Button disabled={activeStep === steps.length} onClick={handleNextStep}>
+                        <Button disabled={activeStep === steps.length} type="button" onClick={handleNextStep}>
                             Selanjutnya
                         </Button>
                     )

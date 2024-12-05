@@ -1,25 +1,25 @@
 "use client"
 
 import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import SelectSearch from "@/components/ui/select-search";
-import {Country, District, Province, Regency} from "@/types/master";
-import {Input} from "@/components/ui/input";
 import React from "react";
 import {Control} from "react-hook-form";
-import {PatientType} from "@/types/patient";
-import Heading from "@/components/ui/heading";
+import {EmployeeForm} from "@/app/(root)/employee/form/form";
+import SelectSearch from "@/components/ui/select-search";
+import {Country, District, Province, Regency, Village} from "@/types/master";
+import {Textarea} from "@/components/ui/textarea";
+import {Input} from "@/components/ui/input";
 
-interface OriginAddressProps {
-    control: Control<PatientType>;
+interface PersonalDataProps {
+    control: Control<EmployeeForm>;
 }
 
-const OriginAddress = ({
-                           control
-                       }: OriginAddressProps) => {
+const ResidenceAddress = ({
+                              control
+                          }: PersonalDataProps
+) => {
     return (
-        <div className="mt-6">
-            <Heading variant="section-title" headingLevel="h5" className="mb-0">Asal</Heading>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-0">
+        <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
                 <FormField
                     control={control}
                     name="id_ms_negara_asal"
@@ -55,13 +55,14 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan Provinsi untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={field.value.toString()}
+                                        defaultValue={Number(field.value) || undefined}
                                     />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
                         )
                     }}/>
+
                 <FormField
                     control={control}
                     name="id_ms_kota_asal"
@@ -76,7 +77,7 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan kota untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={field.value}
+                                        defaultValue={Number(field.value) || undefined}
                                     />
                                 </FormControl>
                                 <FormMessage/>
@@ -97,7 +98,7 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan kecamatan untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={field.value}
+                                        defaultValue={Number(field.value) || undefined}
                                     />
                                 </FormControl>
                                 <FormMessage/>
@@ -112,13 +113,13 @@ const OriginAddress = ({
                             <FormItem>
                                 <FormLabel>Pilih Kelurahan Asal</FormLabel>
                                 <FormControl>
-                                    <SelectSearch<District>
+                                    <SelectSearch<Village>
                                         url="/master/village?status=1"
                                         labelName="nama"
                                         valueName="id"
                                         placeholder="Masukkan kelurahan untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={field.value}
+                                        defaultValue={Number(field.value) || undefined}
                                     />
                                 </FormControl>
                                 <FormMessage/>
@@ -133,7 +134,7 @@ const OriginAddress = ({
                             <FormItem>
                                 <FormLabel>RT Asal</FormLabel>
                                 <FormControl>
-                                    <Input type="number" {...field}/>
+                                    <Input type="text" {...field} value={field.value ?? ""}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -147,30 +148,48 @@ const OriginAddress = ({
                             <FormItem>
                                 <FormLabel>RW Asal</FormLabel>
                                 <FormControl>
-                                    <Input type="number" {...field}/>
+                                    <Input type="text" {...field} value={field.value ?? ""}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )
-                    }}/>
+                        );
+                    }}
+                />
                 <FormField
                     control={control}
-                    name="alamat_asal"
+                    name="kode_pos_asal"
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Alamat Asal</FormLabel>
+                                <FormLabel>kode Pos Asal</FormLabel>
                                 <FormControl>
-                                    <Input type="text" {...field}/>
+                                    <Input type="text" {...field} value={field.value ?? ""}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )
-                    }}/>
-            </div>
-        </div>
+                        );
+                    }}
+                />
 
+                <div>
+                    <h1 className="mb-2">Alamat Asal</h1>
+                    <FormField
+                        name="alamat_asal"
+                        control={control}
+                        defaultValue=""
+                        render={({field}) => (
+                            <Textarea
+                                {...field}
+                                placeholder="Enter your text here..."
+                                className="my-custom-class"
+                                value={field.value ?? ""}
+                            />
+                        )}
+                    />
+                </div>
+            </div>
+        </>
     )
 }
 
-export default OriginAddress
+export default ResidenceAddress

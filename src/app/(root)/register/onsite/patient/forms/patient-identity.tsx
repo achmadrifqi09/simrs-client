@@ -76,7 +76,8 @@ const PatientIdentity = ({
                                     <FormMessage/>
                                 </FormItem>
                             )
-                        }}/> <FormField
+                        }}/>
+                    <FormField
                     control={control}
                     name="no_bpjs"
                     render={({field}) => {
@@ -84,7 +85,7 @@ const PatientIdentity = ({
                             <FormItem>
                                 <FormLabel>Nomor BPJS*</FormLabel>
                                 <FormControl>
-                                    <Input type="number" {...field}/>
+                                    <Input type="number" {...field} value={field.value  ?? ""}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>

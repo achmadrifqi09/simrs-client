@@ -5,7 +5,7 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 import React from "react";
 import {Control} from "react-hook-form";
 import SelectSearch from "@/components/ui/select-search";
-import {BloodType, Education, MaritalStatus, Religion} from "@/types/master";
+import {BloodType, Country, Education, MaritalStatus, Religion} from "@/types/master";
 import Heading from "@/components/ui/heading";
 import {PatientType} from "@/types/patient";
 
@@ -63,20 +63,35 @@ const PersonalData = ({
                             </FormItem>
                         )
                     }}/>
-                <FormItem>
-                    <FormLabel>Jenis Kelamin*</FormLabel>
-                    <Select>
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Pilih Jenis Kelamin"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="1">Laki - laki</SelectItem>
-                                <SelectItem value="2">Perempuan</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </FormItem>
+                <FormField
+                    control={control}
+                    name="jenis_kelamin"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Jenis kelamin</FormLabel>
+                                <FormControl>
+                                    <Select onValueChange={field.onChange}
+                                            defaultValue={field.value.toString()}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih Jenis Kelamin"/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="1">
+                                                    Laki - laki
+                                                </SelectItem>
+                                                <SelectItem value="2">
+                                                    Perempuan
+                                                </SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
                 <FormField
                     control={control}
                     name="id_ms_golongan_darah"
@@ -154,9 +169,16 @@ const PersonalData = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Warga Negara*</FormLabel>
+                                <FormLabel>Pilih Negara Tinggal</FormLabel>
                                 <FormControl>
-                                    <Input type="text" {...field}/>
+                                    <SelectSearch<Country>
+                                        url="/master/country?status=1"
+                                        labelName="nama"
+                                        valueName="id"
+                                        placeholder="Masukkan Negara untuk mencari..."
+                                        onChange={field.onChange}
+                                        defaultValue={Number(field.value) || undefined}
+                                    />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
