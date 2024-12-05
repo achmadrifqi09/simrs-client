@@ -87,6 +87,8 @@ const QueuePolyclinic = () => {
                                 data?.map((polyclinic: WorkUnit) => (
                                     <SolidCard
                                         key={polyclinic.id}
+                                        disabled={!polyclinic?.kode_instalasi_bpjs}
+                                        type={polyclinic?.kode_instalasi_bpjs ? 'link' : 'button'}
                                         href={`/queue/unit/${polyclinic.kode_instalasi_bpjs}`}
                                         className="text-center"
                                     >
