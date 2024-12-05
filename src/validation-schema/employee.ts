@@ -1,8 +1,6 @@
 import {z} from 'zod';
 import {zfd} from "zod-form-data";
 
-const MAX_FILE_SIZE = 5000000;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 const ifStringOrNumber = z.union([z.string(), z.number()]).transform((val) => {
     if (typeof val === 'string') return Number(val);
     return val;

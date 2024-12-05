@@ -51,7 +51,7 @@ const UpdateOrCreateEmployee = ({
     const {handleSubmit, control} = employeeForm;
 
     const {status} = useSession()
-    const [files, setFiles] = useState<(File | null)[]>([null, null, null, null, null]);
+    const [files] = useState<(File | null)[]>([null, null, null, null, null]);
 
     const onSubmit = handleSubmit(async (values) => {
         const formData = new FormData();

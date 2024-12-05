@@ -6,7 +6,7 @@ import {Control} from "react-hook-form";
 import {EmployeeForm} from "@/app/(root)/employee/form/form";
 import SelectSearch from "@/components/ui/select-search";
 import {DoctorSpecialist, Education, EmployeeStatus, RankOrClass, StructuralPosition} from "@/types/master";
-import {ParentUnit, WorkUnit} from "@/types/work-unit";
+import {ParentUnit} from "@/types/work-unit";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
@@ -154,7 +154,7 @@ const JobDetail = ({
                     <FormField
                         control={control}
                         name="tgl_masuk"
-                        render={({ field }) => {
+                        render={({field}) => {
                             return (
                                 <FormItem>
                                     <FormLabel>Tanggal Masuk*</FormLabel>
@@ -165,7 +165,7 @@ const JobDetail = ({
                                             value={field.value ? field.value.toString().split('T')[0] : ""}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage/>
                                 </FormItem>
                             );
                         }}
@@ -182,7 +182,7 @@ const JobDetail = ({
                                     <FormControl>
                                         <Input type="date" {...field}
                                                value={field.value ? field.value.toString().split('T')[0] : ""}
-                                               />
+                                        />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
