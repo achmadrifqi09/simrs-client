@@ -202,6 +202,11 @@ const employeeTypeValidation = z.object({
     status: z.string({message: 'Status Kamar harus Diisi'}),
 })
 
+const insuranceValidation = z.object({
+    nama_asuransi: z
+        .string({message: 'Nama Asuransi Harus Diisi'}),
+    status: z.string({message: 'Asuransi Harus Diisi'}),
+})
 export {
     religionValidation,
     bloodTypeValidation,
@@ -225,5 +230,6 @@ export {
     roomValidation,
     bedValidation,
     employeeTypeValidation,
-    availabilityValidation
+    availabilityValidation,
+    insuranceValidation
 }

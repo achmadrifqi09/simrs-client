@@ -214,7 +214,11 @@ type Room = {
     total_bed: number;
     room_id: number;
 }
-
+type Insurance = {
+    id : number;
+    nama_asuransi: string;
+    status: number;
+}
 
 
 
@@ -251,5 +255,6 @@ export type {
     RoomRelation,
     Room,
     EmployeeType,
-    EmployeeTypeRelation
+    EmployeeTypeRelation,
+    Insurance
 };
