@@ -193,14 +193,15 @@ const CallAdmissionQueue = () => {
                                                 />
                                             </>
                                         )}
-                                            {!queueCode && (
-                                                <Section className="col-span-2 flex gap-2 py-6">
-                                                    <CircleAlert className="text-red-600"/>
-                                                    <p>
-                                                        Pilih kode antrean di kanan atas
-                                                    </p>
-                                                </Section>
-                                            )}
+                                        {!queueCode && (
+                                            <Section
+                                                className="flex gap-2 py-6 lg:col-span-2 2xl:col-span-5">
+                                                <CircleAlert className="text-red-600"/>
+                                                <p>
+                                                    Pilih kode antrean di kanan atas
+                                                </p>
+                                            </Section>
+                                        )}
                                     </>
                                 )
                             }
