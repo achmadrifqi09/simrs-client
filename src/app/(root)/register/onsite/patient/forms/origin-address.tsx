@@ -55,7 +55,7 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan Provinsi untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={field.value.toString()}
+                                        defaultValue={field.value}
                                     />
                                 </FormControl>
                                 <FormMessage/>
