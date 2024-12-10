@@ -62,8 +62,8 @@ const UpdateOrCreateDoctorSchedule = ({
     const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
-    const {postData, postLoading, postError} = usePost('/doctor-schedule');
-    const {updateData, patchError, patchLoading} = usePatch();
+    const {postData, postLoading, postError,setPostError} = usePost('/doctor-schedule');
+    const {updateData, patchError, patchLoading, setPatchError} = usePatch();
 
     const handleCloseDrawer = () => {
         setValue('kode_instalasi_bpjs', '')
@@ -76,6 +76,8 @@ const UpdateOrCreateDoctorSchedule = ({
         setDrawerOpen(!drawerOpen);
         setSelectedRecord(null)
         setOpenDrawer(false);
+        setPostError(null)
+        setPatchError(null)
     }
     const onUpdateDoctorSchedule = (scheduleForm: DoctorSchedule) => {
         setSubmitMode('PATCH')

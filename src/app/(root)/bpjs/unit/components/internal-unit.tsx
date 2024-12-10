@@ -63,7 +63,7 @@ const InternalUnit = () => {
     }, [error]);
 
     return (
-        <Section>
+        <Section className="col-span-1 2xl:col-span-2">
             <Heading headingLevel="h5" variant="section-title">
                 Unit Internal
             </Heading>
