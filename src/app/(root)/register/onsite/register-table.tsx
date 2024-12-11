@@ -181,7 +181,7 @@ const RegisterTable = ({ onRefresh, refreshTrigger }: RegisterProps) => {
                     <TableBody>
                         {data && data?.results?.length === 0 && !loading && (
                             <TableRow>
-                                <TableCell colSpan={11} className="text-center">
+                                <TableCell colSpan={12} className="text-center">
                                     Data tidak ditemukan
                                 </TableCell>
                             </TableRow>
