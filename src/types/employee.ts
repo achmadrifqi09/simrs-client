@@ -74,8 +74,8 @@ export type EmployeeSubmitPayload = {
     nama_pegawai: string;
     nip_pegawai: string;
     nip_pns?: string | null;
-    gelar_depan: string;
-    gelar_belakang: string;
+    gelar_depan: string | null;
+    gelar_belakang: string | null;
     id_ms_negara_tinggal: number;
     id_ms_provinsi_tinggal: string;
     id_ms_kota_tinggal: string;

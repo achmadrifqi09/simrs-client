@@ -72,15 +72,15 @@ const UpdateOrCreateEmployee = () => {
         const payload: EmployeeSubmitPayload = {
             ...values,
             nip_pegawai: String(values.nip_pegawai),
-            id_ms_negara_asal: values.id_ms_negara_asal || null,
-            id_ms_provinsi_asal: String(values.id_ms_provinsi_asal || null),
-            id_ms_kota_asal: String(values.id_ms_kota_asal || null),
-            id_ms_kecamatan_asal: String(values.id_ms_kecamatan_asal || null),
-            id_ms_desa_asal: String(values.id_ms_desa_asal || null),
-            alamat_asal: values.alamat_asal || null,
-            kode_pos_asal: values.kode_pos_asal || null,
-            rt_asal: values.rt_asal || null,
-            rw_asal: values.rw_asal || null,
+            id_ms_negara_asal: values.id_ms_negara_asal || undefined,
+            id_ms_provinsi_asal: values.id_ms_provinsi_asal ? String(values.id_ms_provinsi_asal) : undefined,
+            id_ms_kota_asal: values.id_ms_kota_asal ? String(values.id_ms_kota_asal) : undefined,
+            id_ms_kecamatan_asal: values.id_ms_kecamatan_asal ? String(values.id_ms_kecamatan_asal) : undefined,
+            id_ms_desa_asal: values.id_ms_desa_asal ? String(values.id_ms_desa_asal) : undefined,
+            alamat_asal: values.alamat_asal || undefined,
+            kode_pos_asal: values.kode_pos_asal || undefined,
+            rt_asal: values.rt_asal || undefined,
+            rw_asal: values.rw_asal || undefined,
             id_ms_kota_tinggal: String(values.id_ms_kota_tinggal),
             id_ms_kecamatan_tinggal: String(values.id_ms_kecamatan_tinggal),
             id_ms_desa_tinggal: String(values.id_ms_desa_tinggal),
@@ -121,14 +121,12 @@ const UpdateOrCreateEmployee = () => {
             id_ms_jenis_pegawai: values.id_ms_jenis_pegawai ? Number(values.id_ms_jenis_pegawai) : 0,
             id_ms_unit_induk: Number(values.id_unit_induk),
             id_ms_unit_kerja: Number(values.id_unit_kerja),
-            nip_pns: (() => {
-                console.log('nip_pns value:', values.nip_pns);
-                console.log('nip_pns type:', typeof values.nip_pns);
-                return values.nip_pns && values.nip_pns !== "null" ? values.nip_pns : null;
-            })(),
+            nip_pns: (() => {return values.nip_pns && values.nip_pns !== "null" ? values.nip_pns : null;})(),
+            gelar_depan: values.gelar_depan || null,
+            gelar_belakang: values.gelar_belakang || null
         };
         Object.entries(payload).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
+            if (value !== undefined && value !== null && value !== '') {
                 formData.append(key, String(value));
             }
         });
@@ -167,8 +165,8 @@ const UpdateOrCreateEmployee = () => {
             setSubmitMode('PATCH');
             setValue('nip_pegawai', data.nip_pegawai);
             setValue('nip_pns', data.nip_pns || null);
-            setValue('gelar_depan', data.gelar_depan);
-            setValue('gelar_belakang', data.gelar_belakang);
+            setValue('gelar_depan', data.gelar_depan ||null);
+            setValue('gelar_belakang', data.gelar_belakang||null);
             setValue('nama_pegawai', data.nama_pegawai);
             setValue('id_ms_negara_tinggal', data.id_ms_negara_tinggal);
             setValue('id_ms_provinsi_tinggal', data.id_ms_provinsi_tinggal);
