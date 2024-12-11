@@ -40,7 +40,7 @@ const JobDetail = ({
                                         url="/master/education-level?status=1"
                                         labelName="nama_tingkat_pendidikan"
                                         valueName="id_ms_tingkat_pendidikan"
-                                        placeholder="Masukkan Pendidikan untuk mencari..."
+                                        placeholder="Pilih Untuk mencari..."
                                         onChange={field.onChange}
                                         defaultValue={Number(field.value) || undefined}
                                     />
@@ -82,7 +82,7 @@ const JobDetail = ({
                                         url="/master/employee-category?status=1"
                                         labelName="status_jenis_pegawai"
                                         valueName="id_ms_jenis_pegawai_status"
-                                        placeholder="Masukkan Pendidikan untuk mencari..."
+                                        placeholder="Pilih Untuk mencari..."
                                         onChange={field.onChange}
                                         defaultValue={Number(field.value) || undefined}
                                     />
@@ -103,7 +103,7 @@ const JobDetail = ({
                                         url="/master/specialist?status=1"
                                         labelName="nama_spesialis"
                                         valueName="id_ms_spesialis"
-                                        placeholder="Masukkan Spesialis untuk mencari..."
+                                        placeholder="Pilih Untuk mencari..."
                                         onChange={field.onChange}
                                         defaultValue={Number(field.value) || undefined}
                                     />
@@ -118,13 +118,13 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Unit Induk</FormLabel>
+                                <FormLabel>Pilih Unit Induk*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<ParentUnit>
                                         url="/work-unit"
                                         labelName="nama_unit_kerja"
                                         valueName="id"
-                                        placeholder="Masukkan Unit untuk mencari..."
+                                        placeholder="Pilih Untuk mencari..."
                                         onChange={field.onChange}
                                         defaultValue={Number(field.value) || undefined}
                                     />
@@ -139,13 +139,13 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Unit Kerja</FormLabel>
+                                <FormLabel>Pilih Unit Kerja*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<WorkUnit>
                                         url="/work-unit/status/active"
                                         labelName="nama_unit_kerja"
                                         valueName="id"
-                                        placeholder="Masukkan Unit untuk mencari..."
+                                        placeholder="Pilih Untuk mencari..."
                                         onChange={field.onChange}
                                         defaultValue={Number(field.value) || undefined}
                                     />
@@ -166,7 +166,7 @@ const JobDetail = ({
                                         url="/master/employee-rank?status=1"
                                         labelName="nama_pangkat"
                                         valueName="id_ms_pangkat"
-                                        placeholder="Masukkan Pangkat untuk mencari..."
+                                        placeholder="Pilih Untuk mencari..."
                                         onChange={field.onChange}
                                         defaultValue={Number(field.value) || undefined}
                                     />
@@ -188,7 +188,7 @@ const JobDetail = ({
                                         url="/master/structural-position?status=1"
                                         labelName="nama_jabatan"
                                         valueName="id_ms_jabatan"
-                                        placeholder="Masukkan Jabatan untuk mencari..."
+                                        placeholder="Pilih Untuk mencari..."
                                         onChange={field.onChange}
                                         defaultValue={Number(field.value) || undefined}
                                     />

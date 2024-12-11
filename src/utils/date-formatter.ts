@@ -9,12 +9,17 @@ export const timeStringFormatter = (dateString: string | undefined): string => {
     return dateString || "";
 }
 
-export const dateFormatter = (date: Date | undefined) => {
-    if (date) {
-        return `${date?.getDate() >= 10 ? date.getDate() : '0' + date.getDate()}-${date?.getMonth() + 1}-${date?.getFullYear()}`
+export const dateFormatter = (date: Date | undefined): string => {
+    if (!date || isNaN(date.getTime())) {
+        return ''; // Kembalikan string kosong jika tanggal tidak valid
     }
-    return ''
-}
+
+    const day = date.getDate().toString().padStart(2, '0'); // Pastikan dua digit untuk hari
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Pastikan dua digit untuk bulan
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+};
 
 export const formatToStandardDate = (date: string) => {
     if (/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(date)) {

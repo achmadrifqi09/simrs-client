@@ -26,6 +26,7 @@ export interface Employee {
     status_aktif?: number;
     tgl_lahir: string;
     tgl_masuk: string;
+    // tgl_keluar?: string;
     tgl_keluar?: string | null;
     foto?: File;
     file_ktp?: File;
@@ -96,7 +97,8 @@ export type EmployeeSubmitPayload = {
     status_aktif?: number;
     tgl_lahir: string;
     tgl_masuk: string;
-    tgl_keluar?: string | undefined;
+    // tgl_keluar?: string;
+    tgl_keluar?: string | null;
     foto?: File;
     file_ktp?: File;
     file_kk?: File;
@@ -107,7 +109,7 @@ export type EmployeeSubmitPayload = {
     id_ms_spesialis: number;
     id_pangkat: number;
     id_jabatan: number;
-    kode_dpjp: string;
+    kode_dpjp?: string | null;
     id_ms_unit_induk: number
     id_ms_unit_kerja: number;
     id_ms_jenis_pegawai: number;
@@ -141,7 +143,7 @@ export type EmployeeSingle = {
     status_aktif?: number;
     tgl_lahir: string;
     tgl_masuk: string;
-    tgl_keluar?: string | undefined;
+    tgl_keluar?: string;
     foto?: File;
     file_ktp?: File;
     file_kk?: File;
