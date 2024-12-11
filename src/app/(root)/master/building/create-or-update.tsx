@@ -73,7 +73,6 @@ const UpdateOrCreateBuilding = ({
     }
 
     const updateStatus = async (id: number | undefined, status: number | undefined) => {
-        console.log(id)
         const response = await updateData(
             `/master/building/${id}/status`,
             {status: status === 1 ? 0 : 1},

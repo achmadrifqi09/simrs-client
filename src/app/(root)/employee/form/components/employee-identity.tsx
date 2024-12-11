@@ -28,7 +28,10 @@ const EmployeeIdentity = ({
                             <FormItem>
                                 <FormLabel>Nama Pegawai*</FormLabel>
                                 <FormControl>
-                                    <Input type="text" {...field} />
+                                    <Input
+                                        type="text" {...field}
+                                        placeholder="Sigh Jhonny"
+                                    />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -43,7 +46,8 @@ const EmployeeIdentity = ({
                             <FormControl>
                                 <Input
                                     type="text"
-                                    {...field} // Ensure field.value is a string here
+                                    {...field}
+                                    placeholder="Ex: 2024.12102024.09.0001"
                                 />
                             </FormControl>
                             <FormMessage/>
@@ -57,13 +61,15 @@ const EmployeeIdentity = ({
                         <FormItem>
                             <FormLabel>No. KTP*</FormLabel>
                             <FormControl>
-                                <Input type="number" {...field} />
+                                <Input
+                                    type="number" {...field}
+                                    placeholder="Ex: 3273040101990001"
+                                />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
                     )}
                 />
-
                 <FormField
                     control={control}
                     name="nip_pns"
@@ -71,7 +77,26 @@ const EmployeeIdentity = ({
                         <FormItem>
                             <FormLabel>NIP PNS</FormLabel>
                             <FormControl>
-                                <Input type="number" {...field} value={Number(field.value)}/>
+                                <Input
+                                    type="number" {...field} value={field.value||''}
+                                    placeholder="Ex: 198705152010001001"
+                                />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={control}
+                    name="kode_dpjp"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>Kode DPJP</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="number" {...field} value={field.value || ''}
+                                    placeholder="Ex: 300303"
+                                />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
@@ -189,7 +214,10 @@ const EmployeeIdentity = ({
                             <FormItem>
                                 <FormLabel>No Hp*</FormLabel>
                                 <FormControl>
-                                    <Input type="text" {...field} />
+                                    <Input
+                                        type="text" {...field}
+                                        placeholder="Ex: 089887765540"
+                                    />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -203,7 +231,10 @@ const EmployeeIdentity = ({
                             <FormItem>
                                 <FormLabel>Email*</FormLabel>
                                 <FormControl>
-                                    <Input type="email" {...field} />
+                                    <Input
+                                        type="email" {...field}
+                                        placeholder="Example@gmail.com"
+                                    />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>

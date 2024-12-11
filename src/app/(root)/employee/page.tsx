@@ -51,7 +51,7 @@ const Employee = () => {
                                 setAlertDelete={setShowAlertDelete}
                                 action={actionType}
                                 permission={employeePermission}
-                            />
+                                onRefresh={onRefresh}/>
                         )
                     }
                     {

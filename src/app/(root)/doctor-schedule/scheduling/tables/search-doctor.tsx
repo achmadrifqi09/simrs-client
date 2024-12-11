@@ -1,8 +1,8 @@
-import {DoctorSpecialist} from "@/types/master";
 import SelectSearch from "@/components/ui/select-search";
 import React, {useState} from "react";
 import {X} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import {Employee} from "@/types/employee";
 
 interface SearchDoctorProps {
     selected: string | number;
@@ -16,7 +16,7 @@ const SearchDoctor = ({
                           onSelect,
                           clearTrigger,
                           setClearTrigger,
-    onRefresh
+                          onRefresh
                       }: SearchDoctorProps) => {
     const [doctorId, setDoctorId] = useState<string | number>("");
 
@@ -24,10 +24,10 @@ const SearchDoctor = ({
         <>
             <div className="flex gap-2">
                 <div className="w-full lg:w-1/3">
-                    <SelectSearch<DoctorSpecialist>
+                    <SelectSearch<Employee>
                         url="/employee/doctor"
-                        labelName="nama_spesialis"
-                        valueName="id_ms_spesialis"
+                        labelName="nama_pegawai"
+                        valueName="id_pegawai"
                         onChange={(value: string | number | null) => onSelect(value || '')}
                         defaultValue={doctorId}
                         clearTrigger={clearTrigger}

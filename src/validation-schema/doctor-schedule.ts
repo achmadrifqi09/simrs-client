@@ -2,7 +2,7 @@ import z from 'zod';
 
 const doctorScheduleValidation = z.object({
     id_pegawai: z
-        .string({message: 'Dokter harus di isi'})
+        .number({message: 'Dokter harus di isi'})
         .min(1, {message: 'Dokter minimal 1 karakter'}),
     kode_instalasi_bpjs: z
         .string({message: 'Kode poli harus di isi'})

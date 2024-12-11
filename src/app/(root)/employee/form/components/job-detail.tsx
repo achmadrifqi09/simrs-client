@@ -5,8 +5,15 @@ import React from "react";
 import {Control} from "react-hook-form";
 import {EmployeeForm} from "@/app/(root)/employee/form/form";
 import SelectSearch from "@/components/ui/select-search";
-import {DoctorSpecialist, Education, EmployeeStatus, RankOrClass, StructuralPosition} from "@/types/master";
-import {ParentUnit} from "@/types/work-unit";
+import {
+    DoctorSpecialist,
+    Education,
+    EmployeeCategory,
+    EmployeeStatus,
+    RankOrClass,
+    StructuralPosition
+} from "@/types/master";
+import {ParentUnit, WorkUnit} from "@/types/work-unit";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
@@ -63,7 +70,27 @@ const JobDetail = ({
                             </FormItem>
                         )
                     }}/>
-
+                <FormField
+                    control={control}
+                    name="id_ms_jenis_pegawai"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Pilih Jenis Pegawai</FormLabel>
+                                <FormControl>
+                                    <SelectSearch<EmployeeCategory>
+                                        url="/master/employee-category?status=1"
+                                        labelName="status_jenis_pegawai"
+                                        valueName="id_ms_jenis_pegawai_status"
+                                        placeholder="Masukkan Pendidikan untuk mencari..."
+                                        onChange={field.onChange}
+                                        defaultValue={Number(field.value) || undefined}
+                                    />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
                 <FormField
                     control={control}
                     name="id_ms_spesialis"
@@ -85,7 +112,6 @@ const JobDetail = ({
                             </FormItem>
                         )
                     }}/>
-
                 <FormField
                     control={control}
                     name="id_unit_induk"
@@ -96,6 +122,27 @@ const JobDetail = ({
                                 <FormControl>
                                     <SelectSearch<ParentUnit>
                                         url="/work-unit"
+                                        labelName="nama_unit_kerja"
+                                        valueName="id"
+                                        placeholder="Masukkan Unit untuk mencari..."
+                                        onChange={field.onChange}
+                                        defaultValue={Number(field.value) || undefined}
+                                    />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )
+                    }}/>
+                <FormField
+                    control={control}
+                    name="id_unit_kerja"
+                    render={({field}) => {
+                        return (
+                            <FormItem>
+                                <FormLabel>Pilih Unit Kerja</FormLabel>
+                                <FormControl>
+                                    <SelectSearch<WorkUnit>
+                                        url="/work-unit/status/active"
                                         labelName="nama_unit_kerja"
                                         valueName="id"
                                         placeholder="Masukkan Unit untuk mencari..."
@@ -178,7 +225,7 @@ const JobDetail = ({
                         render={({field}) => {
                             return (
                                 <FormItem>
-                                    <FormLabel>Tanggal Keluar*</FormLabel>
+                                    <FormLabel>Tanggal Keluar</FormLabel>
                                     <FormControl>
                                         <Input type="date" {...field}
                                                value={field.value ? field.value.toString().split('T')[0] : ""}

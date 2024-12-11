@@ -1,17 +1,14 @@
 "use client"
 import Heading from "@/components/ui/heading";
-import Section from "@/components/ui/section";
+import React from "react";
 
-const BPJSDoctor = () => {
+const Doctor = () => {
 
     return (
         <>
             <Heading headingLevel="h3" variant="page-title">Dokter BPJS</Heading>
-            <Section>
-                <p>Content</p>
-            </Section>
         </>
     )
 }
 
-export default BPJSDoctor
+export default Doctor

@@ -18,9 +18,12 @@ import {useSession} from "next-auth/react";
 import {EmployeeForm} from "@/app/(root)/employee/form/form";
 import {dateFormatter} from "@/utils/date-formatter";
 import {employee} from "@/const/employee-default-value";
-import {Employee} from "@/types/employee";
+import {EmployeeSingle, EmployeeSubmitPayload} from "@/types/employee";
 import {Form} from "@/components/ui/form";
-import router from "next/router";
+import {useRouter, useSearchParams} from "next/navigation";
+import useGet from "@/hooks/use-get";
+import {employeeValidationSchema} from "@/validation-schema/employee";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 const steps: Step[] = [
     {step: 1, title: "Data Diri"},
@@ -30,42 +33,42 @@ const steps: Step[] = [
     {step: 5, title: "Detail pekerjaan"},
 ];
 
-interface EmployeProps {
-    onRefresh: () => void;
-    selectedRecordId: string;
-}
-
-const UpdateOrCreateEmployee = ({
-                                    onRefresh,
-                                    selectedRecordId,
-                                }: EmployeProps) => {
+const UpdateOrCreateEmployee = () => {
+    const router = useRouter();
     const {data: session} = useSession();
     const [formStep, setFormStep] = useState<number>(1);
     const {postData} = usePost("/employee");
     const {updateData} = usePatch();
-
+    const {status} = useSession();
     const employeeForm = useForm<EmployeeForm>({
+        resolver: zodResolver(employeeValidationSchema),
         defaultValues: employee,
     });
 
-    const {handleSubmit, control} = employeeForm;
+    const searchParams = useSearchParams();
+    const id_pegawai = Number(searchParams.get('id'));
 
-    const {status} = useSession()
-    const [files] = useState<(File | null)[]>([null, null, null, null, null]);
-
+    const {data} = useGet<EmployeeSingle>({
+        url: id_pegawai ? `/employee/${id_pegawai}` : '/employee',
+    });
+    const {handleSubmit, control, setValue} = employeeForm;
+    const [files, setFiles] = useState<(File | null)[]>([null, null, null, null, null]);
+    const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
     const onSubmit = handleSubmit(async (values) => {
-        const formData = new FormData();
-        if (files[0]) formData.append("ktp", files[0]);
-        if (files[1]) formData.append("kk", files[1]);
-        if (files[2]) formData.append("ktam", files[2]);
-        if (files[3]) formData.append("npwp", files[3]);
-        if (files[4]) formData.append("foto", files[4]);
-
         if (!session?.accessToken) {
             return;
         }
+        const formData = new FormData();
+        const fileKeys = ["file_ktp", "file_kk", "file_ktam", "file_npwp", "foto"];
 
-        const payload: Employee = {
+        files.forEach((file, index) => {
+            if (file) {
+                formData.append(fileKeys[index], file);
+            }
+        });
+
+
+        const payload: EmployeeSubmitPayload = {
             ...values,
             nip_pegawai: String(values.nip_pegawai),
             nip_pns: String(values.nip_pns),
@@ -73,10 +76,10 @@ const UpdateOrCreateEmployee = ({
             gelar_belakang: String(values.gelar_belakang),
             nama_pegawai: values.nama_pegawai,
             id_ms_negara_tinggal: Number(values.id_ms_negara_tinggal),
-            id_ms_provinsi_tinggal: String(values.id_ms_provinsi_tinggal || ""),
-            id_ms_kota_tinggal: String(values.id_ms_kota_tinggal || ""),
-            id_ms_kecamatan_tinggal: String(values.id_ms_kecamatan_tinggal || ""),
-            id_ms_desa_tinggal: String(values.id_ms_desa_tinggal || ""),
+            id_ms_provinsi_tinggal: String(values.id_ms_provinsi_tinggal),
+            id_ms_kota_tinggal: String(values.id_ms_kota_tinggal),
+            id_ms_kecamatan_tinggal: String(values.id_ms_kecamatan_tinggal),
+            id_ms_desa_tinggal: String(values.id_ms_desa_tinggal),
             alamat_tinggal: values.alamat_tinggal,
             kode_pos_tinggal: values.kode_pos_tinggal,
             rt_tinggal: values.rt_tinggal,
@@ -87,53 +90,113 @@ const UpdateOrCreateEmployee = ({
             id_ms_status_kawin: Number(values.id_ms_status_kawin),
             id_ms_agama: Number(values.id_ms_agama),
             hp: values.hp,
-            email: values.email,
+            email: String(values.email),
             no_ktp: values.no_ktp || "",
             status_pns: Number(values.status_pns),
             status_aktif: Number(values.status_aktif),
-            tgl_lahir: values.tgl_lahir ? new Date(values.tgl_lahir) : new Date(),
-            tgl_masuk: values.tgl_masuk ? new Date(values.tgl_masuk) : new Date(),
-            tgl_keluar: values.tgl_keluar ? new Date(values.tgl_keluar) : new Date(),
-            file_ktp: "",
-            file_kk: "",
-            file_ktam: "",
-            file_npwp: "",
-            id_pegawai:1
+            tgl_lahir: submitMode === 'PATCH' && values.tgl_lahir
+                ? dateFormatter(new Date(values.tgl_lahir.split('T')[0]))
+                : (values.tgl_lahir ? dateFormatter(new Date(values.tgl_lahir)) : ""),
+            tgl_masuk: submitMode === 'PATCH' && values.tgl_masuk
+                ? dateFormatter(new Date(values.tgl_masuk.split('T')[0]))
+                : (values.tgl_masuk ? dateFormatter(new Date(values.tgl_masuk)) : ""),
+            tgl_keluar: submitMode === 'PATCH' && values.tgl_keluar
+                ? dateFormatter(new Date(values.tgl_keluar.split('T')[0]))
+                : (values.tgl_keluar ? dateFormatter(new Date(values.tgl_keluar)) : undefined),
+            foto: files[4] ? files[4] : undefined,
+            file_ktp: files[0] ? files[0] : undefined,
+            file_kk: files[1] ? files[1] : undefined,
+            file_ktam: files[2] ? files[2] : undefined,
+            file_npwp: files[3] ? files[3] : undefined,
+            id_ms_pendidikan: Number(values.id_ms_pendidikan),
+            id_ms_status_pegawai: Number(values.id_ms_status_pegawai),
+            id_ms_spesialis: Number(values.id_ms_spesialis),
+            id_pangkat: Number(values.id_pangkat),
+            id_jabatan: Number(values.id_jabatan),
+            kode_dpjp: values.kode_dpjp ?? '',
+            id_ms_jenis_pegawai: values.id_ms_jenis_pegawai ? Number(values.id_ms_jenis_pegawai) : 0,
+            id_ms_unit_induk: Number(values.id_unit_induk),
+            id_ms_unit_kerja: Number(values.id_unit_kerja)
         };
-
-        const formattedPayload = {
-            ...payload,
-            tgl_lahir: dateFormatter(payload.tgl_lahir),
-            tgl_masuk: dateFormatter(payload.tgl_masuk),
-            tgl_keluar: dateFormatter(payload.tgl_keluar),
-        };
-
-        Object.entries(formattedPayload).forEach(([key, value]) => {
-            formData.append(key, String(value));
+        Object.entries(payload).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                formData.append(key, String(value));
+            }
         });
 
-        // formData.forEach((value, key) => {
-        //     console.log(key + ": " + value);
-        // });
-
-        const response = selectedRecordId
-            ? await updateData(`/employee/${selectedRecordId}`, formData)
-            : await postData(formData);
+        let response;
+        if (submitMode === 'POST') {
+            response = await postData(formData);
+        } else if (submitMode === 'PATCH') {
+            response = await updateData(`/employee/${id_pegawai}`, payload);
+        }
 
         if (response?.data) {
             toast({
                 title: "Aksi Berhasil",
-                description: `Berhasil ${selectedRecordId ? "memperbarui data" : "menambah data"}`,
+                description: submitMode === 'PATCH'
+                    ? `Berhasil memperbarui data Pegawai ${response?.data?.nama_pegawai}`
+                    : "Berhasil menambah data",
             });
-            router.push(`/employee/`)
+            router.push(`/employee/`);
             employeeForm.reset();
-            onRefresh();
         }
     });
 
-    useEffect(() => {
-    }, []);
+    const initialFiles = id_pegawai
+        ? [
+            employee.file_ktp,
+            employee.file_kk,
+            employee.file_ktam,
+            employee.file_npwp,
+            employee.foto
+        ]
+        : undefined;
 
+    useEffect(() => {
+        if (id_pegawai && data) {
+            setSubmitMode('PATCH');
+            setValue('nip_pegawai', data.nip_pegawai);
+            setValue('nip_pns', data.nip_pns);
+            setValue('gelar_depan', data.gelar_depan);
+            setValue('gelar_belakang', data.gelar_belakang);
+            setValue('nama_pegawai', data.nama_pegawai);
+            setValue('id_ms_negara_tinggal', data.id_ms_negara_tinggal);
+            setValue('id_ms_provinsi_tinggal', data.id_ms_provinsi_tinggal);
+            setValue('id_ms_kota_tinggal', data.id_ms_kota_tinggal);
+            setValue('id_ms_kecamatan_tinggal', data.id_ms_kecamatan_tinggal);
+            setValue('id_ms_desa_tinggal', data.id_ms_desa_tinggal);
+            setValue('alamat_tinggal', data.alamat_tinggal);
+            setValue('kode_pos_tinggal', data.kode_pos_tinggal);
+            setValue('rt_tinggal', data.rt_tinggal);
+            setValue('rw_tinggal', data.rw_tinggal);
+            setValue('tempat_lahir', data.tempat_lahir);
+            setValue('id_jenis_kelamin', data.id_jenis_kelamin);
+            setValue('id_ms_golongan_darah', data.id_ms_golongan_darah);
+            setValue('id_ms_status_kawin', data.id_ms_status_kawin);
+            setValue('id_ms_agama', data.id_ms_agama);
+            setValue('hp', data.hp);
+            setValue('email', data.email);
+            setValue('no_ktp', data.no_ktp || "");
+            setValue('status_pns', Number(data.status_pns));
+            setValue('status_aktif', Number(data.status_aktif));
+            setValue('tgl_lahir', data.tgl_lahir);
+            setValue('tgl_masuk', data.tgl_masuk);
+            setValue('tgl_keluar', String(data.tgl_keluar));
+            setValue('id_ms_pendidikan', data.id_ms_pendidikan);
+            setValue('status_aktif', Number(data.status_aktif));
+            setValue('id_ms_spesialis', data.id_ms_spesialis)
+            setValue('id_ms_status_pegawai', data.id_ms_status_pegawai);
+            setValue('id_pangkat', data.id_pangkat)
+            setValue('id_jabatan', data.id_jabatan)
+            setValue('kode_dpjp', data.kode_dpjp)
+            setValue('id_unit_induk', Number(data.id_ms_unit_induk));
+            setValue('id_unit_kerja', Number(data.id_ms_unit_kerja))
+        } else {
+            setSubmitMode('POST');
+        }
+
+    }, [id_pegawai, data, setValue]);
     return (
         <>
             <div className="flex justify-between items-center mb-0">
@@ -160,7 +223,13 @@ const UpdateOrCreateEmployee = ({
                                     {formStep === 1 && <EmployeeIdentity control={control}/>}
                                     {formStep === 2 && <ResidenceAddress control={control}/>}
                                     {formStep === 3 && <OriginAddress control={control}/>}
-                                    {formStep === 4 && <SupportingDocument control={control}/>}
+                                    {formStep === 4 && submitMode === 'POST' && (
+                                        <SupportingDocument
+                                            control={control}
+                                            setFiles={setFiles}
+                                            initialFiles={initialFiles}
+                                        />
+                                    )}
                                     {formStep === 5 && <JobDetail control={control}/>}
                                 </Stepper>
                             </form>

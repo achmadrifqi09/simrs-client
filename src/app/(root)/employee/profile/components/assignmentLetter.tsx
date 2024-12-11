@@ -5,13 +5,13 @@ import Heading from "@/components/ui/heading";
 import {Button} from "@/components/ui/button";
 import React from "react";
 
-const Job = () => {
+const AssignmentLetter = () => {
     return (
         <>
             <div className="flex flex-col w-full">
                 <div>
                     <Heading variant='section-title' headingLevel='h5'>
-                        Data Pekerjaan
+                        Prestasi
                     </Heading>
                     <div className="flex justify-end w-full mb-4">
                         <Button>
@@ -25,9 +25,8 @@ const Job = () => {
                             <TableRow>
                                 <TableHead>No</TableHead>
                                 <TableHead>No. SK</TableHead>
-                                <TableHead>Unit Kerja</TableHead>
-                                <TableHead>Jabatan</TableHead>
-                                <TableHead>TMT</TableHead>
+                                <TableHead>Prestasi</TableHead>
+                                <TableHead>Tanggal</TableHead>
                                 <TableHead>File</TableHead>
                             </TableRow>
                             <TableRow>
@@ -38,7 +37,7 @@ const Job = () => {
                 </div>
                 <div className="flex flex-col w-full mt-4">
                     <Heading variant='section-title' headingLevel='h5'>
-                        Data Pekerjaan
+                        Sanksi
                     </Heading>
                     <div className="flex justify-end w-full mb-4">
                         <Button>
@@ -51,8 +50,34 @@ const Job = () => {
                                 <TableRow>
                                     <TableHead>No</TableHead>
                                     <TableHead>No. SK</TableHead>
-                                    <TableHead>Pangkat / Golongan</TableHead>
-                                    <TableHead>TMT</TableHead>
+                                    <TableHead>Sanksi</TableHead>
+                                    <TableHead>Tanggal</TableHead>
+                                    <TableHead>File</TableHead>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center">Data tidak ditemukan</TableCell>
+                                </TableRow>
+                            </TableHeader>
+                        </Table>
+                    </div>
+                </div>
+                <div className="flex flex-col w-full mt-4">
+                    <Heading variant='section-title' headingLevel='h5'>
+                        Sanksi
+                    </Heading>
+                    <div className="flex justify-end w-full mb-4">
+                        <Button>
+                            Tambah Data
+                        </Button>
+                    </div>
+                    <div>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>No</TableHead>
+                                    <TableHead>No. SK</TableHead>
+                                    <TableHead>Sanksi</TableHead>
+                                    <TableHead>Tanggal</TableHead>
                                     <TableHead>File</TableHead>
                                 </TableRow>
                                 <TableRow>
@@ -67,4 +92,4 @@ const Job = () => {
     )
 }
 
-export default Job
+export default AssignmentLetter
