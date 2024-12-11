@@ -1,59 +1,59 @@
-"use client";
-import React, {useCallback, useEffect, useState} from "react";
-import Heading from "@/components/ui/heading";
-import Section from "@/components/ui/section";
-import {Input} from "@/components/ui/input";
-import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
-import {Button} from "@/components/ui/button";
-import {Filter} from "lucide-react";
-import {Label} from "@/components/ui/label";
-import {useSession} from "next-auth/react";
-import useGet from "@/hooks/use-get";
-import debounce from "debounce";
-import {toast} from "@/hooks/use-toast";
-import {AdmissionQueue, AdmissionQueues} from "@/types/admission-queue";
-import {Skeleton} from "@/components/ui/skeleton";
-import CursorPagination from "@/components/ui/cursor-pagination";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {formatToStandardDate} from "@/utils/date-formatter";
-import DrawerTaskId from "@/app/(root)/queue/(user)/data/components/drawer-task-id";
+'use client';
+import React, { useCallback, useEffect, useState } from 'react';
+import Heading from '@/components/ui/heading';
+import Section from '@/components/ui/section';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Filter } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { useSession } from 'next-auth/react';
+import useGet from '@/hooks/use-get';
+import debounce from 'debounce';
+import { toast } from '@/hooks/use-toast';
+import { AdmissionQueue, AdmissionQueues } from '@/types/admission-queue';
+import { Skeleton } from '@/components/ui/skeleton';
+import CursorPagination from '@/components/ui/cursor-pagination';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { formatToStandardDate } from '@/utils/date-formatter';
+import DrawerTaskId from '@/app/(root)/queue/(user)/data/components/drawer-task-id';
 
 type DateFilter = {
-    fromDate: string,
-    toDate: string,
-}
+    fromDate: string;
+    toDate: string;
+};
 
 const QueueDataTable = () => {
     const [filter, setFilter] = useState<DateFilter>({
-        fromDate: new Date().toISOString().split("T")[0],
-        toDate: new Date().toISOString().split("T")[0],
+        fromDate: new Date().toISOString().split('T')[0],
+        toDate: new Date().toISOString().split('T')[0],
     });
-    const url: string = '/queue'
-    const {status} = useSession();
+    const url: string = '/queue';
+    const { status } = useSession();
     const [canRefresh, setCanRefresh] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
     const [cursor, setCursor] = useState<number>(0);
     const [takeData, setTakeData] = useState<number>(10);
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const [title, setTitle] = useState<string>('');
-    const [showTaskId, setShowTaskId] = useState<boolean>(false)
-    const [selectedQueue, setSelectedQueue] = useState<AdmissionQueue | null>(null)
+    const [showTaskId, setShowTaskId] = useState<boolean>(false);
+    const [selectedQueue, setSelectedQueue] = useState<AdmissionQueue | null>(null);
 
-    const {data, loading, error, getData} = useGet<AdmissionQueues>({
+    const { data, loading, error, getData } = useGet<AdmissionQueues>({
         url: `${url}?from_date=${filter.fromDate}&to_date=${filter.toDate}`,
         keyword: searchKeyword,
         take: takeData,
-        cursor: cursor
-    })
+        cursor: cursor,
+    });
 
     const handleShowTaskId = (queue: AdmissionQueue | null) => {
         if (showTaskId) {
-            setSelectedQueue(null)
+            setSelectedQueue(null);
         } else {
-            setSelectedQueue(queue)
+            setSelectedQueue(queue);
         }
-        setShowTaskId(prev => !prev)
-    }
+        setShowTaskId((prev) => !prev);
+    };
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const keyword: string = e.target.value;
@@ -79,43 +79,40 @@ const QueueDataTable = () => {
         setCanRefresh(true);
     };
 
-    const debouncedChangeSearch = useCallback(
-        debounce(handleChangeSearch, 500),
-        []
-    );
+    const debouncedChangeSearch = useCallback(debounce(handleChangeSearch, 500), []);
 
     const handleChangeFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setFilter({...filter, [name]: value});
+        const { name, value } = e.target;
+        setFilter({ ...filter, [name]: value });
         setCanRefresh(true);
     };
 
     useEffect(() => {
         setTitle(`Rentang tanggal ${formatToStandardDate(filter.fromDate)} - ${formatToStandardDate(filter.toDate)}`);
-        setCursor(data?.pagination?.current_cursor || 0)
+        setCursor(data?.pagination?.current_cursor || 0);
     }, [data]);
 
     useEffect(() => {
         if (error) {
             toast({
-                title: "Terjadi Kesalahan",
+                title: 'Terjadi Kesalahan',
                 description: error?.toString(),
                 duration: 4000,
-            })
+            });
         }
-    }, [error])
+    }, [error]);
 
     useEffect(() => {
         if (status === 'authenticated' && canRefresh) {
             getData().catch(() => {
                 toast({
-                    title: "Terjadi Kesalahan",
-                    description: "Terjadi kesalahan saat memperbarui data di tabel",
+                    title: 'Terjadi Kesalahan',
+                    description: 'Terjadi kesalahan saat memperbarui data di tabel',
                     duration: 4000,
-                })
+                });
             });
         }
-    }, [getData, status])
+    }, [getData, status]);
 
     return (
         <>
@@ -131,12 +128,13 @@ const QueueDataTable = () => {
                         type="search"
                         className="w-full md:w-1/3"
                         placeholder="Nama/RM/BPJS/No Rujukan"
-                        onChange={debouncedChangeSearch}/>
+                        onChange={debouncedChangeSearch}
+                    />
                     <div className="flex w-full justify-end md:block md:w-max">
                         <Popover open={showFilter} onOpenChange={setShowFilter}>
                             <PopoverTrigger asChild>
                                 <Button variant="ghost">
-                                    <Filter className="w-4 h-4 mr-1.5"/>
+                                    <Filter className="w-4 h-4 mr-1.5" />
                                     Filter
                                 </Button>
                             </PopoverTrigger>
@@ -148,7 +146,8 @@ const QueueDataTable = () => {
                                         className="block mt-1"
                                         name="fromDate"
                                         defaultValue={filter.fromDate}
-                                        onChange={handleChangeFilter}/>
+                                        onChange={handleChangeFilter}
+                                    />
                                 </div>
                                 <div>
                                     <Label>Sampai Tanggal</Label>
@@ -157,7 +156,8 @@ const QueueDataTable = () => {
                                         name="toDate"
                                         className="block mt-1"
                                         defaultValue={filter.toDate}
-                                        onChange={handleChangeFilter}/>
+                                        onChange={handleChangeFilter}
+                                    />
                                 </div>
                             </PopoverContent>
                         </Popover>
@@ -179,101 +179,92 @@ const QueueDataTable = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {
-                            (loading || status == 'loading') ? (
-                                Array.from({length: 2}, (_, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-16 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-5 w-12 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <Skeleton className="h-8 w-10 rounded md:w-1/2 rounded-lg"/>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                data?.results?.map((queue: AdmissionQueue, index: number) => {
-                                    return (
-                                        <React.Fragment key={index}>
-                                            <TableRow>
-                                                <TableCell>{index + 1}</TableCell>
-                                                <TableCell className="min-w-[16ch]">{queue?.nama_pasien}</TableCell>
-                                                <TableCell>{queue?.kode_antrian}-{queue.no_antrian}</TableCell>
-                                                <TableCell>{queue?.kode_rm || '-'}</TableCell>
-                                                <TableCell>{queue?.no_bpjs || '-'}</TableCell>
-                                                <TableCell>{queue?.no_rujukan || '-'}</TableCell>
-                                                <TableCell>
-                                                    {queue?.jenis_penjamin === 1 ? 'Umum' : 'BPJS'}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {queue?.jenis_pasien === 1 ? 'Lama' : 'Baru'}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {queue?.jadwal_dokter.kode_instalasi_bpjs || '-'}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button size="sm" disabled={Number(queue.jenis_penjamin) === 1}
-                                                            onClick={() => handleShowTaskId(queue)}>
-                                                        Task ID
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        </React.Fragment>
-                                    )
-                                })
-                            )
-                        }
-                        {(data && data?.results?.length === 0 && !loading) && (
+                        {loading || status == 'loading'
+                            ? Array.from({ length: 2 }, (_, index) => (
+                                  <TableRow key={index}>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-16 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-5 w-12 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                          <Skeleton className="h-8 w-10 md:w-1/2 rounded-lg" />
+                                      </TableCell>
+                                  </TableRow>
+                              ))
+                            : data?.results?.map((queue: AdmissionQueue, index: number) => {
+                                  return (
+                                      <React.Fragment key={index}>
+                                          <TableRow>
+                                              <TableCell>{index + 1}</TableCell>
+                                              <TableCell className="min-w-[16ch]">{queue?.nama_pasien}</TableCell>
+                                              <TableCell>
+                                                  {queue?.kode_antrian}-{queue.no_antrian}
+                                              </TableCell>
+                                              <TableCell>{queue?.kode_rm || '-'}</TableCell>
+                                              <TableCell>{queue?.no_bpjs || '-'}</TableCell>
+                                              <TableCell>{queue?.no_rujukan || '-'}</TableCell>
+                                              <TableCell>{queue?.jenis_penjamin === 1 ? 'Umum' : 'BPJS'}</TableCell>
+                                              <TableCell>{queue?.jenis_pasien === 1 ? 'Lama' : 'Baru'}</TableCell>
+                                              <TableCell>{queue?.jadwal_dokter.kode_instalasi_bpjs || '-'}</TableCell>
+                                              <TableCell>
+                                                  <Button size="sm" onClick={() => handleShowTaskId(queue)}>
+                                                      Task ID
+                                                  </Button>
+                                              </TableCell>
+                                          </TableRow>
+                                      </React.Fragment>
+                                  );
+                              })}
+                        {data && data?.results?.length === 0 && !loading && (
                             <TableRow>
-                                <TableCell colSpan={9} className="text-center">Data tidak ditemukan</TableCell>
+                                <TableCell colSpan={9} className="text-center">
+                                    Data tidak ditemukan
+                                </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
-                {
-                    (loading || status === 'loading') ? (
-                        <div className="flex justify-between items-center mt-2">
-                            <Skeleton className="h-10 w-[128px] rounded-lg"/>
-                            <div className="flex gap-4">
-                                <Skeleton className="h-10 w-10 rounded-lg"/>
-                                <Skeleton className="h-10 w-10 rounded-lg"/>
-                            </div>
+                {loading || status === 'loading' ? (
+                    <div className="flex justify-between items-center mt-2">
+                        <Skeleton className="h-10 w-[128px] rounded-lg" />
+                        <div className="flex gap-4">
+                            <Skeleton className="h-10 w-10 rounded-lg" />
+                            <Skeleton className="h-10 w-10 rounded-lg" />
                         </div>
-                    ) : (
-                        <CursorPagination
-                            currentCursor={data?.pagination?.current_cursor || 0}
-                            take={takeData}
-                            onNextPage={handleNextPage}
-                            onPreviousPage={handlePreviousPage}
-                            onItemsPerPageChange={handleChangeDataPerPage}
-                            hasMore={(data?.results?.length || 0) >= takeData}
-                        />
-                    )
-                }
+                    </div>
+                ) : (
+                    <CursorPagination
+                        currentCursor={data?.pagination?.current_cursor || 0}
+                        take={takeData}
+                        onNextPage={handleNextPage}
+                        onPreviousPage={handlePreviousPage}
+                        onItemsPerPageChange={handleChangeDataPerPage}
+                        hasMore={(data?.results?.length || 0) >= takeData}
+                    />
+                )}
                 {selectedQueue && (
                     <DrawerTaskId
                         showTaskId={showTaskId}
@@ -281,8 +272,7 @@ const QueueDataTable = () => {
                         selectedQueue={selectedQueue}
                         setSelectedQueue={setSelectedQueue}
                     />
-                )
-                }
+                )}
             </Section>
         </>
     );

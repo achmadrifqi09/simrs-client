@@ -8,7 +8,7 @@ type sectionProps = React.ComponentProps<'section'> & {
 }
 
 const Section = (props: sectionProps) => {
-    const baseClass = "p-4 border border-gray-200 rounded-xl";
+    const baseClass = "p-4 border border-gray-200 rounded-xl shadow-sm";
     return (
         <div className={cn(baseClass, props.className)}>
             {props.children}

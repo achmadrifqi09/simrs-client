@@ -57,7 +57,6 @@ const PatientRegister = () => {
                 ${values.rw_tinggal.toString()}`,
                 }
             );
-            console.log(values.jenis_kelamin);
             if (response?.data) {
                 toast({
                     title: "Aksi Berhasil",
