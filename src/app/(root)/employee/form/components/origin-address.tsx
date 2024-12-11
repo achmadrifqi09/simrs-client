@@ -124,15 +124,13 @@ const OriginAddress = ({
                 name="rt_asal"
                 render={({field}) => (
                     <FormItem>
-                        <FormLabel>RT Asal</FormLabel>
+                        <FormLabel>RT Asal*</FormLabel>
                         <FormControl>
-                        <Input 
-                                type="number" 
-                                value={field.value || ''}
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
-                                onBlur={field.onBlur}
-                                name={field.name}
-                                min={0}
+                            <Input
+                                type="text"  // Ubah ke text
+                                {...field}
+                                value={field.value || ''}  // Handle null/undefined
+                                onChange={(e) => field.onChange(e.target.value || null)}  // Handle empty string
                             />
                         </FormControl>
                         <FormMessage/>
@@ -146,13 +144,11 @@ const OriginAddress = ({
                     <FormItem>
                         <FormLabel>RW Asal</FormLabel>
                         <FormControl>
-                        <Input 
-                                type="number" 
+                            <Input
+                                type="text"
+                                {...field}
                                 value={field.value || ''}
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
-                                onBlur={field.onBlur}
-                                name={field.name}
-                                min={0}
+                                onChange={(e) => field.onChange(e.target.value || null)}
                             />
                         </FormControl>
                         <FormMessage/>
@@ -166,13 +162,11 @@ const OriginAddress = ({
                     <FormItem>
                         <FormLabel>Kode Pos Asal</FormLabel>
                         <FormControl>
-                        <Input 
-                                type="number" 
+                            <Input
+                                type="text"
+                                {...field}
                                 value={field.value || ''}
-                                onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : '')}
-                                onBlur={field.onBlur}
-                                name={field.name}
-                                min={0}
+                                onChange={(e) => field.onChange(e.target.value || null)}
                             />
                         </FormControl>
                         <FormMessage/>

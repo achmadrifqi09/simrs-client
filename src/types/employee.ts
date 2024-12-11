@@ -85,15 +85,15 @@ export type EmployeeSubmitPayload = {
     kode_pos_tinggal: string;
     rt_tinggal: string;
     rw_tinggal: string;
-    id_ms_negara_asal: number;
-    id_ms_provinsi_asal: string;
-    id_ms_kota_asal: string;
-    id_ms_kecamatan_asal: string;
-    id_ms_desa_asal: string;
-    alamat_asal: string;
-    kode_pos_asal: string;
-    rt_asal: string;
-    rw_asal: string;
+    id_ms_negara_asal?: number | null;
+    id_ms_provinsi_asal?: string | null;
+    id_ms_kota_asal?: string | null;
+    id_ms_kecamatan_asal?: string | null;
+    id_ms_desa_asal?: string | null;
+    alamat_asal?: string | null;
+    kode_pos_asal?: string | null;
+    rt_asal?: string | null;
+    rw_asal?: string | null;
     tempat_lahir: string;
     id_jenis_kelamin: number;
     id_ms_golongan_darah: number;
@@ -140,6 +140,15 @@ export type EmployeeSingle = {
     kode_pos_tinggal: string;
     rt_tinggal: string;
     rw_tinggal: string;
+    id_ms_negara_asal: number | null;
+    id_ms_provinsi_asal: string | null;
+    id_ms_kota_asal: string | null;
+    id_ms_kecamatan_asal: string | null;
+    id_ms_desa_asal: string | null;
+    alamat_asal: string | null;
+    kode_pos_asal: string | null;
+    rt_asal: string | null;
+    rw_asal: string | null;
     tempat_lahir: string;
     id_jenis_kelamin: number;
     id_ms_golongan_darah: number;
@@ -167,6 +176,6 @@ export type EmployeeSingle = {
     id_ms_unit_induk: number;
     id_ms_unit_kerja: number;
     id_ms_jenis_pegawai: number;
-    id_unit_induk:number;
+    id_unit_induk: number;
     id_unit_kerja: number;
 }
