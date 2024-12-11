@@ -72,7 +72,7 @@ const UpdateOrCreateEmployee = () => {
         const payload: EmployeeSubmitPayload = {
             ...values,
             nip_pegawai: String(values.nip_pegawai),
-            nip_pns: String(values.nip_pns),
+            nip_pns: String(values.nip_pns) || null,
             gelar_depan: String(values.gelar_depan),
             gelar_belakang: String(values.gelar_belakang),
             nama_pegawai: values.nama_pegawai,

@@ -3,13 +3,13 @@ import {z} from 'zod';
 const employeeValidationSchema = z.object({
     nip_pegawai: z
         .string({message: 'Format NIP Pegawai tidak valid, harus diisi.'})
-        .regex(
-            /^[0-9]{4}\.[0-9]{2}[0-9]{2}[0-9]{4}\.[0-9]{2}\.[0-9]{5}$/,
-            {message: 'NIP Pegawai format yyyy.ddmmyyyy.xx.xxxx atau yyyy.mm.00000'}
-        ),
+        .regex(/^(?:\d{4}\.\d{8}\.\d{2}\.\d{4}|\d{4}\.\d{2}\.\d{5})$/, {
+            message:
+                'Format NIP Pegawai tidak valid, harus mengikuti format yyyy.ddmmyyyy.xx.xxxx atau yyyy.mm.00000',
+        }),
     nip_pns: z.string({message: 'NIP PNS harus angka'})
         .optional()
-        .nullable(),
+        .nullish(),
     gelar_depan: z.string(),
     gelar_belakang: z.string(),
     nama_pegawai: z.string({message: 'Nama Pegawai Harus diisi'}),

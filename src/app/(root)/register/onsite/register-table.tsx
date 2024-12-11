@@ -19,6 +19,7 @@ import CancelDialog from '@/app/(root)/register/onsite/cancel-dialog';
 import { toast } from '@/hooks/use-toast';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import CursorPagination from "@/components/ui/cursor-pagination";
 
 interface RegisterProps {
     onRefresh: () => void;
@@ -34,14 +35,30 @@ const RegisterTable = ({ onRefresh, refreshTrigger }: RegisterProps) => {
     const { status } = useSession();
     const [id, setId] = useState<number | undefined>();
     const [cursor, setCursor] = useState<number>(0);
+    const [takeData, setTakeData] = useState<number>(10);
     const [show, setShow] = useState<boolean>(false);
     const [url, setUrl] = useState<string>('/registration');
     const { data, loading, getData } = useGet<Register>({
         url: url,
         keyword: searchKeyword,
+        take: takeData,
         cursor: cursor,
     });
+
     const [showFilter, setShowFilter] = useState<boolean>(false);
+    const handleChangeDataPerPage = (value: number) => {
+        setTakeData(value);
+        setCursor(0);
+    };
+
+    const handleNextPage = () => {
+        setCursor(prevCursor => prevCursor + takeData);
+    };
+
+    const handlePreviousPage = () => {
+        const newCursor = Math.max(0, cursor - takeData);
+        setCursor(newCursor);
+    };
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const keyword: string = e.target.value;
         setSearchKeyword(keyword);
@@ -258,6 +275,15 @@ const RegisterTable = ({ onRefresh, refreshTrigger }: RegisterProps) => {
                         })}
                     </TableBody>
                 </Table>
+
+                <CursorPagination
+                    currentCursor={data?.pagination?.current_cursor || 0}
+                    take={takeData}
+                    onNextPage={handleNextPage}
+                    onPreviousPage={handlePreviousPage}
+                    onItemsPerPageChange={handleChangeDataPerPage}
+                    hasMore={(data?.results?.length || 0) >= takeData}
+                />
             </div>
         </div>
     );

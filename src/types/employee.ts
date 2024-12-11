@@ -73,7 +73,7 @@ type EmployeesWorkUnit = {
 export type EmployeeSubmitPayload = {
     nama_pegawai: string;
     nip_pegawai: string;
-    nip_pns: string;
+    nip_pns: string | null;
     gelar_depan: string;
     gelar_belakang: string;
     id_ms_negara_tinggal: number;
