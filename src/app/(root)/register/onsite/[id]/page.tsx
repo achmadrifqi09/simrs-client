@@ -1,36 +1,64 @@
-"use client";
+'use client';
 
-import Heading from "@/components/ui/heading";
-import Section from "@/components/ui/section";
-import PatientData from "@/app/(root)/register/onsite/[id]/components/patient-data";
-import GeneralRegisterData from "@/app/(root)/register/onsite/[id]/components/general-register-data";
-import { Button } from "@/components/ui/button";
+import Heading from '@/components/ui/heading';
+import PatientData from '@/app/(root)/register/onsite/[id]/components/patient-data';
+import GeneralRegisterData from '@/app/(root)/register/onsite/[id]/components/general-register-data';
+import { Button } from '@/components/ui/button';
+import { useParams } from 'next/navigation';
+import SelectRegistrant from '@/app/(root)/register/onsite/[id]/components/select-registrant';
+import { useState } from 'react';
+import Cookies from 'js-cookie';
+import { toast } from '@/hooks/use-toast';
+import { useRouter } from 'next-nprogress-bar';
+import { PatientType } from '@/types/patient';
+
+type RegistrationDetailPrams = {
+    id: string;
+};
 
 const RegistrationDetail = () => {
+    const params = useParams<RegistrationDetailPrams>();
+    const router = useRouter();
+    const [selectRegistrantShow, setSelectRegistrantShow] = useState<boolean>(false);
+    const [patient, setPatient] = useState<PatientType | null>(null);
+
+    const handleBackToCounter = () => {
+        const counterId = Cookies.get('LATEST_COUNTER_ID');
+        if (counterId) {
+            router.push(`/queue/admission-counter/${counterId}`);
+        } else {
+            toast({
+                description: 'Anda tidak memiliki riwayat loket yang pernah dikunjungi',
+            });
+        }
+    };
 
     return (
         <>
-            <Heading variant='page-title' headingLevel='h3'> Detail Register</Heading>
-            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
-                <Section>
-                    <div>
-                        <Heading variant="section-title" headingLevel="h5">Data Pasien</Heading>
-                    </div>
-                    <PatientData/>
-                </Section>
-                <Section className="2xl:col-span-2 flex flex-col justify-between h-full">
-                    <div>
-                        <GeneralRegisterData/>
-                    </div>
-
-                    <div className="flex justify-center items-center gap-4 mt-4">
-                        <Button>Simpan</Button>
-                        <Button variant="outline" onClick={() => window.history.back()}>
-                            Kembali
-                        </Button>
-                    </div>
-                </Section>
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-4">
+                <Heading variant="page-title" headingLevel="h3">
+                    Pendaftaran Pasien
+                </Heading>
+                <div className="flex gap-2">
+                    <Button size="sm" variant="secondary" onClick={() => router.push('/register/onsite/')}>
+                        Kembali
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setSelectRegistrantShow(true)}>
+                        Pilih Pendaftar
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleBackToCounter()}>
+                        Kembali ke Loket
+                    </Button>
+                </div>
             </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                <PatientData setPatient={setPatient} />
+                <GeneralRegisterData id={params.id} patient={patient} />
+            </div>
+            <SelectRegistrant
+                selectRegistrantShow={selectRegistrantShow}
+                setSelectRegistrantShow={setSelectRegistrantShow}
+            />
         </>
     );
 };

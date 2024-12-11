@@ -125,7 +125,7 @@ const SelectSearch = <T extends Record<string, any>>({
     }, [defaultValue]);
 
     useEffect(() => {
-        if(clearTrigger !== 0){
+        if (clearTrigger !== 0) {
             setSelectedOption(null)
         }
     }, [clearTrigger]);
