@@ -11,7 +11,12 @@ import { Button } from '@/components/ui/button';
 import { InternalDoctor, InternalDoctors } from '@/types/doctor-bpjs';
 import UpdateDialog from './update-dialog';
 
-const DoctorInternal = () => {
+interface DoctorInternalProps {
+    setDoctorInternal: React.Dispatch<React.SetStateAction<InternalDoctors | null>>;
+    internalDoctors: InternalDoctors | null;
+}
+
+const DoctorInternal = ({ setDoctorInternal, internalDoctors }: DoctorInternalProps) => {
     const [searchKeyword, setSearchKeyword] = useState<string>('');
     const { status } = useSession();
     const [selectedDoctor, setSelectedDoctor] = useState<InternalDoctor | null>(null);
@@ -20,6 +25,8 @@ const DoctorInternal = () => {
     const { data, loading, error, getData } = useGet<InternalDoctors>({
         url: '/employee/doctor',
         keyword: searchKeyword,
+        take: 200,
+        cursor: 0,
     });
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +63,8 @@ const DoctorInternal = () => {
                 description: error.toString(),
             });
         }
-    }, [error]);
+        if (data?.results?.length !== internalDoctors?.results?.length) setDoctorInternal(data);
+    }, [error, data]);
 
     return (
         <Section className="col-span-1 2xl:col-span-2">

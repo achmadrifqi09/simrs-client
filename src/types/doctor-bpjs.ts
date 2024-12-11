@@ -5,8 +5,8 @@ export type DoctorsBPJS = {
 };
 
 export type DoctorBPJS = {
-    nama: string;
-    kode: string;
+    namadokter: string;
+    kodedokter: string;
 };
 
 export type DoctorBPJSFilters = {
