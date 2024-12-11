@@ -27,7 +27,7 @@ export const employee: EmployeeSubmitPayload = {
     status_aktif: 1,
     tgl_lahir: '',
     tgl_masuk: '',
-    tgl_keluar: undefined,
+    tgl_keluar: '',
     foto: undefined,
     file_ktp: undefined,
     file_kk: undefined,

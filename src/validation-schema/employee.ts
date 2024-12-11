@@ -1,10 +1,15 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 const employeeValidationSchema = z.object({
-    nip_pegawai: z.string({message: 'Format NIP Pegawai tidak valid, harus mengikuti format yyyy.ddmmyyyy.xx.xxxx atau yyyy.mm.00000'}),
+    nip_pegawai: z
+        .string({message: 'Format NIP Pegawai tidak valid, harus diisi.'})
+        .regex(/^(?:\d{4}\.\d{8}\.\d{2}\.\d{4}|\d{4}\.\d{2}\.\d{5})$/, {
+            message:
+                'Format NIP Pegawai tidak valid, harus mengikuti format yyyy.ddmmyyyy.xx.xxxx atau yyyy.mm.00000',
+        }),
     nip_pns: z.string({message: 'NIP PNS harus angka'})
         .optional()
-        .nullable(),
+        .nullish(),
     gelar_depan: z.string(),
     gelar_belakang: z.string(),
     nama_pegawai: z.string({message: 'Nama Pegawai Harus diisi'}),
@@ -24,7 +29,7 @@ const employeeValidationSchema = z.object({
         .min(2, {message: 'RW tinggal harus diisi minimal 2 angka'})
         .max(3, {message: 'RW tinggal harus diisi maximal 3 angka'}),
     tempat_lahir: z.string()
-        .min(3,{message:'Tempat Lahir Minimal 3 karakter'})
+        .min(3, {message: 'Tempat Lahir Minimal 3 karakter'})
         .max(100, {message: 'Tempat Lahir maximal 100 karakter'}),
     id_jenis_kelamin: z.number(),
     id_ms_golongan_darah: z.number(),
@@ -43,7 +48,7 @@ const employeeValidationSchema = z.object({
     tgl_masuk: z.string().refine((val) => !val || !isNaN(Date.parse(val)), {
         message: 'Tanggal Masuk harus diisi',
     }).nullable(),
-    tgl_keluar: z.string().optional().nullable(),
+    tgl_keluar: z.string().nullish(),
     foto: z.any().optional(),
     file_ktp: z.any().optional(),
     file_kk: z.any().optional(),
@@ -55,10 +60,10 @@ const employeeValidationSchema = z.object({
     id_ms_spesialis: z.number(),
     id_pangkat: z.number(),
     id_jabatan: z.number(),
-    kode_dpjp: z.string().default(''),
+    kode_dpjp: z.string().nullish(),
     id_unit_induk: z.number().optional(),
     id_unit_kerja: z.number().optional(),
     id_ms_jenis_pegawai: z.number()
 });
 
-export { employeeValidationSchema };
+export {employeeValidationSchema};

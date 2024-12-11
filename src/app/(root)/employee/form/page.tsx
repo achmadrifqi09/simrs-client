@@ -1,45 +1,45 @@
 "use client"
-import React, {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
-import {Button} from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import Section from "@/components/ui/section";
 import Stepper from "@/components/ui/stepper";
-import {Step} from "@/types/stepper";
+import { Step } from "@/types/stepper";
 import EmployeeIdentity from "@/app/(root)/employee/form/components/employee-identity";
 import ResidenceAddress from "@/app/(root)/employee/form/components/residence-address";
 import OriginAddress from "@/app/(root)/employee/form/components/origin-address";
 import SupportingDocument from "@/app/(root)/employee/form/components/supporting-document";
 import JobDetail from "@/app/(root)/employee/form/components/job-detail";
 import Heading from "@/components/ui/heading";
-import {usePost} from "@/hooks/use-post";
-import {usePatch} from "@/hooks/use-patch";
-import {toast} from "@/hooks/use-toast";
-import {useSession} from "next-auth/react";
-import {EmployeeForm} from "@/app/(root)/employee/form/form";
-import {dateFormatter} from "@/utils/date-formatter";
-import {employee} from "@/const/employee-default-value";
-import {EmployeeSingle, EmployeeSubmitPayload} from "@/types/employee";
-import {Form} from "@/components/ui/form";
-import {useRouter, useSearchParams} from "next/navigation";
+import { usePost } from "@/hooks/use-post";
+import { usePatch } from "@/hooks/use-patch";
+import { toast } from "@/hooks/use-toast";
+import { useSession } from "next-auth/react";
+import { EmployeeForm } from "@/app/(root)/employee/form/form";
+import { dateFormatter } from "@/utils/date-formatter";
+import { employee } from "@/const/employee-default-value";
+import { EmployeeSingle, EmployeeSubmitPayload } from "@/types/employee";
+import { Form } from "@/components/ui/form";
+import { useRouter, useSearchParams } from "next/navigation";
 import useGet from "@/hooks/use-get";
-import {employeeValidationSchema} from "@/validation-schema/employee";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { employeeValidationSchema } from "@/validation-schema/employee";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const steps: Step[] = [
-    {step: 1, title: "Data Diri"},
-    {step: 2, title: "Alamat Asal"},
-    {step: 3, title: "Alamat Tinggal"},
-    {step: 4, title: "Dokumen Pendukung"},
-    {step: 5, title: "Detail pekerjaan"},
+    { step: 1, title: "Data Diri" },
+    { step: 2, title: "Alamat Asal" },
+    { step: 3, title: "Alamat Tinggal" },
+    { step: 4, title: "Dokumen Pendukung" },
+    { step: 5, title: "Detail pekerjaan" },
 ];
 
 const UpdateOrCreateEmployee = () => {
     const router = useRouter();
-    const {data: session} = useSession();
+    const { data: session } = useSession();
     const [formStep, setFormStep] = useState<number>(1);
-    const {postData} = usePost("/employee");
-    const {updateData} = usePatch();
-    const {status} = useSession();
+    const { postData } = usePost("/employee");
+    const { updateData } = usePatch();
+    const { status } = useSession();
     const employeeForm = useForm<EmployeeForm>({
         resolver: zodResolver(employeeValidationSchema),
         defaultValues: employee,
@@ -48,10 +48,12 @@ const UpdateOrCreateEmployee = () => {
     const searchParams = useSearchParams();
     const id_pegawai = Number(searchParams.get('id'));
 
-    const {data} = useGet<EmployeeSingle>({
+    const { data } = useGet<EmployeeSingle>({
         url: id_pegawai ? `/employee/${id_pegawai}` : '/employee',
     });
-    const {handleSubmit, control, setValue} = employeeForm;
+
+
+    const { handleSubmit, control, setValue } = employeeForm;
     const [files, setFiles] = useState<(File | null)[]>([null, null, null, null, null]);
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
     const onSubmit = handleSubmit(async (values) => {
@@ -60,7 +62,6 @@ const UpdateOrCreateEmployee = () => {
         }
         const formData = new FormData();
         const fileKeys = ["file_ktp", "file_kk", "file_ktam", "file_npwp", "foto"];
-
         files.forEach((file, index) => {
             if (file) {
                 formData.append(fileKeys[index], file);
@@ -71,7 +72,7 @@ const UpdateOrCreateEmployee = () => {
         const payload: EmployeeSubmitPayload = {
             ...values,
             nip_pegawai: String(values.nip_pegawai),
-            nip_pns: String(values.nip_pns),
+            nip_pns: String(values.nip_pns) || null,
             gelar_depan: String(values.gelar_depan),
             gelar_belakang: String(values.gelar_belakang),
             nama_pegawai: values.nama_pegawai,
@@ -100,9 +101,9 @@ const UpdateOrCreateEmployee = () => {
             tgl_masuk: submitMode === 'PATCH' && values.tgl_masuk
                 ? dateFormatter(new Date(values.tgl_masuk.split('T')[0]))
                 : (values.tgl_masuk ? dateFormatter(new Date(values.tgl_masuk)) : ""),
-            tgl_keluar: submitMode === 'PATCH' && values.tgl_keluar
-                ? dateFormatter(new Date(values.tgl_keluar.split('T')[0]))
-                : (values.tgl_keluar ? dateFormatter(new Date(values.tgl_keluar)) : undefined),
+            tgl_keluar: values.tgl_keluar && !isNaN(new Date(values.tgl_keluar).getTime())
+                ? dateFormatter(new Date(values.tgl_keluar))
+                : null,
             foto: files[4] ? files[4] : undefined,
             file_ktp: files[0] ? files[0] : undefined,
             file_kk: files[1] ? files[1] : undefined,
@@ -113,7 +114,7 @@ const UpdateOrCreateEmployee = () => {
             id_ms_spesialis: Number(values.id_ms_spesialis),
             id_pangkat: Number(values.id_pangkat),
             id_jabatan: Number(values.id_jabatan),
-            kode_dpjp: values.kode_dpjp ?? '',
+            kode_dpjp: values.kode_dpjp || null,
             id_ms_jenis_pegawai: values.id_ms_jenis_pegawai ? Number(values.id_ms_jenis_pegawai) : 0,
             id_ms_unit_induk: Number(values.id_unit_induk),
             id_ms_unit_kerja: Number(values.id_unit_kerja)
@@ -190,8 +191,9 @@ const UpdateOrCreateEmployee = () => {
             setValue('id_pangkat', data.id_pangkat)
             setValue('id_jabatan', data.id_jabatan)
             setValue('kode_dpjp', data.kode_dpjp)
-            setValue('id_unit_induk', Number(data.id_ms_unit_induk));
-            setValue('id_unit_kerja', Number(data.id_ms_unit_kerja))
+            setValue('id_unit_induk', Number(data.id_unit_induk));
+            setValue('id_unit_kerja', Number(data.id_unit_kerja));
+            setValue('id_ms_jenis_pegawai', Number(data.id_ms_jenis_pegawai))
         } else {
             setSubmitMode('POST');
         }
@@ -220,9 +222,9 @@ const UpdateOrCreateEmployee = () => {
                                         formStep === 5 && <Button type="submit">Simpan</Button>
                                     }
                                 >
-                                    {formStep === 1 && <EmployeeIdentity control={control}/>}
-                                    {formStep === 2 && <ResidenceAddress control={control}/>}
-                                    {formStep === 3 && <OriginAddress control={control}/>}
+                                    {formStep === 1 && <EmployeeIdentity control={control} />}
+                                    {formStep === 2 && <ResidenceAddress control={control} />}
+                                    {formStep === 3 && <OriginAddress control={control} />}
                                     {formStep === 4 && submitMode === 'POST' && (
                                         <SupportingDocument
                                             control={control}
@@ -230,7 +232,7 @@ const UpdateOrCreateEmployee = () => {
                                             initialFiles={initialFiles}
                                         />
                                     )}
-                                    {formStep === 5 && <JobDetail control={control}/>}
+                                    {formStep === 5 && <JobDetail control={control} />}
                                 </Stepper>
                             </form>
                         </Form>

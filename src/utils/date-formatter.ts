@@ -1,41 +1,30 @@
 export const timeStringFormatter = (dateString: string | undefined): string => {
-    if (dateString) {
+    if(dateString) {
         const date = new Date(dateString);
         const hours = String(date.getUTCHours()).padStart(2, '0');
         const minutes = String(date.getUTCMinutes()).padStart(2, '0');
         const seconds = String(date.getUTCSeconds()).padStart(2, '0');
         return `${hours}:${minutes}:${seconds}`;
     }
-    return dateString || '';
-};
-
-export const dateFormatter = (date: Date | undefined) => {
-    if (date) {
-        return `${date?.getDate() >= 10 ? date.getDate() : '0' + date.getDate()}-${
-            date?.getMonth() + 1
-        }-${date?.getFullYear()}`;
-    }
-    return '';
-};
-
-export const formatToStandardDate = (date: string): string => {
-    if (/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(date)) {
-        const [year, month, day] = date.split('-');
-        return `${day}-${month}-${year}`;
-    }
-    return date;
-};
-
-export const isValidTimeFormat = (time: string): boolean => {
-    const regex = /^([01]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])(\.\d{3}Z?)?$/;
-    return regex.test(time);
+    return dateString || "";
 }
 
-export const removeMillisecondsAndTimezone = (time: string): string =>{
-    if (!isValidTimeFormat(time)) {
-        throw new Error('Format waktu tidak valid. Harus dalam format HH:mm:ss atau HH:mm:ss.sssZ');
+export const dateFormatter = (date: Date | undefined): string => {
+    if (!date || isNaN(date.getTime())) {
+        return ''; // Kembalikan string kosong jika tanggal tidak valid
     }
-    const cleanedTime = time.replace(/(\.\d{3}Z?)?$/, '');
-    const [hours, minutes] = cleanedTime.split(':');
-    return `${hours}:${minutes}`;
+
+    const day = date.getDate().toString().padStart(2, '0'); // Pastikan dua digit untuk hari
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Pastikan dua digit untuk bulan
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+};
+
+export const formatToStandardDate = (date: string) => {
+    if (/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(date)) {
+        const [year, month, day] = date.split('-');
+       return `${day}-${month}-${year}`;
+    }
+    return date;
 }

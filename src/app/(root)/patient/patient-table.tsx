@@ -12,6 +12,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Permission} from "@/types/permission";
 import moment from 'moment-timezone';
 import Link from "next/link";
+import CursorPagination from "@/components/ui/cursor-pagination";
 
 interface PatientTableProps {
     refreshTrigger: number;
@@ -32,10 +33,28 @@ const PatientTable = ({
     const url: string = '/patient';
     const {status} = useSession();
     const [searchKeyword, setSearchKeyword] = useState<string>('');
+    const [cursor, setCursor] = useState<number>(0);
+    const [takeData, setTakeData] = useState<number>(10);
     const {data, loading, error, getData} = useGet<PatientTypePagination>({
         url: url,
         keyword: searchKeyword,
+        take: takeData,
+        cursor: cursor
     });
+
+    const handleChangeDataPerPage = (value: number) => {
+        setTakeData(value);
+        setCursor(0);
+    };
+
+    const handleNextPage = () => {
+        setCursor(prevCursor => prevCursor + takeData);
+    };
+
+    const handlePreviousPage = () => {
+        const newCursor = Math.max(0, cursor - takeData);
+        setCursor(newCursor);
+    };
 
     const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const keyword = e.target.value;
@@ -183,6 +202,14 @@ const PatientTable = ({
                     }
                 </TableBody>
             </Table>
+            <CursorPagination
+                currentCursor={data?.pagination?.current_cursor || 0}
+                take={takeData}
+                onNextPage={handleNextPage}
+                onPreviousPage={handlePreviousPage}
+                onItemsPerPageChange={handleChangeDataPerPage}
+                hasMore={(data?.results?.length || 0) >= takeData}
+            />
         </>
     )
 }

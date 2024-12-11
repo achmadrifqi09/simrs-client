@@ -223,7 +223,7 @@ const UpdateOrCreateDoctorSchedule = ({
                                                                 valueName="id_pegawai"
                                                                 placeholder="Masukkan nama Dokter..."
                                                                 onChange={field.onChange}
-                                                                defaultValue={field.value}
+                                                                defaultValue={field.value > 0 ? field.value : undefined}
                                                             />
                                                         </FormControl>
                                                         <FormMessage/>
