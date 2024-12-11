@@ -73,7 +73,7 @@ type EmployeesWorkUnit = {
 export type EmployeeSubmitPayload = {
     nama_pegawai: string;
     nip_pegawai: string;
-    nip_pns: string | null;
+    nip_pns?: string | null;
     gelar_depan: string;
     gelar_belakang: string;
     id_ms_negara_tinggal: number;
@@ -85,6 +85,15 @@ export type EmployeeSubmitPayload = {
     kode_pos_tinggal: string;
     rt_tinggal: string;
     rw_tinggal: string;
+    id_ms_negara_asal: number;
+    id_ms_provinsi_asal: string;
+    id_ms_kota_asal: string;
+    id_ms_kecamatan_asal: string;
+    id_ms_desa_asal: string;
+    alamat_asal: string;
+    kode_pos_asal: string;
+    rt_asal: string;
+    rw_asal: string;
     tempat_lahir: string;
     id_jenis_kelamin: number;
     id_ms_golongan_darah: number;

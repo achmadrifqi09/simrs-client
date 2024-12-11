@@ -72,12 +72,15 @@ const UpdateOrCreateEmployee = () => {
         const payload: EmployeeSubmitPayload = {
             ...values,
             nip_pegawai: String(values.nip_pegawai),
-            nip_pns: String(values.nip_pns) || null,
-            gelar_depan: String(values.gelar_depan),
-            gelar_belakang: String(values.gelar_belakang),
-            nama_pegawai: values.nama_pegawai,
-            id_ms_negara_tinggal: Number(values.id_ms_negara_tinggal),
-            id_ms_provinsi_tinggal: String(values.id_ms_provinsi_tinggal),
+            id_ms_negara_asal: values.id_ms_negara_asal ?? 0,
+            id_ms_provinsi_asal: String(values.id_ms_provinsi_asal ?? 0),
+            id_ms_kota_asal: String(values.id_ms_kota_asal ?? 0), 
+            id_ms_kecamatan_asal: String(values.id_ms_kecamatan_asal ?? 0),
+            id_ms_desa_asal: String(values.id_ms_desa_asal ?? 0),
+            alamat_asal: values.alamat_asal ?? '',
+            kode_pos_asal: values.kode_pos_asal ?? '',
+            rt_asal: values.rt_asal ?? '',
+            rw_asal: values.rw_asal ?? '',
             id_ms_kota_tinggal: String(values.id_ms_kota_tinggal),
             id_ms_kecamatan_tinggal: String(values.id_ms_kecamatan_tinggal),
             id_ms_desa_tinggal: String(values.id_ms_desa_tinggal),
@@ -117,7 +120,12 @@ const UpdateOrCreateEmployee = () => {
             kode_dpjp: values.kode_dpjp || null,
             id_ms_jenis_pegawai: values.id_ms_jenis_pegawai ? Number(values.id_ms_jenis_pegawai) : 0,
             id_ms_unit_induk: Number(values.id_unit_induk),
-            id_ms_unit_kerja: Number(values.id_unit_kerja)
+            id_ms_unit_kerja: Number(values.id_unit_kerja),
+            nip_pns: (() => {
+                console.log('nip_pns value:', values.nip_pns);
+                console.log('nip_pns type:', typeof values.nip_pns);
+                return values.nip_pns && values.nip_pns !== "null" ? values.nip_pns : null;
+            })(),
         };
         Object.entries(payload).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
@@ -158,7 +166,7 @@ const UpdateOrCreateEmployee = () => {
         if (id_pegawai && data) {
             setSubmitMode('PATCH');
             setValue('nip_pegawai', data.nip_pegawai);
-            setValue('nip_pns', data.nip_pns);
+            setValue('nip_pns', data.nip_pns || null); 
             setValue('gelar_depan', data.gelar_depan);
             setValue('gelar_belakang', data.gelar_belakang);
             setValue('nama_pegawai', data.nama_pegawai);
@@ -199,6 +207,7 @@ const UpdateOrCreateEmployee = () => {
         }
 
     }, [id_pegawai, data, setValue]);
+    console.log('Form values:', employeeForm.getValues());
     return (
         <>
             <div className="flex justify-between items-center mb-0">
