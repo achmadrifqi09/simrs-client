@@ -13,11 +13,11 @@ import {
 import {toast} from "@/hooks/use-toast";
 import {useDelete} from "@/hooks/use-delete";
 import {Loader2} from "lucide-react";
-import {EmployeeDTO} from "@/types/employee";
+import {Employee} from "@/types/employee";
 
 type DeleteEmployeeProps = {
     onRefresh: () => void,
-    selectedRecord: EmployeeDTO | null,
+    selectedRecord: Employee | null,
     action: Action,
     showAlert: boolean,
     setShowAlert: React.Dispatch<React.SetStateAction<boolean>>
@@ -35,7 +35,7 @@ const DeleteEmployee = ({
     )
     const handleDelete = async () => {
         if (action === Action.DELETE) {
-            const result = await deleteData(`/field-of-work-unit/${selectedRecord?.id}`)
+            const result = await deleteData(`/employee/${selectedRecord?.id_pegawai}`)
 
             if (result?.status_code === 200) {
                 toast({
@@ -59,8 +59,7 @@ const DeleteEmployee = ({
                     <AlertDialogHeader>
                         <AlertDialogTitle>Peringatan</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah anda yakin akan menghapus data bindang unit
-                            kerja {"'"}{selectedRecord?.nama_bidang}{"'"} ?
+                            Apakah anda yakin akan menghapus data Pegawai{"'"}{selectedRecord?.nama_pegawai}{"'"} ?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

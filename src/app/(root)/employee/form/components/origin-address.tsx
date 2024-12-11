@@ -75,7 +75,7 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan kota untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={Number(field.value) || undefined}
+                                        defaultValue={field.value}
                                     />
                                 </FormControl>
                                 <FormMessage/>
@@ -96,7 +96,7 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan kecamatan untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={Number(field.value) || undefined}
+                                        defaultValue={field.value}
                                     />
                                 </FormControl>
                                 <FormMessage/>
@@ -109,7 +109,7 @@ const OriginAddress = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Kelurahan Tinggal*</FormLabel>
+                                <FormLabel>Pilih Desa Tinggal*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<Village>
                                         url="/master/village?status=1"
@@ -117,7 +117,7 @@ const OriginAddress = ({
                                         valueName="id"
                                         placeholder="Masukkan kelurahan untuk mencari..."
                                         onChange={field.onChange}
-                                        defaultValue={Number(field.value) || undefined}
+                                        defaultValue={field.value}
                                     />
                                 </FormControl>
                                 <FormMessage/>

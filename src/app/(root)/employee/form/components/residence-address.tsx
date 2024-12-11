@@ -111,7 +111,7 @@ const ResidenceAddress = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Kelurahan Asal</FormLabel>
+                                <FormLabel>Pilih Desa Asal</FormLabel>
                                 <FormControl>
                                     <SelectSearch<Village>
                                         url="/master/village?status=1"

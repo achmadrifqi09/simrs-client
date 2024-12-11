@@ -25,6 +25,7 @@ import {usePatch} from "@/hooks/use-patch";
 import {toast} from "@/hooks/use-toast";
 import FormError from "@/components/ui/form-error";
 import {timeStringFormatter} from "@/utils/date-formatter";
+import {Employee} from "@/types/employee";
 
 type UpdateOrCreateDoctorScheduleProps = {
     onRefresh: () => void;
@@ -48,7 +49,7 @@ const UpdateOrCreateDoctorSchedule = ({
     const scheduleForm = useForm<z.infer<typeof doctorScheduleValidation>>({
         resolver: zodResolver(doctorScheduleValidation),
         defaultValues: {
-            id_pegawai: '0',
+            id_pegawai: 0,
             kode_instalasi_bpjs: '',
             hari_praktek: '1',
             kuota_mjkn: '0',
@@ -62,7 +63,7 @@ const UpdateOrCreateDoctorSchedule = ({
     const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
     const [submitMode, setSubmitMode] = useState<'POST' | 'PATCH'>('POST');
     const [selectedRecordId, setSelectedRecordId] = useState<number | null | undefined>(null);
-    const {postData, postLoading, postError,setPostError} = usePost('/doctor-schedule');
+    const {postData, postLoading, postError, setPostError} = usePost('/doctor-schedule');
     const {updateData, patchError, patchLoading, setPatchError} = usePatch();
 
     const handleCloseDrawer = () => {
@@ -83,7 +84,7 @@ const UpdateOrCreateDoctorSchedule = ({
         setSubmitMode('PATCH')
         setDrawerOpen(true);
         setSelectedRecordId(scheduleForm.id_jadwal_dokter)
-        setValue('id_pegawai', scheduleForm.id_pegawai.toString())
+        setValue('id_pegawai', Number(scheduleForm.id_pegawai))
         setValue('kode_instalasi_bpjs', scheduleForm.kode_instalasi_bpjs)
         setValue('hari_praktek', scheduleForm.hari_praktek.toString())
         setValue('kuota_mjkn', scheduleForm.kuota_mjkn.toString())
@@ -140,6 +141,7 @@ const UpdateOrCreateDoctorSchedule = ({
             if (actionType === Action.UPDATE_FIELDS) onUpdateDoctorSchedule(selectedRecord);
         }
     }, [selectedRecord])
+  
     return (
         <>
             <Drawer open={openDrawer} onOpenChange={handleCloseDrawer}>
@@ -213,9 +215,16 @@ const UpdateOrCreateDoctorSchedule = ({
                                             render={({field}) => {
                                                 return (
                                                     <FormItem>
-                                                        <FormLabel>Dokter*</FormLabel>
+                                                        <FormLabel>Pilih Dokter*</FormLabel>
                                                         <FormControl>
-                                                            <Input type="text" {...field}/>
+                                                            <SelectSearch<Employee>
+                                                                url="/employee/doctor"
+                                                                labelName="nama_pegawai"
+                                                                valueName="id_pegawai"
+                                                                placeholder="Masukkan nama Dokter..."
+                                                                onChange={field.onChange}
+                                                                defaultValue={field.value}
+                                                            />
                                                         </FormControl>
                                                         <FormMessage/>
                                                     </FormItem>

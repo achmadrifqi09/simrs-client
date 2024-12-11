@@ -65,7 +65,7 @@ const Stepper = ({steps, activeStep, stepperChange, children, action} : StepperP
             <div className="flex justify-end gap-2 mt-4">
                 {
                     activeStep !== 1 && (
-                        <Button variant="outline" typeof="button" onClick={handlePrevStep}>
+                        <Button variant="outline" type="button" onClick={handlePrevStep}>
                             Sebelumnya
                         </Button>
                     )

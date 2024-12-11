@@ -22,3 +22,4 @@ const DoctorBPJSPage = () => {
 };
 
 export default DoctorBPJSPage;
+

@@ -1,6 +1,6 @@
-import {Employee} from "@/types/employee";
+import {EmployeeSubmitPayload} from "@/types/employee";
 
-export const employee: Employee = {
+export const employee: EmployeeSubmitPayload = {
     nip_pegawai: '',
     nip_pns: '',
     gelar_depan: '',
@@ -23,15 +23,23 @@ export const employee: Employee = {
     hp: '',
     email: '',
     no_ktp: '',
-    foto: '',
     status_pns: 0,
-    status_aktif: 0,
-    tgl_lahir: new Date(),
-    tgl_masuk: new Date(),
-    tgl_keluar: new Date(),
-    file_ktp: "",
-    file_kk: "",
-    file_ktam: "",
-    file_npwp: "",
-    id_pegawai: 1
+    status_aktif: 1,
+    tgl_lahir: '',
+    tgl_masuk: '',
+    tgl_keluar: undefined,
+    foto: undefined,
+    file_ktp: undefined,
+    file_kk: undefined,
+    file_ktam: undefined,
+    file_npwp: undefined,
+    id_ms_pendidikan: 0,
+    id_ms_status_pegawai: 0,
+    id_ms_spesialis: 0,
+    id_pangkat: 0,
+    id_jabatan: 0,
+    kode_dpjp: '',
+    id_ms_jenis_pegawai: 0,
+    id_ms_unit_kerja: 1,
+    id_ms_unit_induk: 1
 }
