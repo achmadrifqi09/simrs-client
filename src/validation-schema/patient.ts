@@ -30,7 +30,7 @@ const patientValidation = z
             .number()
             .int()
             .refine((value) => value > 0, {message: 'ID Warga Negara harus valid'}),
-        identitas_pasien: z.number(),
+        identitas_pasien: z.string(),
         no_identitas: z
             .string()
             .max(100, 'No Identitas tidak boleh melebihi 100 karakter'),
