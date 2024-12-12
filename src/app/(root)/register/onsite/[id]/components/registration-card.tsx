@@ -1,14 +1,14 @@
-import { Registration } from '@/types/register';
-import { formatToStandardDate, removeMillisecondsAndTimezone, timeStringFormatter } from '@/utils/date-formatter';
-import { Button } from '@/components/ui/button';
-import { BPJSQueueAdd } from '@/types/bpjs-queue';
-import { PatientType } from '@/types/patient';
-import { usePost } from '@/hooks/use-post';
-import { useEffect, useState } from 'react';
-import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import {Registration} from '@/types/register';
+import {formatToStandardDate, timeStringFormatter} from '@/utils/date-formatter';
+import {Button} from '@/components/ui/button';
+import {BPJSQueueAdd} from '@/types/bpjs-queue';
+import {PatientType} from '@/types/patient';
+import {usePost} from '@/hooks/use-post';
+import {useEffect, useState} from 'react';
+import {toast} from '@/hooks/use-toast';
+import {Loader2} from 'lucide-react';
 import DrawerSEP from './drawer-sep';
-import { Badge } from '@/components/ui/badge';
+import {Badge} from '@/components/ui/badge';
 
 interface RegistrationCardProps {
     registration: Registration | null;
@@ -16,12 +16,12 @@ interface RegistrationCardProps {
     onRefresh: () => void;
 }
 
-const RegistrationCard = ({ registration, patient, onRefresh }: RegistrationCardProps) => {
-    const { postData, postLoading, postError } = usePost('/bpjs/queue');
+const RegistrationCard = ({registration, patient, onRefresh}: RegistrationCardProps) => {
+    const {postData, postLoading, postError} = usePost('/bpjs/queue');
     const [openDrawerSEP, setOpenDrawerSEP] = useState<boolean>(false);
     const splitDateGetHour = (date: Date) => {
         const stringDate = new Date(date).toISOString();
-        return stringDate.split('T')[1];
+        return stringDate.split('T')[1].replace('.000Z', '');
     };
 
     const handleSendQueueToBPJS = async () => {
@@ -43,11 +43,9 @@ const RegistrationCard = ({ registration, patient, onRefresh }: RegistrationCard
                 namadokter: `${registration?.antrian?.jadwal_dokter?.pegawai?.gelar_depan} ${
                     registration?.antrian?.jadwal_dokter?.pegawai?.nama_pegawai
                 } ${registration?.antrian?.jadwal_dokter?.pegawai?.gelar_belakang ?? ''}`,
-                jampraktek: `${removeMillisecondsAndTimezone(
-                    splitDateGetHour(registration?.antrian?.jadwal_dokter?.jam_buka_praktek)
-                )}-${removeMillisecondsAndTimezone(
+                jampraktek: `${splitDateGetHour(registration?.antrian?.jadwal_dokter?.jam_buka_praktek)}-${
                     splitDateGetHour(registration?.antrian?.jadwal_dokter?.jam_tutup_praktek)
-                )}`,
+                }`,
                 jeniskunjungan: registration?.status_rujukan,
                 nomorreferensi:
                     Number(registration?.status_rujukan) !== 1
@@ -174,7 +172,7 @@ const RegistrationCard = ({ registration, patient, onRefresh }: RegistrationCard
                 >
                     {postLoading ? (
                         <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
                             <span>Loading</span>
                         </>
                     ) : (
@@ -200,7 +198,7 @@ const RegistrationCard = ({ registration, patient, onRefresh }: RegistrationCard
                 )}
             </div>
             {openDrawerSEP && (
-                <DrawerSEP patient={patient} openDrawerSEP={openDrawerSEP} setOpenDrawerSEP={setOpenDrawerSEP} />
+                <DrawerSEP patient={patient} openDrawerSEP={openDrawerSEP} setOpenDrawerSEP={setOpenDrawerSEP}/>
             )}
             {registration?.task_id_terakhir === 99 && (
                 <Badge className="absolute top-6 right-4 animate-pulse">Antrean Batal</Badge>
