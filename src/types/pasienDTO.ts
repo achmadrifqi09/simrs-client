@@ -5,7 +5,7 @@ export interface PatientDTO {
     tgl_lahir: Date;
     jenis_kelamin: 1 | 2;
     id_warga_negara: number;
-    identitas_pasien: number;
+    identitas_pasien: string;
     no_identitas: string;
     no_bpjs: string;
     no_hp: string;
