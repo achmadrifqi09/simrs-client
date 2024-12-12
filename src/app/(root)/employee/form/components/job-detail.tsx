@@ -160,7 +160,7 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Pangkat</FormLabel>
+                                <FormLabel>Pilih Pangkat*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<RankOrClass>
                                         url="/master/employee-rank?status=1"
@@ -182,7 +182,7 @@ const JobDetail = ({
                     render={({field}) => {
                         return (
                             <FormItem>
-                                <FormLabel>Pilih Jabatan</FormLabel>
+                                <FormLabel>Pilih Jabatan*</FormLabel>
                                 <FormControl>
                                     <SelectSearch<StructuralPosition>
                                         url="/master/structural-position?status=1"

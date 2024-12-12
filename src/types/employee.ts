@@ -115,7 +115,7 @@ export type EmployeeSubmitPayload = {
     file_npwp?: File;
     id_ms_pendidikan: number;
     id_ms_status_pegawai: number;
-    id_ms_spesialis: number;
+    id_ms_spesialis: number | null;
     id_pangkat: number;
     id_jabatan: number;
     kode_dpjp?: string | null;

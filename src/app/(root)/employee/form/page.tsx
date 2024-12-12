@@ -27,8 +27,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 
 const steps: Step[] = [
     {step: 1, title: "Data Diri"},
-    {step: 2, title: "Alamat Asal"},
-    {step: 3, title: "Alamat Tinggal"},
+    {step: 2, title: "Alamat Tinggal"},
+    {step: 3, title: "Alamat Asal"},
     {step: 4, title: "Dokumen Pendukung"},
     {step: 5, title: "Detail pekerjaan"},
 ];
@@ -114,7 +114,7 @@ const UpdateOrCreateEmployee = () => {
             file_npwp: files[3] ? files[3] : undefined,
             id_ms_pendidikan: Number(values.id_ms_pendidikan),
             id_ms_status_pegawai: Number(values.id_ms_status_pegawai),
-            id_ms_spesialis: Number(values.id_ms_spesialis),
+            id_ms_spesialis: Number(values.id_ms_spesialis) || null,
             id_pangkat: Number(values.id_pangkat),
             id_jabatan: Number(values.id_jabatan),
             kode_dpjp: values.kode_dpjp || null,
@@ -201,7 +201,7 @@ const UpdateOrCreateEmployee = () => {
             setValue('tgl_keluar', String(data.tgl_keluar));
             setValue('id_ms_pendidikan', data.id_ms_pendidikan);
             setValue('status_aktif', Number(data.status_aktif));
-            setValue('id_ms_spesialis', data.id_ms_spesialis)
+            setValue('id_ms_spesialis', data.id_ms_spesialis || null)
             setValue('id_ms_status_pegawai', data.id_ms_status_pegawai);
             setValue('id_pangkat', data.id_pangkat)
             setValue('id_jabatan', data.id_jabatan)

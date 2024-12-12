@@ -55,7 +55,7 @@ const employeeValidationSchema = z.object({
     id_pegawai: z.string().optional(),
     id_ms_pendidikan: z.number(),
     id_ms_status_pegawai: z.number(),
-    id_ms_spesialis: z.number(),
+    id_ms_spesialis: z.number().nullish(),
     id_pangkat: z.number(),
     id_jabatan: z.number(),
     kode_dpjp: z.string().nullish(),
