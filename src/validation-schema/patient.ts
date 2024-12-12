@@ -110,7 +110,7 @@ const patientValidation = z
         (value) => {
             const isSeventeen = isSeventeenYearsOld(formatBirthDate(value.tgl_lahir));
 
-            return !(isSeventeen && ![1, 2].includes(value.identitas_pasien));
+            return !(isSeventeen && ![1, 2].includes(Number(value.identitas_pasien));
         },
         {
             message: 'Pasien harus menyertakan identitas yang valid',
