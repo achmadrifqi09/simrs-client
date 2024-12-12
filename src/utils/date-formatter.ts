@@ -28,3 +28,6 @@ export const formatToStandardDate = (date: string) => {
     }
     return date;
 }
+export const removeMillisecondsAndTimezone = (timeString: string) => {
+    return timeString.replace(/\.\d+Z$/, '');
+};

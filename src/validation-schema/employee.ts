@@ -7,11 +7,9 @@ const employeeValidationSchema = z.object({
             message:
                 'Format NIP Pegawai tidak valid, harus mengikuti format yyyy.ddmmyyyy.xx.xxxx atau yyyy.mm.00000',
         }),
-    nip_pns: z.string({message: 'NIP PNS harus angka'})
-        .optional()
-        .nullish(),
-    gelar_depan: z.string(),
-    gelar_belakang: z.string(),
+    nip_pns: z.string().nullish(),
+    gelar_depan: z.string().nullish(),
+    gelar_belakang: z.string().nullish(),
     nama_pegawai: z.string({message: 'Nama Pegawai Harus diisi'}),
     id_ms_negara_tinggal: z.number(),
     id_ms_provinsi_tinggal: z.string(),
@@ -57,13 +55,22 @@ const employeeValidationSchema = z.object({
     id_pegawai: z.string().optional(),
     id_ms_pendidikan: z.number(),
     id_ms_status_pegawai: z.number(),
-    id_ms_spesialis: z.number(),
+    id_ms_spesialis: z.number().nullish(),
     id_pangkat: z.number(),
     id_jabatan: z.number(),
     kode_dpjp: z.string().nullish(),
     id_unit_induk: z.number().optional(),
     id_unit_kerja: z.number().optional(),
-    id_ms_jenis_pegawai: z.number()
+    id_ms_jenis_pegawai: z.number(),
+    id_ms_negara_asal: z.number().nullish(),
+    id_ms_provinsi_asal: z.string().nullish(),
+    id_ms_kota_asal: z.string().nullish(),
+    id_ms_kecamatan_asal: z.string().nullish(),
+    id_ms_desa_asal: z.string().nullish(),
+    rt_asal: z.string().nullish(),
+    rw_asal: z.string().nullish(),
+    kode_pos_asal: z.string().nullish(),
+    alamat_asal: z.string().nullish(),
 });
 
 export {employeeValidationSchema};

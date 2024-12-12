@@ -14,16 +14,15 @@ interface PersonalDataProps {
 }
 
 const SupportingDocument = ({
-                                control,
-                                setFiles,
-                                initialFiles = [null, null, null, null, null] as (string | File | null)[]
-                            }: PersonalDataProps) => {
+    control,
+    setFiles,
+    initialFiles = [null, null, null, null, null] as (string | File | null)[]
+}: PersonalDataProps) => {
     const fields = [
-        useController({ name: "ktp", control }).field,
-        useController({ name: "kk", control }).field,
-        useController({ name: "ktam", control }).field,
-        useController({ name: "npwp", control }).field,
-        useController({ name: "foto", control }).field,
+        useController({ name: "file_ktp", control }).field,    // Ubah "ktp" jadi "file_ktp"
+        useController({ name: "file_kk", control }).field,     // Ubah "kk" jadi "file_kk"
+        useController({ name: "file_ktam", control }).field,   // Ubah "ktam" jadi "file_ktam"
+        useController({ name: "file_npwp", control }).field,   // Ubah "npwp" jadi "file_npwp"
     ];
 
     const [previewUrls, setPreviewUrls] = useState<(string | null)[]>(

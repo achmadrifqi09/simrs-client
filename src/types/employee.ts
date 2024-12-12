@@ -73,9 +73,9 @@ type EmployeesWorkUnit = {
 export type EmployeeSubmitPayload = {
     nama_pegawai: string;
     nip_pegawai: string;
-    nip_pns: string | null;
-    gelar_depan: string;
-    gelar_belakang: string;
+    nip_pns?: string | null;
+    gelar_depan: string | null;
+    gelar_belakang: string | null;
     id_ms_negara_tinggal: number;
     id_ms_provinsi_tinggal: string;
     id_ms_kota_tinggal: string;
@@ -85,6 +85,15 @@ export type EmployeeSubmitPayload = {
     kode_pos_tinggal: string;
     rt_tinggal: string;
     rw_tinggal: string;
+    id_ms_negara_asal?: number | null;
+    id_ms_provinsi_asal?: string | null;
+    id_ms_kota_asal?: string | null;
+    id_ms_kecamatan_asal?: string | null;
+    id_ms_desa_asal?: string | null;
+    alamat_asal?: string | null;
+    kode_pos_asal?: string | null;
+    rt_asal?: string | null;
+    rw_asal?: string | null;
     tempat_lahir: string;
     id_jenis_kelamin: number;
     id_ms_golongan_darah: number;
@@ -106,7 +115,7 @@ export type EmployeeSubmitPayload = {
     file_npwp?: File;
     id_ms_pendidikan: number;
     id_ms_status_pegawai: number;
-    id_ms_spesialis: number;
+    id_ms_spesialis: number | null;
     id_pangkat: number;
     id_jabatan: number;
     kode_dpjp?: string | null;
@@ -131,6 +140,15 @@ export type EmployeeSingle = {
     kode_pos_tinggal: string;
     rt_tinggal: string;
     rw_tinggal: string;
+    id_ms_negara_asal: number | null;
+    id_ms_provinsi_asal: string | null;
+    id_ms_kota_asal: string | null;
+    id_ms_kecamatan_asal: string | null;
+    id_ms_desa_asal: string | null;
+    alamat_asal: string | null;
+    kode_pos_asal: string | null;
+    rt_asal: string | null;
+    rw_asal: string | null;
     tempat_lahir: string;
     id_jenis_kelamin: number;
     id_ms_golongan_darah: number;
@@ -158,6 +176,6 @@ export type EmployeeSingle = {
     id_ms_unit_induk: number;
     id_ms_unit_kerja: number;
     id_ms_jenis_pegawai: number;
-    id_unit_induk:number;
+    id_unit_induk: number;
     id_unit_kerja: number;
 }

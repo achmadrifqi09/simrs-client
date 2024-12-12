@@ -96,7 +96,7 @@ const patientValidation = z
             .refine((value) => value > 0, {message: 'ID Pendidikan harus valid'}),
         live: z.number().int().default(1),
         nama_pekerjaan: z.string()
-            .max(100, {message: 'Harus diisi maximal 100'}).nullish(),z
+            .max(100, {message: 'Harus diisi maximal 100'}).nullish(),
     })
     .refine(
         (value) => {
