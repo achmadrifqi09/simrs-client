@@ -45,7 +45,6 @@ const Registration = ({ id, data, patient, onRefresh }: RegistrationProps) => {
     };
     const onSubmit = handleSubmit(async (values) => {
         delete values.jenis_pasien;
-        console.log(values);
         const response = await updateData(`/registration/${id}`, {
             ...values,
             tgl_daftar: values?.tgl_daftar ? formateDate(values?.tgl_daftar) : undefined,

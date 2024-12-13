@@ -7,7 +7,8 @@ export type QueueInputPayload = {
     id_jadwal_dokter: number;
     tgl_lahir: string;
     kode_rm?: string;
-}
+    no_rujukan?: string;
+};
 
 export type RegisterResponse = {
     nama_pasien: string;

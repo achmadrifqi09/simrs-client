@@ -90,6 +90,7 @@ const CurrentQueue = ({ counterId, queueCode, currentQueue, setCurrentQueue }: C
 
     const handleQueueAttendanceWithoutNextCall = () => {
         if (currentQueue) {
+            Cookies.remove('ADMISSION_QUEUE_PENDING');
             socket?.emit('admission-attend-and-continue-registration', {
                 id_antrian: currentQueue?.id_antrian,
                 id_ms_loket_antrian: counterId,
@@ -142,14 +143,13 @@ const CurrentQueue = ({ counterId, queueCode, currentQueue, setCurrentQueue }: C
             });
 
             socket.on(`queue-registration-result-${socket.id}`, (result: QueueWithRegistrationFromWs) => {
-                console.log(result);
                 if (result?.data) {
                     const url =
                         Number(result?.data?.jenis_pasien) === 1 &&
                         result?.data?.kode_rm &&
                         result?.data?.kode_rm !== ''
                             ? `/register/onsite/${result?.data?.id_pendaftaran}?rm=${result?.data?.kode_rm}`
-                            : `/register/onsite/patient?QUID=${result?.data?.id_antrian}`;
+                            : `/register/onsite/patient?QUID=${result?.data?.id_antrian}&RID=${result?.data?.id_pendaftaran}`;
                     router.push(url);
                 } else {
                     toast({

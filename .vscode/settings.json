@@ -1,0 +1,18 @@
+{
+    "zenMode.hideActivityBar": true,
+    "diffEditor.renderSideBySide": true,
+    "diffEditor.renderGutterMenu": true,
+    "editor.minimap.sectionHeaderFontSize": 8,
+    "explorer.autoReveal": true,
+    "explorer.compactFolders": false,
+    "explorer.fileNesting.enabled": false,
+    "explorer.decorations.badges": true,
+    "explorer.decorations.colors": true,
+    "explorer.fileNesting.expand": false,
+    "explorer.openEditors.sortOrder": "editorOrder",
+    "outline.collapseItems": "alwaysExpand",
+    "outline.problems.badges": true,
+    "outline.problems.colors": true,
+    "outline.showArrays": true,
+    "workbench.tree.enableStickyScroll": false
+}

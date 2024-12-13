@@ -14,6 +14,7 @@ import PolyclinicTicket from './polyclinic-ticket';
 import PatientCard from './patient-card';
 import { PatientType } from '@/types/patient';
 import { Separator } from '@/components/ui/separator';
+import PolyclinicLabel from './polyclinic-label';
 
 interface GeneralRegisterData {
     id: string;
@@ -83,6 +84,7 @@ const GeneralRegisterData = ({ id, patient }: GeneralRegisterData) => {
                 <>
                     <PolyclinicTicket data={data} />
                     <PatientCard patient={patient} />
+                    <PolyclinicLabel patient={patient} />
                 </>
             )}
         </div>

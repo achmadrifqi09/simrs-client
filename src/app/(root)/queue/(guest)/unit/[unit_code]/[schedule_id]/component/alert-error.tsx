@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,26 +8,26 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import React, {useState} from "react";
-import {useRouter} from "next/navigation";
-import {ZodError} from "zod";
+} from '@/components/ui/alert-dialog';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ZodError } from 'zod';
 
 interface AlertErrorProps {
     redirectUrl?: string | null;
     message: any;
-    isShow: boolean
+    isShow: boolean;
 }
 
-const AlertError = ({redirectUrl, message, isShow = false}: AlertErrorProps) => {
+const AlertError = ({ redirectUrl, message: formError, isShow = false }: AlertErrorProps) => {
     const [show, setShow] = useState<boolean>(isShow);
     const router = useRouter();
     const handleActionError = () => {
         if (redirectUrl) {
-            router.push(redirectUrl)
+            router.push(redirectUrl);
         }
         setShow(false);
-    }
+    };
 
     return (
         <AlertDialog open={show} onOpenChange={handleActionError}>
@@ -38,24 +38,26 @@ const AlertError = ({redirectUrl, message, isShow = false}: AlertErrorProps) => 
                     <AlertDialogDescription className="text-base"></AlertDialogDescription>
                 </AlertDialogHeader>
                 <div>
-                    {message && Array.isArray(message) ? (
-                        <div>
-                            {message.map((error: ZodError, index: number) => (
-                                <p className="text-sm text-red-600" key={index}>{error.message}</p>
-                            ))}
-                        </div>
-                    ) : (
-                        message && (
-                            <p className="text-sm text-red-600">{message}</p>
-                        )
-                    )}
+                    {formError && (Array.isArray(formError) || Array.isArray(formError?.errors))
+                        ? formError.errors
+                            ? formError.errors.map((error: ZodError, index: number) => (
+                                  <p className="text-sm text-red-600" key={index}>
+                                      {error.message}
+                                  </p>
+                              ))
+                            : formError.map((error: ZodError, index: number) => (
+                                  <p className="text-sm text-red-600" key={index}>
+                                      {error.message}
+                                  </p>
+                              ))
+                        : formError && <p className="text-sm text-red-600">{formError.toString()}</p>}
                 </div>
                 <AlertDialogFooter>
                     <AlertDialogAction onClick={handleActionError}>Oke</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
-}
+    );
+};
 
 export default AlertError;
