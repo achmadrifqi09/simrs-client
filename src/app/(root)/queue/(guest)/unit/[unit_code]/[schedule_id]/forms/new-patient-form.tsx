@@ -143,7 +143,7 @@ export default function NewPatientForm({ scheduleId, handlePrintTicket, patientT
                     setSelectedPatient(patientBPJS.rujukan[0]);
                 }
             }
-        } catch (error) {
+        } catch {
             setBpjsNumberError(
                 'Nomor tersebut tidak terdaftar pada BPJS, cek kembali nomor BPJS atau mendaftar Pasien Umum'
             );

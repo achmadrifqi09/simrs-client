@@ -74,6 +74,7 @@ type DoctorScheduleRegister = {
     };
     jam_buka_praktek: Date;
     jam_tutup_praktek: Date;
+    id_jadwal_dokter: number;
 };
 
 type PaginationRegister = {
