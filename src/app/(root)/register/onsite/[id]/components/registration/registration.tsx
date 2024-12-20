@@ -20,7 +20,6 @@ import FormError from '@/components/ui/form-error';
 import { PatientType } from '@/types/patient';
 import SelectReference from './select-reference';
 import DoctorScheduleTable from './doctor-schedule-table';
-
 interface RegistrationProps {
     id: string;
     data: RegistrationType | null;

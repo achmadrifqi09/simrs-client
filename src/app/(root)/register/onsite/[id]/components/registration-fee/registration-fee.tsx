@@ -66,7 +66,7 @@ const RegistrationFee = ({ id, onRefresh }: RegistrationFeeProps) => {
                                     <FormItem>
                                         <FormLabel>Biaya Pendaftaran*</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} />
+                                            <Input type="number" min={0} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -82,7 +82,7 @@ const RegistrationFee = ({ id, onRefresh }: RegistrationFeeProps) => {
                                         <FormLabel>Diskon Pendaftaran</FormLabel>
                                         <FormControl>
                                             <div className="relative">
-                                                <Input type="number" {...field} />
+                                                <Input type="number" min={0} max={100} {...field} />
                                                 <div className="absolute top-0.5 px-4 font-medium text-base right-0.5 bg-white h-9 flex justify-center items-center rounded-r-md">
                                                     <span>%</span>
                                                 </div>
@@ -104,7 +104,7 @@ const RegistrationFee = ({ id, onRefresh }: RegistrationFeeProps) => {
                                     <FormItem>
                                         <FormLabel>Biaya Kartu</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} />
+                                            <Input type="number" min={0} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -120,7 +120,7 @@ const RegistrationFee = ({ id, onRefresh }: RegistrationFeeProps) => {
                                         <FormLabel>Biaya Kartu</FormLabel>
                                         <FormControl>
                                             <div className="relative">
-                                                <Input type="number" {...field} />
+                                                <Input type="number" min={0} max={100} {...field} />
                                                 <div className="absolute top-0.5 px-4 font-medium text-base right-0.5 bg-white h-9 flex justify-center items-center rounded-r-md">
                                                     <span>%</span>
                                                 </div>
@@ -142,7 +142,7 @@ const RegistrationFee = ({ id, onRefresh }: RegistrationFeeProps) => {
                                     <FormItem>
                                         <FormLabel>Biaya Dokter*</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} />
+                                            <Input type="number" min={0} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -158,7 +158,7 @@ const RegistrationFee = ({ id, onRefresh }: RegistrationFeeProps) => {
                                         <FormLabel>Diskon Dokter</FormLabel>
                                         <FormControl>
                                             <div className="relative">
-                                                <Input type="number" {...field} />
+                                                <Input type="number" min={0} max={100} {...field} />
                                                 <div className="absolute top-0.5 px-4 font-medium text-base right-0.5 bg-white h-9 flex justify-center items-center rounded-r-md">
                                                     <span>%</span>
                                                 </div>

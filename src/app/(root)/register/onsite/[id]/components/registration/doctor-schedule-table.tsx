@@ -9,7 +9,7 @@ import { Doctor, QueueSchedule } from '@/types/doctor-schedule';
 import { timeStringFormatter } from '@/utils/date-formatter';
 import { checkDateIsNow, checkTimeMissed } from '@/utils/time-checker';
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface DoctorScheduleProps {
     doctorScheduleId: number;
@@ -37,7 +37,6 @@ const DoctorScheduleTable = ({ doctorScheduleId, unitCode, queueId, onRefresh }:
         }
         const response = await updateData(`/queue/${queueId}/doctor-schedule`, { id_jadwal_dokter: doctorScheduleId });
         if (response?.status_code === 200) {
-            setIsSkeleton(false);
             onRefresh();
             await getData().catch(() => {
                 toast({
@@ -51,6 +50,11 @@ const DoctorScheduleTable = ({ doctorScheduleId, unitCode, queueId, onRefresh }:
             });
         }
     };
+    useEffect(() => {
+        if (data) {
+            setIsSkeleton(false);
+        }
+    }, [data]);
 
     const checkRegistrationAvailability = (doctorSchedule: QueueSchedule) => {
         if (doctorSchedule) {
@@ -74,9 +78,9 @@ const DoctorScheduleTable = ({ doctorScheduleId, unitCode, queueId, onRefresh }:
     };
 
     return (
-        <div className="xl:col-span-2">
+        <div className="xl:col-span-2 mt-8">
             <p className="mb-2 text-sm font-medium">Jadwal Dokter</p>
-            {!loading && (
+            {!isSkeleton && (
                 <Table>
                     <TableHeader>
                         <TableRow>

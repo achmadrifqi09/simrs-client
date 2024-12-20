@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 import { Label } from '@/components/ui/label';
 import axios from 'axios';
 import { generateSignature } from '@/lib/crypto-js/cipher';
-import { PatientReference, Reference } from '@/types/patient-reference';
+import { PatientReferences, Reference } from '@/types/patient-reference';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { months } from '@/const/month';
 
@@ -129,7 +129,7 @@ export default function NewPatientForm({ scheduleId, handlePrintTicket, patientT
                 }
             );
             if (response.status === 200) {
-                const patientBPJS: PatientReference = response.data?.data;
+                const patientBPJS: PatientReferences = response.data?.data;
                 if (patientBPJS?.rujukan?.length > 0) {
                     newPatientForm.setValue('nama_pasien', patientBPJS.rujukan[0].peserta.nama);
                     newPatientForm.setValue('no_hp', patientBPJS.rujukan[0].peserta.mr.noTelepon || '');

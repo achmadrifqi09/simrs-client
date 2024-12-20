@@ -1,11 +1,11 @@
 'use client';
 
 import Heading from '@/components/ui/heading';
-import PatientData from '@/app/(root)/register/onsite/[id]/components/patient-data';
-import GeneralRegisterData from '@/app/(root)/register/onsite/[id]/components/general-register-data';
+import PatientData from '@/app/(root)/register/onsite/[id]/components/patient/patient-data';
+import GeneralRegisterData from '@/app/(root)/register/onsite/[id]/components/registration/general-register-data';
 import { Button } from '@/components/ui/button';
 import { useParams } from 'next/navigation';
-import SelectRegistrant from '@/app/(root)/register/onsite/[id]/components/select-registrant';
+import SelectRegistrant from '@/app/(root)/register/onsite/[id]/components/registration/select-registrant';
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 import { toast } from '@/hooks/use-toast';

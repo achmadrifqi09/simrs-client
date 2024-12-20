@@ -1,24 +1,25 @@
-import axios, {AxiosResponse, isAxiosError} from "axios";
-import {useCallback, useEffect, useState} from "react";
-import {generateSignature} from "@/lib/crypto-js/cipher";
-import {signOut, useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
+import axios, { AxiosResponse, isAxiosError } from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import { generateSignature } from '@/lib/crypto-js/cipher';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 type GetProps = {
-    url: string,
-    headers?: Record<string, string>,
-    keyword?: string,
-    cursor?: number,
-    take?: number,
-    isGuest?: boolean,
-}
+    url: string;
+    headers?: Record<string, string>;
+    keyword?: string;
+    cursor?: number;
+    take?: number;
+    isGuest?: boolean;
+    firstLoad?: boolean;
+};
 
-const useGet = <T>({isGuest = false, url, headers, keyword, cursor, take}: GetProps) => {
+const useGet = <T>({ isGuest = false, url, headers, keyword, cursor, take, firstLoad = true }: GetProps) => {
     const router = useRouter();
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | object>();
-    const {data: session, status} = useSession();
+    const { data: session, status } = useSession();
 
     const getData = useCallback(async () => {
         if (status === 'unauthenticated' && isGuest === false) await signOut();
@@ -39,30 +40,34 @@ const useGet = <T>({isGuest = false, url, headers, keyword, cursor, take}: GetPr
                 }
 
                 const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
-                    headers: currentHeader
-                })
+                    headers: currentHeader,
+                });
 
-                setData(response.data.data)
+                setData(response.data.data);
             } catch (error: any) {
                 if (isAxiosError(error) && error.status === 401) {
-                    await signOut()
+                    await signOut();
                     return router.push('/auth/login');
                 }
-                setError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga')
+                setError(error?.response?.data?.errors || error?.message || 'Terjadi kesalahan yang tidak terduga');
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
         }
     }, [url, headers, keyword, session, take, cursor]);
 
-    useEffect(() => {
-        getData().catch((error) => {
-            setError(error.message);
-        });
+    useEffect(
+        () => {
+            if (firstLoad) {
+                getData().catch((error) => {
+                    setError(error.message);
+                });
+            }
+        },
+        isGuest ? [] : [status, getData]
+    );
 
-    }, isGuest ? [] : [status, getData])
-
-    return {data, loading, error, getData}
-}
+    return { data, loading, error, getData };
+};
 
 export default useGet;

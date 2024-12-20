@@ -1,20 +1,20 @@
 'use client';
 
-import Registration from '@/app/(root)/register/onsite/[id]/components/registration';
-import RegistrationFee from '@/app/(root)/register/onsite/[id]/components/registration-fee';
+import Registration from '@/app/(root)/register/onsite/[id]/components/registration/registration';
+import RegistrationFee from '@/app/(root)/register/onsite/[id]/components/registration-fee/registration-fee';
 import Heading from '@/components/ui/heading';
 import Section from '@/components/ui/section';
 import useGet from '@/hooks/use-get';
 import { Registration as RegistrationType } from '@/types/register';
 import { useEffect, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
-import FormSubmitted from './form-submitted';
+import FormSubmitted from '../form-submitted';
 import RegistrationCard from './registration-card';
-import PolyclinicTicket from './polyclinic-ticket';
-import PatientCard from './patient-card';
+import PolyclinicTicket from '../print/polyclinic-ticket';
+import PatientCard from '../patient/patient-card';
 import { PatientType } from '@/types/patient';
 import { Separator } from '@/components/ui/separator';
-import PolyclinicLabel from './polyclinic-label';
+import PolyclinicLabel from '../print/polyclinic-label';
 
 interface GeneralRegisterData {
     id: string;
@@ -27,7 +27,7 @@ const GeneralRegisterData = ({ id, patient }: GeneralRegisterData) => {
     const [isRegistrationFee, setIsRegistration] = useState<boolean>(false);
 
     const onRefresh = () => {
-        if (!data?.modified_at || !data?.biaya_pendaftaran || data?.status_kirim_bpjs === 0) {
+        if (!data?.modified_at || !data?.biaya_pendaftaran || data?.status_kirim_bpjs === 0 || data?.no_sep === null) {
             getData().catch(() => {
                 toast({
                     title: 'Terjadi Kesalahan',

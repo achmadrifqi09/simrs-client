@@ -3,7 +3,7 @@ import AsyncSelect, { AsyncProps } from 'react-select/async';
 import axios, { AxiosResponse } from 'axios';
 import { useSession } from 'next-auth/react';
 import { generateSignature } from '@/lib/crypto-js/cipher';
-import { components, DropdownIndicatorProps, GroupBase } from 'react-select';
+import { components, DropdownIndicatorProps, GroupBase, SingleValue } from 'react-select';
 import debounce from 'debounce';
 import { toast } from '@/hooks/use-toast';
 import { ChevronsUpDown } from 'lucide-react';
@@ -99,7 +99,7 @@ const SelectSearch = <T extends Record<string, any>>({
         debouncedFetchOptions(inputValue, callback);
     };
 
-    const handleChange = (newValue: Option | null) => {
+    const handleChange = (newValue: SingleValue<Option>) => {
         setSelectedOption(newValue);
         if (onChange) {
             onChange(newValue ? newValue.value : null);
@@ -174,6 +174,7 @@ const SelectSearch = <T extends Record<string, any>>({
             styles={customStyles}
             className="border border-input rounded-md text-sm"
             classNamePrefix="react-select"
+            noOptionsMessage={() => 'Tidak ada opsi data'}
             components={{ DropdownIndicator }}
         />
     );

@@ -1,6 +1,11 @@
-export type PatientReference = {
+export type PatientReferences = {
     asalFaskes: string;
     rujukan: Reference[];
+};
+
+export type PatientReference = {
+    asalFaskes: string;
+    rujukan: Reference;
 };
 
 export type Reference = {
@@ -22,6 +27,12 @@ export type Participant = {
     noKartu: string;
     tglLahir: string;
     mr: MR;
+    hakKelas: ClassRight;
+};
+
+export type ClassRight = {
+    keterangan: string;
+    kode: string;
 };
 
 export type MR = {
