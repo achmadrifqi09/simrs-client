@@ -1,27 +1,26 @@
-import {Registration} from '@/types/register';
-import {formatToStandardDate, timeStringFormatter} from '@/utils/date-formatter';
-import {Button} from '@/components/ui/button';
-import {BPJSQueueAdd} from '@/types/bpjs-queue';
-import {PatientType} from '@/types/patient';
-import {usePost} from '@/hooks/use-post';
-import {useEffect, useState} from 'react';
-import {toast} from '@/hooks/use-toast';
-import {Loader2} from 'lucide-react';
-import DrawerSEP from './drawer-sep';
-import {Badge} from '@/components/ui/badge';
-
+import { Registration } from '@/types/register';
+import { formatToStandardDate, removeMillisecondsAndTimezone, timeStringFormatter } from '@/utils/date-formatter';
+import { Button } from '@/components/ui/button';
+import { BPJSQueueAdd } from '@/types/bpjs-queue';
+import { PatientType } from '@/types/patient';
+import { usePost } from '@/hooks/use-post';
+import { lazy, useEffect, useState } from 'react';
+import { toast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+const SEPDialog = lazy(() => import('../sep/sep-dialog'));
 interface RegistrationCardProps {
     registration: Registration | null;
     patient: PatientType | null;
     onRefresh: () => void;
 }
 
-const RegistrationCard = ({registration, patient, onRefresh}: RegistrationCardProps) => {
-    const {postData, postLoading, postError} = usePost('/bpjs/queue');
-    const [openDrawerSEP, setOpenDrawerSEP] = useState<boolean>(false);
+const RegistrationCard = ({ registration, patient, onRefresh }: RegistrationCardProps) => {
+    const { postData, postLoading, postError } = usePost('/bpjs/queue');
+    const [openDialogSEP, setOpenDialogSEP] = useState<boolean>(false);
     const splitDateGetHour = (date: Date) => {
         const stringDate = new Date(date).toISOString();
-        return stringDate.split('T')[1].replace('.000Z', '');
+        return stringDate.split('T')[1];
     };
 
     const handleSendQueueToBPJS = async () => {
@@ -43,9 +42,11 @@ const RegistrationCard = ({registration, patient, onRefresh}: RegistrationCardPr
                 namadokter: `${registration?.antrian?.jadwal_dokter?.pegawai?.gelar_depan} ${
                     registration?.antrian?.jadwal_dokter?.pegawai?.nama_pegawai
                 } ${registration?.antrian?.jadwal_dokter?.pegawai?.gelar_belakang ?? ''}`,
-                jampraktek: `${splitDateGetHour(registration?.antrian?.jadwal_dokter?.jam_buka_praktek)}-${
+                jampraktek: `${removeMillisecondsAndTimezone(
+                    splitDateGetHour(registration?.antrian?.jadwal_dokter?.jam_buka_praktek)
+                )}-${removeMillisecondsAndTimezone(
                     splitDateGetHour(registration?.antrian?.jadwal_dokter?.jam_tutup_praktek)
-                }`,
+                )}`,
                 jeniskunjungan: registration?.status_rujukan,
                 nomorreferensi:
                     Number(registration?.status_rujukan) !== 1
@@ -172,20 +173,26 @@ const RegistrationCard = ({registration, patient, onRefresh}: RegistrationCardPr
                 >
                     {postLoading ? (
                         <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             <span>Loading</span>
                         </>
                     ) : (
                         <span>{registration?.status_kirim_bpjs ? 'Antrean terkirim' : 'Kirim BPJS'}</span>
                     )}
                 </Button>
-                <Button
-                    variant="outline"
-                    disabled={registration?.status_kirim_bpjs === 0 || registration?.task_id_terakhir === 99}
-                    onClick={() => setOpenDrawerSEP(true)}
-                >
-                    Buat SEP
-                </Button>
+                {registration?.antrian.jenis_penjamin === 2 && (
+                    <Button
+                        variant="outline"
+                        disabled={
+                            registration?.status_kirim_bpjs === 0 ||
+                            registration?.task_id_terakhir === 99 ||
+                            registration?.no_sep !== null
+                        }
+                        onClick={() => setOpenDialogSEP(true)}
+                    >
+                        {registration?.no_sep ? 'SEP Telah Dibuat' : ' Buat SEP'}
+                    </Button>
+                )}
             </div>
             <div className="my-4">
                 {!registration?.antrian?.jadwal_dokter?.pegawai?.kode_dpjp && (
@@ -197,8 +204,14 @@ const RegistrationCard = ({registration, patient, onRefresh}: RegistrationCardPr
                     </p>
                 )}
             </div>
-            {openDrawerSEP && (
-                <DrawerSEP patient={patient} openDrawerSEP={openDrawerSEP} setOpenDrawerSEP={setOpenDrawerSEP}/>
+            {openDialogSEP && (
+                <SEPDialog
+                    patient={patient}
+                    openDialogSEP={openDialogSEP}
+                    setOpenDialogSEP={setOpenDialogSEP}
+                    registration={registration}
+                    onRefresh={onRefresh}
+                />
             )}
             {registration?.task_id_terakhir === 99 && (
                 <Badge className="absolute top-6 right-4 animate-pulse">Antrean Batal</Badge>

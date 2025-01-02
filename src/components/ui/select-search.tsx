@@ -1,12 +1,12 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import AsyncSelect, {AsyncProps} from 'react-select/async';
-import axios, {AxiosResponse} from "axios";
-import {useSession} from "next-auth/react";
-import {generateSignature} from "@/lib/crypto-js/cipher";
-import {components, DropdownIndicatorProps, GroupBase} from 'react-select';
-import debounce from "debounce";
-import {toast} from "@/hooks/use-toast";
-import {ChevronsUpDown} from "lucide-react";
+import React, { useCallback, useEffect, useState } from 'react';
+import AsyncSelect, { AsyncProps } from 'react-select/async';
+import axios, { AxiosResponse } from 'axios';
+import { useSession } from 'next-auth/react';
+import { generateSignature } from '@/lib/crypto-js/cipher';
+import { components, DropdownIndicatorProps, GroupBase, SingleValue } from 'react-select';
+import debounce from 'debounce';
+import { toast } from '@/hooks/use-toast';
+import { ChevronsUpDown } from 'lucide-react';
 
 interface SelectSearchProps<T> {
     url: string;
@@ -21,26 +21,26 @@ interface SelectSearchProps<T> {
 type Option = {
     label: string;
     value: string | number;
-}
+};
 
 const DropdownIndicator = (props: DropdownIndicatorProps<Option>) => {
     return (
         <components.DropdownIndicator {...props}>
-            <ChevronsUpDown className="text-gray-400 w-5 h-5"/>
+            <ChevronsUpDown className="text-gray-400 w-5 h-5" />
         </components.DropdownIndicator>
-    )
-}
+    );
+};
 
 const SelectSearch = <T extends Record<string, any>>({
-                                                         url,
-                                                         labelName,
-                                                         valueName,
-                                                         defaultValue,
-                                                         placeholder = "Pilih opsi ...",
-                                                         onChange,
-                                                         clearTrigger,
-                                                     }: SelectSearchProps<T>) => {
-    const {data: session} = useSession();
+    url,
+    labelName,
+    valueName,
+    defaultValue,
+    placeholder = 'Pilih opsi ...',
+    onChange,
+    clearTrigger,
+}: SelectSearchProps<T>) => {
+    const { data: session } = useSession();
     const [selectedOption, setSelectedOption] = useState<Option | null>(null);
     const generateOptions = (options: T[] | { results?: T[] }): Option[] => {
         if (Array.isArray(options)) {
@@ -62,23 +62,28 @@ const SelectSearch = <T extends Record<string, any>>({
             const currentHeader: Record<string, string | undefined> = {
                 'client-signature': generateSignature() ?? '',
                 'client-id': process.env.NEXT_PUBLIC_CLIENT_ID,
-                'Authorization': session?.accessToken ? `Bearer ${session.accessToken}` : undefined
+                Authorization: session?.accessToken ? `Bearer ${session.accessToken}` : undefined,
             };
 
-            const response: AxiosResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}${url.includes('?') ? (inputValue && '&keyword=' + inputValue) : (inputValue && '?keyword=' + inputValue)}`, {
-                headers: currentHeader,
-                params: {search: inputValue}
-            });
+            const response: AxiosResponse = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}${url}${
+                    url.includes('?') ? inputValue && '&keyword=' + inputValue : inputValue && '?keyword=' + inputValue
+                }`,
+                {
+                    headers: currentHeader,
+                    params: { search: inputValue },
+                }
+            );
 
             if (response.status === 200) {
                 const data = response.data?.data;
-                return generateOptions(Array.isArray(data) ? data : (data?.results || []));
+                return generateOptions(Array.isArray(data) ? data : data?.results || []);
             }
             return [];
         } catch {
             toast({
-                description: "Gagal mendapatkan data opsi data",
-            })
+                description: 'Gagal mendapatkan data opsi data',
+            });
             return [];
         }
     };
@@ -90,14 +95,11 @@ const SelectSearch = <T extends Record<string, any>>({
         []
     );
 
-    const loadOptions: AsyncProps<Option, false, GroupBase<Option>>['loadOptions'] = (
-        inputValue,
-        callback
-    ) => {
+    const loadOptions: AsyncProps<Option, false, GroupBase<Option>>['loadOptions'] = (inputValue, callback) => {
         debouncedFetchOptions(inputValue, callback);
     };
 
-    const handleChange = (newValue: Option | null) => {
+    const handleChange = (newValue: SingleValue<Option>) => {
         setSelectedOption(newValue);
         if (onChange) {
             onChange(newValue ? newValue.value : null);
@@ -108,7 +110,7 @@ const SelectSearch = <T extends Record<string, any>>({
         const loadDefaultValue = async () => {
             if (defaultValue !== undefined) {
                 const options = await fetchOptions(defaultValue as string);
-                const defaultOption = options.find(option => option.value === defaultValue);
+                const defaultOption = options.find((option) => option.value === defaultValue);
                 if (defaultOption) {
                     setSelectedOption(defaultOption);
                     if (onChange) {
@@ -119,16 +121,16 @@ const SelectSearch = <T extends Record<string, any>>({
         };
         loadDefaultValue().catch(() => {
             toast({
-                description: "Gagal mendapatkan data opsi data",
-            })
+                description: 'Gagal mendapatkan data opsi data',
+            });
         });
     }, [defaultValue]);
 
     useEffect(() => {
         if (clearTrigger !== 0) {
-            setSelectedOption(null)
+            setSelectedOption(null);
         }
-    }, [clearTrigger]);
+    }, [clearTrigger, url]);
 
     const customStyles = {
         control: (provided: any) => ({
@@ -157,7 +159,7 @@ const SelectSearch = <T extends Record<string, any>>({
             cursor: 'pointer',
             '&:hover': {
                 backgroundColor: state.isSelected ? 'rgb(220 38 38)' : 'rgb(243 244 246)',
-                color: state.isSelected ? 'white' : 'black'
+                color: state.isSelected ? 'white' : 'black',
             },
         }),
     };
@@ -172,7 +174,8 @@ const SelectSearch = <T extends Record<string, any>>({
             styles={customStyles}
             className="border border-input rounded-md text-sm"
             classNamePrefix="react-select"
-            components={{DropdownIndicator}}
+            noOptionsMessage={() => 'Tidak ada opsi data'}
+            components={{ DropdownIndicator }}
         />
     );
 };

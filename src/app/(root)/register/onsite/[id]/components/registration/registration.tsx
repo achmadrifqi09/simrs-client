@@ -19,7 +19,7 @@ import { Loader2 } from 'lucide-react';
 import FormError from '@/components/ui/form-error';
 import { PatientType } from '@/types/patient';
 import SelectReference from './select-reference';
-
+import DoctorScheduleTable from './doctor-schedule-table';
 interface RegistrationProps {
     id: string;
     data: RegistrationType | null;
@@ -35,6 +35,7 @@ const Registration = ({ id, data, patient, onRefresh }: RegistrationProps) => {
     });
     const [isSelectReferenceDialog, setIsReferenceDialog] = useState<boolean>(false);
     const { handleSubmit, control } = registrationForm;
+
     const formateDate = (date: string) => {
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if (regex.test(date)) {
@@ -43,9 +44,9 @@ const Registration = ({ id, data, patient, onRefresh }: RegistrationProps) => {
         }
         return date;
     };
+
     const onSubmit = handleSubmit(async (values) => {
         delete values.jenis_pasien;
-        console.log(values);
         const response = await updateData(`/registration/${id}`, {
             ...values,
             tgl_daftar: values?.tgl_daftar ? formateDate(values?.tgl_daftar) : undefined,
@@ -337,6 +338,16 @@ const Registration = ({ id, data, patient, onRefresh }: RegistrationProps) => {
                                 />
                             </div>
                         )}
+                        {data?.antrian?.jadwal_dokter?.id_jadwal_dokter &&
+                            data?.antrian?.jadwal_dokter?.unit?.kode_instalasi_bpjs && (
+                                <DoctorScheduleTable
+                                    doctorScheduleId={data?.antrian?.jadwal_dokter?.id_jadwal_dokter}
+                                    unitCode={data?.antrian?.jadwal_dokter?.unit?.kode_instalasi_bpjs}
+                                    queueId={data?.antrian?.id_antrian}
+                                    onRefresh={onRefresh}
+                                />
+                            )}
+
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4 mt-8 col-span-2">
                             <FormField
                                 control={control}

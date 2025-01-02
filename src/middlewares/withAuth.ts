@@ -1,24 +1,24 @@
-import {getToken, JWT} from 'next-auth/jwt'
-import {NextFetchEvent, NextMiddleware, NextResponse} from "next/server";
-import moment from "moment-timezone";
-import {guestRoutes} from "@/const/guest-routes";
-import {generateCurrentTimestamp} from "@/lib/formatter/date-formatter";
-import {decompressFromBase64} from "lz-string";
-import {clearSessionAndRedirect} from "@/utils/cookies-cleaner";
-import {NextRequestWithAuth} from "next-auth/middleware";
+import { getToken, JWT } from 'next-auth/jwt';
+import { NextFetchEvent, NextMiddleware, NextResponse } from 'next/server';
+import moment from 'moment-timezone';
+import { guestRoutes } from '@/const/guest-routes';
+import { generateCurrentTimestamp } from '@/lib/formatter/date-formatter';
+import { decompressFromBase64 } from 'lz-string';
+import { clearSessionAndRedirect } from '@/utils/cookies-cleaner';
+import { NextRequestWithAuth } from 'next-auth/middleware';
 
-export default function withAuth(
-    middleware: NextMiddleware,
-) {
+export default function withAuth(middleware: NextMiddleware) {
     return async (req: NextRequestWithAuth, next: NextFetchEvent) => {
-        const pathname: string = req.nextUrl.pathname
+        const pathname: string = req.nextUrl.pathname;
 
-        if (pathname.includes('/manifest')
-            || pathname.includes('/icons')
-            || pathname.includes('/audios')
-            || pathname.includes('/screenshot')
-            || pathname.includes('sw.js')
-            || pathname.includes('/workbox')
+        if (
+            pathname.includes('/manifest') ||
+            pathname.includes('/icons') ||
+            pathname.includes('/audios') ||
+            pathname.includes('/screenshot') ||
+            pathname.includes('sw.js') ||
+            pathname.includes('/workbox') ||
+            pathname.includes('/profile')
         ) {
             return middleware(req, next);
         }
@@ -27,10 +27,11 @@ export default function withAuth(
             return middleware(req, next);
         }
 
-        const isStaticAsset = pathname.startsWith('/_next/') || pathname.startsWith('/static/') || pathname.startsWith('/images');
-        const isAllowedPath = guestRoutes.some(path => pathname.startsWith(path));
+        const isStaticAsset =
+            pathname.startsWith('/_next/') || pathname.startsWith('/static/') || pathname.startsWith('/images');
+        const isAllowedPath = guestRoutes.some((path) => pathname.startsWith(path));
 
-        const session: JWT | null = await getToken({req, secret: process.env.PUBLIC_NEXTAUTH_SECRET})
+        const session: JWT | null = await getToken({ req, secret: process.env.PUBLIC_NEXTAUTH_SECRET });
 
         if (session && pathname.startsWith('/auth/login')) {
             return NextResponse.redirect(new URL('/', req.url));
@@ -48,19 +49,17 @@ export default function withAuth(
             const expired = moment.utc(session.expires);
             const currentTimestamp = moment.utc(generateCurrentTimestamp());
             if (currentTimestamp.isAfter(expired)) {
-                const response = NextResponse.redirect(
-                    new URL('/auth/login', req.url)
-                )
+                const response = NextResponse.redirect(new URL('/auth/login', req.url));
 
-                response.cookies.delete('next-auth.session-token')
-                response.cookies.delete('next-auth.csrf-token')
-                response.cookies.delete('next-auth.callback-url')
+                response.cookies.delete('next-auth.session-token');
+                response.cookies.delete('next-auth.csrf-token');
+                response.cookies.delete('next-auth.callback-url');
 
-                return response
+                return response;
             }
         }
 
-        const cookieMenus = req.cookies.get('menu_paths')?.value
+        const cookieMenus = req.cookies.get('menu_paths')?.value;
         if (cookieMenus) {
             const menus: string[] = JSON.parse(decompressFromBase64(cookieMenus) || '[]');
             if (cookieMenus) {
@@ -75,7 +74,7 @@ export default function withAuth(
                 clearSessionAndRedirect(req);
             }
         }
-    }
+    };
 }
 
 function checkPath(path: string, menuPaths: string[]) {
@@ -95,7 +94,7 @@ function checkPath(path: string, menuPaths: string[]) {
                     break;
                 }
             }
-            if (match && (pathSegments.length <= patternSegments.length + 1)) {
+            if (match && pathSegments.length <= patternSegments.length + 1) {
                 return true;
             }
         }

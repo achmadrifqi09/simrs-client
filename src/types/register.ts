@@ -42,6 +42,7 @@ type Registration = {
     biaya_pendaftaran?: RegistrationFee;
     nomor_antrian_poli?: number;
     kode_antrian_poli?: string;
+    kode_booking: string;
     modified_at?: Date;
     asuransi?: Insurance;
     task_id_terakhir?: number;
@@ -74,6 +75,7 @@ type DoctorScheduleRegister = {
     };
     jam_buka_praktek: Date;
     jam_tutup_praktek: Date;
+    id_jadwal_dokter: number;
 };
 
 type PaginationRegister = {

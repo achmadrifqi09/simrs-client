@@ -74,7 +74,7 @@ body {
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
-    background-color: #d9282b;
+    background-color: #9ba4b0;
     border-radius: 6px;
 }
 
@@ -147,6 +147,81 @@ body {
     body {
         @apply bg-background text-foreground;
     }
+}
+
+.polyclinic-label-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2mm;
+}
+
+.identifier-patient-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.identifier-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.identifier-label {
+    font-size: 6pt;
+}
+
+.identifier-vaule {
+    font-size: 8pt;
+    font-weight: 500;
+}
+.polyclinic-label {
+    width: 64mm;
+    height: 32mm;
+    margin: 0 auto;
+    padding: 1.5mm;
+    position: relative;
+}
+
+.identifier-patient-name {
+    text-align: center;
+    font-size: 10pt;
+    font-weight: 500;
+}
+
+.polyclinic-label-title {
+    font-weight: 600;
+    font-size: 8.5pt;
+    text-align: center;
+    border-bottom: 1px solid black;
+    margin-bottom: 1mm;
+}
+
+.polyclinic-label-desc {
+    font-size: 8pt;
+    text-align: left;
+}
+
+.polyclinic-label-address {
+    font-size: 8pt;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 1.5mm;
+    max-width: 32ch;
+}
+
+.label-barcode-wrapper {
+    width: min-content;
+}
+
+.polyclinic-label-footer {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 1mm;
+    right: 2mm;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .patient-card {

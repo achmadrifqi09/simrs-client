@@ -75,7 +75,7 @@ const PatientData = ({ setPatient }: PatientDataProps) => {
                     <div className="space-y-1.5">
                         <p className="text-gray-500">Identitas Pasien</p>
                         <p className="px-4 py-2.5 bg-gray-50 rounded min-h-[40px]">
-                            {data?.identitas_pasien === 1 ? 'KTP' : data?.identitas_pasien === 2 ? 'Pasport' : '-'}{' '}
+                            {Number(data?.identitas_pasien) === 1 ? 'KTP' : Number(data?.identitas_pasien) === 2 ? 'Pasport' : '-'}{' '}
                             {data?.no_identitas}
                         </p>
                     </div>

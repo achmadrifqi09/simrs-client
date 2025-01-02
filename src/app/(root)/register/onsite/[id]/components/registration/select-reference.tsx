@@ -6,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 import { generateSignature } from '@/lib/crypto-js/cipher';
 import { AxiosResponse } from 'axios';
 import axios from 'axios';
-import { PatientReference, Reference } from '@/types/patient-reference';
+import { PatientReferences, Reference } from '@/types/patient-reference';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface SelectReferenceProps {
@@ -23,7 +23,7 @@ const SelectReference = ({
 }: SelectReferenceProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const { data: session } = useSession();
-    const [references, setRefreces] = useState<PatientReference | null>();
+    const [references, setRefreces] = useState<PatientReferences | null>();
     const fetchRerence = async () => {
         setLoading(true);
         try {

@@ -8,7 +8,7 @@ export const patient: PatientType = {
     tgl_lahir: new Date(),
     jenis_kelamin: 1,
     id_warga_negara: 1,
-    identitas_pasien: 0,
+    identitas_pasien: "1",
     no_identitas: "",
     no_bpjs: "",
     no_hp: "",
