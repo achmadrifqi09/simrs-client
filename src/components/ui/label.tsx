@@ -25,7 +25,7 @@ const Label = React.forwardRef<
             props.children?.toString().includes('*') ? (
                 <>
                     {props?.children?.toString().replace(/\*/g, ' ')}
-                    <span className="text-red-600">*</span>
+                    <span className="text-blue-600">*</span>
                 </>
             ) : (props?.children)
         }
