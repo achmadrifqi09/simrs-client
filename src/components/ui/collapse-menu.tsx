@@ -1,12 +1,12 @@
 "use client"
 import React from "react";
-import {Collapsible, CollapsibleContent, CollapsibleTrigger,} from "@/components/ui/collapsible"
-import {cn} from "@/lib/utils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
-import {Submenu} from '@/types/menu-type'
+import { Submenu } from '@/types/menu-type';
 import Icon from "@/components/ui/icon";
-import {usePathname} from "next/navigation";
-import {LuChevronDown, LuChevronRight} from "react-icons/lu";
+import { usePathname } from "next/navigation";
+import { LuChevronDown, LuChevronRight } from "react-icons/lu";
 
 interface CollapseMenuButtonProps {
     iconName: string,
@@ -19,8 +19,8 @@ interface CollapseMenuButtonProps {
     closeMenu?: () => void
 }
 
-const CollapseMenu = ({iconName, label, submenus, active, onToggle, id, open, closeMenu}: CollapseMenuButtonProps) => {
-    const pathname = usePathname()
+const CollapseMenu = ({ iconName, label, submenus, active, onToggle, id, open, closeMenu }: CollapseMenuButtonProps) => {
+    const pathname = usePathname();
     const baseClass = "w-full hover:bg-gray-50 flex justify-between items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary";
     const baseClassSubmenu = "mx-[-0.65rem] w-full hover:bg-gray-50 flex justify-between items-center gap-4 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary";
     const findPathname = (menuPath: string) => {
@@ -35,16 +35,16 @@ const CollapseMenu = ({iconName, label, submenus, active, onToggle, id, open, cl
             <Collapsible open={open} onOpenChange={() => onToggle(id)} className="w-full select-none">
                 <CollapsibleTrigger className="[&[data-state=open]>div>div>svg]:rotate-180 mb-1" asChild>
                     <button
-                        className={cn(baseClass, active && 'bg-gradient-to-br from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-500 hover:text-white')}
+                        className={cn(baseClass, active && 'bg-gradient-to-br from-[#60A5FA] to-[#60A5FA] text-white hover:from-[#60A5FA] hover:to-[#60A5FA] hover:text-white')}
                     >
                         <div className="flex gap-4 items-center">
                             <Icon nameIcon={iconName} />
                             {label}
                         </div>
                         {open ? (
-                            <LuChevronDown className="w-5 h-5"/>
+                            <LuChevronDown className="w-5 h-5" />
                         ) : (
-                            <LuChevronRight className="w-5 h-5"/>
+                            <LuChevronRight className="w-5 h-5" />
                         )}
                     </button>
                 </CollapsibleTrigger>
@@ -53,7 +53,7 @@ const CollapseMenu = ({iconName, label, submenus, active, onToggle, id, open, cl
                         {submenus.map((submenu: Submenu, index: number) => (
                             <Link
                                 className={`${baseClassSubmenu} ${findPathname(submenu.pathname || '') && (
-                                    cn('bg-gray-50 before:slide-down before:content-[""] before:w-1 before:h-8 before:absolute before:bg-red-600 before:-left-[1px] before:rounded text-red-600')
+                                    cn('bg-gray-50 before:slide-down before:content-[""] before:w-1 before:h-8 before:absolute before:bg-[#60A5FA] before:-left-[1px] before:rounded text-[#60A5FA]')
                                 )}`}
                                 href={submenu.pathname || ''}
                                 onClick={closeMenu}
@@ -69,5 +69,4 @@ const CollapseMenu = ({iconName, label, submenus, active, onToggle, id, open, cl
     );
 };
 
-
-export default CollapseMenu
+export default CollapseMenu;

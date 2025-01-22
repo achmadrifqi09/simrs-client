@@ -9,13 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-br from-red-600 to-red-500 text-white hover:bg-primary/90",
+        default: "bg-gradient-to-br from-[#065A7F] to-[#054571] text-white hover:bg-primary/90", // Ganti warna default
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-[#FF4F5A] text-[#FF4F5A] hover:bg-[#FF4F5A]/90", // Ganti warna destructive
         outline:
           "border border-primary bg-background hover:bg-accent text-primary hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-[#6C757D] text-white hover:bg-[#6C757D]/80", // Ganti warna secondary
         ghost: "text-primary hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
