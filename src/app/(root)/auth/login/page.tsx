@@ -21,7 +21,7 @@ const Login = () => {
     const credentials = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            email: "",
+            username: "",
             password: ""
         }
     })
@@ -30,10 +30,24 @@ const Login = () => {
 
     const onSubmit = handleSubmit(async (values) => {
         setLoadingSubmit(true);
+        try {
+            const result = await signIn('credentials', {
+                ...values,
+                redirect: false
+            });
 
-        await signIn('credentials', {
-            ...values
-        })
+            if (result?.error) {
+                throw new Error(result.error);
+            }
+
+            if (result?.ok) {
+                window.location.href = '/';
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+        } finally {
+            setLoadingSubmit(false);
+        }
     })
 
     return (
@@ -81,13 +95,13 @@ const Login = () => {
                                 <div className="my-4">
                                     <FormField
                                         control={control}
-                                        name="email"
+                                        name="username"
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
                                                     <FormLabel>Email</FormLabel>
                                                     <FormControl>
-                                                        <Input type="email" {...field}/>
+                                                        <Input type="username" {...field}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
