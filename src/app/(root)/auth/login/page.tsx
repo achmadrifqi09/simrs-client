@@ -2,7 +2,6 @@
 import Image from "next/image";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import Footer from "@/components/ui/footer";
 import React, {useState} from "react";
 import {loginSchema} from "@/validation-schema/auth";
 import {useForm} from "react-hook-form";
@@ -10,7 +9,8 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {signIn} from "next-auth/react";
-import {LuEye, LuEyeOff, LuFolderLock, LuLoader2} from "react-icons/lu";
+import {LuEye, LuEyeOff} from "react-icons/lu";
+import {LuLoader2} from "react-icons/lu";
 import {useSearchParams} from "next/navigation";
 
 const Login = () => {
@@ -30,66 +30,45 @@ const Login = () => {
 
     const onSubmit = handleSubmit(async (values) => {
         setLoadingSubmit(true);
-        try {
-            const result = await signIn('credentials', {
-                ...values,
-                redirect: false
-            });
 
-            if (result?.error) {
-                throw new Error(result.error);
-            }
-
-            if (result?.ok) {
-                window.location.href = '/';
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-        } finally {
-            setLoadingSubmit(false);
-        }
+        await signIn('credentials', {
+            ...values
+        })
     })
 
     return (
         <div className="h-dvh w-screen overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 h-full">
                 <div
-                    className="w-full h-dvh bg-gradient-to-br from-red-600 to-red-500 flex-col justify-center items-center hidden md:flex">
-                    <div className="w-full h-full flex flex-col items-center justify-center px-6">
-                        <div className="relative w-40 h-40 mb-6">
+                    className="w-full h-dvh flex-col justify-center items-center hidden md:flex">
+                    <div className="w-full flex flex-col items-center justify-center space-y-10">
+                        <h2 className="text-primary text-center space-y-2 py-10 font-bold text-xl md:text-3xl xl:text-4xl">
+                            <span className="block"> Selamat Datang di Vimedika!</span>
+                        </h2>
+                        <div className="w-full flex items-center justify-center">
                             <Image
-                                src="/images/logo-rs-white.png"
-                                alt="Logo RSU UMM"
-                                fill
-                                sizes="(max-width: 28rem) 100vw, 28rem"
+                                src="/images/welcome-logo.png"
+                                alt="Welcome Logo"
+                                width={500}
+                                height={500}
+                                className="object-contain"
                             />
                         </div>
-                        <h2 className="text-white text-center space-y-2 font-bold text-xl md:text-2xl xl:text-3xl">
-                            <span className="block"> Rumah Sakit Umum</span>
-                            <span className="block">Universitas Muhammadiyah Malang</span>
-                        </h2>
-                        <p className="text-lg text-red-50 mt-2">Layananku Pengabdianku</p>
-                    </div>
-                    <div className="w-full h-full bg-login-banner bg-contain bg-no-repeat bg-bottom">
                     </div>
                 </div>
-                <div className="flex flex-col items-center justify-center px-6 relative">
+                <div className="bg-primary flex flex-col items-center justify-center px-6 relative">
                     <div className="max-w-[24em] w-full">
                         <div className="relative w-28 h-28 mb-8 md:hidden">
                             <Image
                                 src="/images/logo-rs.png"
-                                alt="Logo RSU UMM" fill
+                                alt="Logo Vimedika" fill
                                 sizes="(max-width: 28rem) 100vw, 28rem"
                             />
                         </div>
-                        <div
-                            className=" rounded-full md:flex bg-[#074570] hidden items-center justify-center w-max p-4 text-white mb-8">
-                            <LuFolderLock className="w-6 h-6"/>
-                        </div>
-                        <p className="text-gray-500">Selamat datang</p>
-                        <h2 className="text-left space-y-2 leading-relaxed mb-6 text-xl md:text-2xl text-[#054571] font-bold">
-                            Portal Sistem Manajemen<br/>Rumah Sakit
+                        <h2 className="text-center leading-relaxed mb-3 text-2xl md:text-3xl text-white font-bold">
+                            Sign In
                         </h2>
+                        <p className="text-white text-center mb-8 font-medium">Masuk ke akun anda untuk melanjutkan</p>
                         <Form {...credentials}>
                             <form onSubmit={onSubmit} autoComplete="off">
                                 <div className="my-4">
@@ -99,15 +78,14 @@ const Login = () => {
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Email</FormLabel>
+                                                    <FormLabel className="text-white">Username</FormLabel>
                                                     <FormControl>
-                                                        <Input type="username" {...field}/>
+                                                        <Input type="text" {...field}/>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
                                             )
                                         }}/>
-
                                 </div>
                                 <div className="my-4">
                                     <FormField
@@ -116,7 +94,7 @@ const Login = () => {
                                         render={({field}) => {
                                             return (
                                                 <FormItem>
-                                                    <FormLabel>Password</FormLabel>
+                                                    <FormLabel className="text-white">Password</FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
                                                             <Input
@@ -137,9 +115,9 @@ const Login = () => {
                                             )
                                         }}/>
                                 </div>
-                                {errorParam && (<p className="text-red-700 text-sm">{errorParam}</p>)}
+                                {errorParam && (<p className="text-primary text-sm">{errorParam}</p>)}
                                 <div className="flex justify-end mt-10">
-                                    <Button type="submit" disabled={loadingSubmit}>
+                                    <Button type="submit" disabled={loadingSubmit} className="w-full">
                                         {
                                             loadingSubmit ? (
                                                 <>
@@ -154,9 +132,6 @@ const Login = () => {
                                 </div>
                             </form>
                         </Form>
-                    </div>
-                    <div className="absolute bottom-0 right-0 left-0">
-                        <Footer/>
                     </div>
                 </div>
             </div>
